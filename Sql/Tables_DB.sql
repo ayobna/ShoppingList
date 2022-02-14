@@ -16,7 +16,7 @@ CREATE TABLE users
 GO
 
 
--- Drop Table users
+-- Drop Table shopping_lists
 CREATE TABLE shopping_lists  
 (
 	 ListID int identity not null,
@@ -27,10 +27,11 @@ CREATE TABLE shopping_lists
 )
 GO
 
--- Drop Table users
+-- Drop Table products
 CREATE TABLE products  
 (
 	 ProductID int identity not null,
+	 ListID int not null,
 	 CreatorID int not null,
 	 [Name] nvarchar (150) not null,
 	 Amount int not null,
@@ -41,7 +42,7 @@ CREATE TABLE products
 )
 GO
 
--- Drop Table users
+-- Drop Table shopping_lists_users
 CREATE TABLE shopping_lists_users
 (
 	 ListID int identity not null,
@@ -53,13 +54,13 @@ CREATE TABLE shopping_lists_users
 GO
 
 
--- Drop Table users
+-- Drop Table shopping_lists_messages
 CREATE TABLE shopping_lists_messages
 (
 	 ListID int identity not null,
 	 UserID int not null,
-	 [Message] nvarchar (150) not null,
 	 CreatedOn DateTime not null,
+	 [Message] nvarchar (150) not null,
 	 IsActive bit default 1
 )
 GO
@@ -79,7 +80,58 @@ Constraint pk_shopping_lists_ListID Primary key (ListID)
 GO
 
 
+ALTER TABLE products
+ADD
+Constraint pk_products_ProductID Primary key (ProductID) 
+GO
+
+ALTER TABLE shopping_lists_users 
+ADD
+Constraint pk_shopping_lists_users_ListID_UserID Primary key (ListID, UserID) 
+GO
+
+ALTER TABLE shopping_lists_messages
+ADD
+Constraint pk_shopping_lists_messages_ListID_UserID_CreatedOn Primary key (ListID, UserID,CreatedOn) 
+GO
+
+
+----------------------------------------------- foreign Keys -----------------------------------------------------
+
 ALTER TABLE shopping_lists
 ADD
-Constraint pk_shopping_lists_ListID Primary key (ListID) 
-GO
+CONSTRAINT [fk_shopping_lists_CreatorID_users_UserID] FOREIGN KEY 
+	       (CreatorID) REFERENCES 
+                users ([UserID])
+go
+
+
+ALTER TABLE [products]
+ADD
+CONSTRAINT [fk_products_ListID_shopping_lists_ListID] FOREIGN KEY 
+	       (ListID) REFERENCES 
+                shopping_lists (ListID),
+CONSTRAINT [fk_products_CreatorID_users_UserID] FOREIGN KEY 
+	       (CreatorID) REFERENCES 
+                users (UserID)
+go
+
+ALTER TABLE [shopping_lists_users]
+ADD
+CONSTRAINT [fk_shopping_lists_users_ListID_shopping_lists_ListID] FOREIGN KEY 
+	       (ListID) REFERENCES 
+                shopping_lists (ListID),
+CONSTRAINT [fk_shopping_lists_users_UserID_users_UserID] FOREIGN KEY 
+	       (UserID) REFERENCES 
+                users (UserID)
+go
+
+ALTER TABLE [shopping_lists_messages]
+ADD
+CONSTRAINT [fk_shopping_lists_messages_ListID_shopping_lists_ListID] FOREIGN KEY 
+	       (ListID) REFERENCES 
+                shopping_lists (ListID),
+CONSTRAINT [fk_shopping_lists_messages_UserID_users_UserID] FOREIGN KEY 
+	       (UserID) REFERENCES 
+                users (UserID)
+go
