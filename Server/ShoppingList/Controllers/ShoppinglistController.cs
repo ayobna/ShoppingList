@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ShoppingList.Models;
+using ShoppingList.Models.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,11 +14,13 @@ namespace ShoppingList.Controllers
     public class ShoppinglistController : ControllerBase
     {
         private readonly IShoppingList shoppingList;
+        private readonly ILoggerService logger;
 
-        public ShoppinglistController(IShoppingList shoppingList_)
+        public ShoppinglistController(IShoppingList shoppingList_ ,ILoggerService logger_)
         {
-      
+
             shoppingList = shoppingList_;
+            logger = logger_;
 
         }
 
@@ -25,6 +28,7 @@ namespace ShoppingList.Controllers
         [Route("api/shoppingList")]
         public IActionResult TE()
         {
+            logger.LogError("Error test ");
             return Ok(1);
         }
 
