@@ -8,11 +8,15 @@ using System.Threading.Tasks;
 
 namespace ShoppingList.Data
 {
-    public class ShoppingListData
+    public class ShoppingListData : IShoppingList
     {
 
-        private readonly DbConnection db = new DbConnection();
+        private readonly IDbConnection db;
 
+        public ShoppingListData(IDbConnection db_)
+        {
+            db = db_;
+        }
         //proc not Exsits yet
         public List<Shoppinglist> GetShoppingList()
         {

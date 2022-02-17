@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ShoppingList.Data
 {
-    public class DbConnection
+    public class DbConnection: IDbConnection
     {
         private string connectionString = "Server = tcp:shoppinglistdbserver2022.database.windows.net,1433;Initial Catalog = ShoppingList_db; Persist Security Info=False;User ID = Ayoub; Password=@.Ayob.@; MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout = 30";
 
