@@ -5,7 +5,10 @@ using System.Threading.Tasks;
 
 namespace ShoppingList.Models
 {
-   public interface IShoppingList
+    public interface IShoppingList
     {
+        public List<Shoppinglist> GetShoppingList();
+
+        public int CreateShoppinglist(Shoppinglist shoppinglist);
     }
 }

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using ShoppingList.Data;
 using ShoppingList.Models;
 using ShoppingList.Models.Interfaces;
 using System;
@@ -27,14 +28,17 @@ namespace ShoppingList
         {
             services.AddSwaggerGen();
             services.AddSingleton<ILoggerService, LoggerService>();
+            services.Add(new ServiceDescriptor(typeof(IDbConnection), new DbConnection()));
             services.Add(new ServiceDescriptor(typeof(IShoppingList), new Shoppinglist()));
-
+    
             services.AddControllersWithViews();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+
+            app.UseStaticFiles();
             app.UseSwagger();
             app.UseSwaggerUI();
 
@@ -53,7 +57,7 @@ namespace ShoppingList
             {
                 app.UseExceptionHandler("/Home/Error");
             }
-            app.UseStaticFiles();
+         
 
             app.UseRouting();
 

@@ -28,6 +28,7 @@ namespace ShoppingList.Controllers
         [Route("api/shoppingList")]
         public IActionResult TE()
         {
+            shoppingList.GetShoppingList();
             logger.LogError("Error test ");
             return Ok(1);
         }
