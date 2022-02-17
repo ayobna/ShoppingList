@@ -17,6 +17,12 @@ namespace ShoppingList.Data
         {
             db = db_;
         }
+
+        public int CreateShoppinglist(Shoppinglist shoppinglist)
+        {
+            throw new NotImplementedException();
+        }
+
         //proc not Exsits yet
         public List<Shoppinglist> GetShoppingList()
         {
