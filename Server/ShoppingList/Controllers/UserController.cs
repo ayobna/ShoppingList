@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using ShoppingList.Models;
 using ShoppingList.Models.Interfaces;
 using System;
@@ -12,10 +13,11 @@ namespace ShoppingList.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUser user;
-        private readonly ILoggerService logger;
-
-        public UserController(IUser user_, ILoggerService logger_)
+        //private readonly ILoggerService logger;
+        private readonly ILogger<UserController> logger;
+        public UserController(IUser user_, ILogger<UserController> logger_)
         {
+
             user = user_;
             logger = logger_;
         }
@@ -50,7 +52,8 @@ namespace ShoppingList.Controllers
         [Route("api/usersGet")]
         public IActionResult GetAllUsers()
         {
-            logger.LogError("Error test ");
+            logger.LogInformation("new test");
+            //logger.LogError("Error test ");
             return Ok(user.GetAllUsers());
         }
 
