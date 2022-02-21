@@ -3,7 +3,7 @@ import * as React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import Icon from "react-native-vector-icons/Ionicons";
 
-import HomeS from "../screens/HomeS";
+import HomeScreen from "../screens/HomeScreen";
 
 const Stack = createStackNavigator();
 
@@ -12,8 +12,8 @@ function MyShoppingListsStack(props) {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="HomeS"
-        component={HomeS}
+        name="HomeScreen"
+        component={HomeScreen}
         options={{
           title: "My List",
           headerLeft: () => (

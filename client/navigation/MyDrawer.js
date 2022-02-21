@@ -1,8 +1,10 @@
 import * as React from "react";
 import { View, Text } from "react-native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
-import Feed from "../screens/Feed";
+
 import ShoppingListMainStack from "./ShoppingListMainStack";
+import AccountScreen from "../screens/AccountScreen";
+import RequestsScreen from "../screens/RequestsScreen";
 
 const Drawer = createDrawerNavigator();
 
@@ -10,11 +12,20 @@ function MyDrawer() {
   return (
     <Drawer.Navigator>
       <Drawer.Screen
-        name="ShoppingListMainStack"
+        name="דף בית"
         component={ShoppingListMainStack}
         options={{ headerShown: false }}
       />
-      <Drawer.Screen name="Feed" component={Feed} />
+     <Drawer.Screen
+        name="בקשות"
+        component={RequestsScreen}
+   
+      />
+       <Drawer.Screen
+        name="חשבון"
+        component={AccountScreen}
+  
+      />
     </Drawer.Navigator>
   );
 }

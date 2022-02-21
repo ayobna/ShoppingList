@@ -3,12 +3,12 @@ import { View, Text } from 'react-native';
 
 
 
-function Feed() {
+const ListScreen =()=> {
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Feed Screen</Text>
+      <Text>Create list Screen</Text>
     </View>
   );
 }
 
-export default Feed;
+export default ListScreen;

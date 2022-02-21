@@ -1,29 +1,35 @@
 import * as React from "react";
 
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
-import HomeScreen from "../screens/HomeScreen";
-import SettingsScreen from "../screens/SettingsScreen";
+
 import MyShoppingListsStack from "./MyShoppingListsStack";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 const Tab = createMaterialBottomTabNavigator();
 
-function MyTabs() {
+function HomeTabs() {
   return (
     <Tab.Navigator>
       <Tab.Screen
         name="Home"
         component={MyShoppingListsStack}
         options={{
-          tabBarLabel: "הרשימה שלי",
+          tabBarLabel: "הרשימות שלי",
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="home" color={color} size={24} />
           ),
         }}
       />
-      <Tab.Screen name="Settings" component={SettingsScreen} />
+      <Tab.Screen
+        name="Home2"
+        component={MyShoppingListsStack}
+        options={{
+          tabBarLabel:"המשתפות",
+        
+        }}
+      />
     </Tab.Navigator>
   );
 }
 
-export default MyTabs;
+export default HomeTabs;
