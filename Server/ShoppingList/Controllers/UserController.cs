@@ -33,10 +33,12 @@ namespace ShoppingList.Controllers
 
                 if (u == null)
                 {
+                    logger.LogWarning("User not created ");
                     return NotFound();
                 }
                 else
                 {
+                    logger.LogInformation("User not created ");
                     return Ok(u);
                 }
             }
@@ -52,25 +54,39 @@ namespace ShoppingList.Controllers
         [Route("api/usersGet")]
         public IActionResult GetAllUsers()
         {
-            logger.LogInformation("new test");
+            try
+            {
+                logger.LogInformation("Gat All Users");
+                List<User> users = user.GetAllUsers();
+                return Ok(users);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, ": DbConnection");
+                return NotFound(ex);
+            }
+          
+           
             //logger.LogError("Error test ");
-            return Ok(user.GetAllUsers());
+        
         }
 
 
         [HttpGet]
         [Route("Api/GetUserById/{id}")]
-        public IActionResult Get(int id)
+        public IActionResult GetUserById(int id)
         {
             try
             {
                 User u = user.GetUserById(id);
                 if (u == null)
                 {
+                    logger.LogWarning(" Id not exists");
                     return NotFound();
                 }
                 else
                 {
+                    logger.LogInformation("User by Id");
                     return Ok(u);
                 }
             }
