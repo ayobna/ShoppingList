@@ -19,9 +19,9 @@ namespace ShoppingList.Data
             db = db_;
         }
       
-        public User InsertUser( User user)
+        public User CreateUser(User user)
         {
-            SqlCommand cmd = db.CreateCommand("[Proc_Insert_User]", db.Connect(), "proc");
+            SqlCommand cmd = db.CreateCommand("Proc_Create_User", db.Connect(), "proc");
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.Add("@UserID", SqlDbType.Int).Direction = ParameterDirection.Output;
             cmd.Parameters.Add("@FirstName", SqlDbType.NVarChar).Value = user.FirstName;
@@ -30,7 +30,6 @@ namespace ShoppingList.Data
           //  string passwordHash = BCrypt.Net.BCrypt.HashPassword(user.User_Password);
             cmd.Parameters.Add("@Password", SqlDbType.NVarChar).Value = user.Password;
             cmd.Parameters.Add("@PhoneNumber", SqlDbType.NVarChar).Value = user.PhoneNumber;
-          
             cmd.Parameters.Add("@IsActive", SqlDbType.Bit).Value = user.IsActive;
             cmd.Parameters.Add("@Img", SqlDbType.NVarChar).Value = user.Img;
             cmd.Parameters.Add("@NotificationToken", SqlDbType.NVarChar).Value = user.NotificationToken;
@@ -41,6 +40,29 @@ namespace ShoppingList.Data
                 return user;
             }
             return null;
+        }
+
+        public List<User> GetAllUsers()
+        {
+            SqlCommand cmd = db.CreateCommand("Proc_Get_Users", db.Connect(), "proc");
+            DataTable tb = db.ReadAndClose(cmd);
+            List<User> users = db.ConvertDataTable<User>(tb);
+            return users;
+        }
+        public User GetUserById(int id)
+        {
+            SqlCommand cmd = db.CreateCommand("Proc_Get_User_By_Id", db.Connect(), "proc");
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.Add("@UserID", SqlDbType.Int).Value = id;
+
+            DataTable tb = db.ReadAndClose(cmd);
+            List<User> users = db.ConvertDataTable<User>(tb);
+            if (users == null)
+            {
+                return null;
+
+            }
+            return users[0];
         }
     }
 }

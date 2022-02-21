@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 
 namespace ShoppingList.Models.Interfaces
 {
-    interface IUser
+    public interface IUser
     {
-
+        public User CreateUser(User user);
+        public List<User> GetAllUsers();
+        public User GetUserById(int id);
     }
 }
