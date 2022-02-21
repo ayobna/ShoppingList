@@ -23,10 +23,11 @@ namespace ShoppingList
                 {
                     webBuilder.UseStartup<Startup>();
                 }).ConfigureLogging(
-                builder =>
+                logging =>
                 {
-                    builder.AddLog4Net("log4net.config");
-                    builder.SetMinimumLevel(LogLevel.Trace);
+                    logging.ClearProviders();
+                    logging.AddConsole();
+                    logging.AddAzureWebAppDiagnostics();
                 }
                 );
     }

@@ -14,14 +14,15 @@ namespace ShoppingList.Controllers
     public class ShoppinglistController : ControllerBase
     {
         private readonly IShoppingList shoppingList;
-        private readonly ILoggerService logger;
+        //private readonly ILoggerService logger;
 
-        public ShoppinglistController(IShoppingList shoppingList_ ,ILoggerService logger_)
+        private readonly ILogger<ShoppinglistController> logger;
+
+        public ShoppinglistController(IShoppingList shoppingList_, ILogger<ShoppinglistController> logger_)
         {
 
             shoppingList = shoppingList_;
             logger = logger_;
-
         }
 
         [HttpGet]
@@ -29,7 +30,8 @@ namespace ShoppingList.Controllers
         public IActionResult TE()
         {
             shoppingList.GetShoppingList();
-            logger.LogError("Error test ");
+            logger.LogInformation("new test");
+           //logger.LogError("Error test ");
             return Ok(1);
         }
 
