@@ -3,12 +3,12 @@ import { View, Text } from 'react-native';
 
 
 
-function HomeS() {
+const ChatScreen =()=> {
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Feed Screen</Text>
+      <Text>Chat Screen</Text>
     </View>
   );
 }
 
-export default HomeS;
+export default ChatScreen;

@@ -3,12 +3,12 @@ import { View, Text } from 'react-native';
 
 
 
-function SettingsScreen() {
+const RequestsScreen =()=> {
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Feed Screen</Text>
+      <Text>Requests Screen  </Text>
     </View>
   );
 }
 
-export default SettingsScreen;
+export default RequestsScreen;
