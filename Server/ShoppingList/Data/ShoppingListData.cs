@@ -17,15 +17,17 @@ namespace ShoppingList.Data
         {
             db = db_;
         }
-
+       
         public int CreateShoppinglist(Shoppinglist shoppinglist)
         {
             throw new NotImplementedException();
+           
         }
 
         //proc not Exsits yet
         public List<Shoppinglist> GetShoppingList()
         {
+
             SqlCommand cmd = db.CreateCommand("Proc_Get_District", db.Connect(), "proc");
             DataTable tb = db.ReadAndClose(cmd);
             List<Shoppinglist> shoppinglist = db.ConvertDataTable<Shoppinglist>(tb);
