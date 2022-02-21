@@ -29,8 +29,12 @@ namespace ShoppingList
             services.AddSwaggerGen();
             services.AddSingleton<ILoggerService, LoggerService>();
             services.Add(new ServiceDescriptor(typeof(IDbConnection), new DbConnection()));
-            services.Add(new ServiceDescriptor(typeof(IShoppingList), new Shoppinglist()));
-    
+            services.AddTransient<IShoppingList, ShoppingListData>();
+            services.AddTransient<IUser, UserData>();
+            //services.Add(new ServiceDescriptor(typeof(IUser), new User()));
+            //services.Add(new ServiceDescriptor(typeof(IShoppingList), new Shoppinglist()));
+
+
             services.AddControllersWithViews();
         }
 
