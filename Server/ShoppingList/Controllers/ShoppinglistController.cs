@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using ShoppingList.Data;
 using ShoppingList.Models;
 using ShoppingList.Models.Interfaces;
 using System;
@@ -20,6 +21,7 @@ namespace ShoppingList.Controllers
 
         public ShoppinglistController(IShoppingList shoppingList_, ILogger<ShoppinglistController> logger_)
         {
+         
 
             shoppingList = shoppingList_;
             logger = logger_;
@@ -27,9 +29,9 @@ namespace ShoppingList.Controllers
 
         [HttpGet]
         [Route("api/shoppingList")]
-        public IActionResult TE()
+        public IActionResult  GetAllListsUserIsAParticipant()
         {
-            shoppingList.GetShoppingList();
+            shoppingList.GetAllListsCreatedByUser();
             logger.LogInformation("new test");
            //logger.LogError("Error test ");
             return Ok(1);

@@ -136,7 +136,10 @@ CONSTRAINT [fk_shopping_lists_messages_UserID_users_UserID] FOREIGN KEY
                 users (UserID)
 go
 
--------------------------------------------------Proc----------------------------------------------
+-------------------------------------------------------------------------------------------------Proc--------------------------------------------------------------------------------------
+
+
+-------------------------------------------------User----------------------------------------------
 
 Create Proc Proc_Get_Users
 AS
@@ -175,3 +178,21 @@ as
 go
 
 --exec Proc_Get_User_By_Id 2
+
+
+-------------------------------------------------List----------------------------------------------
+
+Create Proc Proc_Get_All_Lists_Created_By_User
+@CreatorID int
+AS
+Select * From [shopping_lists]
+where CreatorID = @CreatorID
+Go
+
+
+Create Proc Proc_Get_All_Lists_User_Is_A_Participant
+@UserID int
+AS
+Select * From [shopping_lists_users]
+where  [UserID]= @UserID
+Go
