@@ -28,10 +28,10 @@ namespace ShoppingList
         {
             services.AddSwaggerGen();
             services.Add(new ServiceDescriptor(typeof(IDbConnection), new DbConnection()));
-            services.AddTransient<IShoppingList, ShoppingListData>();
-            services.AddTransient<IUser, UserData>();
-            //services.Add(new ServiceDescriptor(typeof(IUser), new User()));
-            //services.Add(new ServiceDescriptor(typeof(IShoppingList), new Shoppinglist()));
+            services.AddSingleton<IShoppingList, ShoppingListData>();
+           services.AddSingleton<IUser, UserData>();
+     //       services.Add(new ServiceDescriptor(typeof(IUser), new User()));
+       //     services.Add(new ServiceDescriptor(typeof(IShoppingList), new Shoppinglist()));
 
 
             services.AddControllersWithViews();

@@ -7,8 +7,10 @@ namespace ShoppingList.Models
 {
     public interface IShoppingList
     {
-        public List<Shoppinglist> GetShoppingList();
+      
 
         public int CreateShoppinglist(Shoppinglist shoppinglist);
+        public List<Shoppinglist> GetAllListsCreatedByUser();
+        public List<Shoppinglist> GetAllListsUserIsAParticipant();
     }
 }

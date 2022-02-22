@@ -24,14 +24,23 @@ namespace ShoppingList.Data
            
         }
 
-        //proc not Exsits yet
-        public List<Shoppinglist> GetShoppingList()
-        {
-
-            SqlCommand cmd = db.CreateCommand("Proc_Get_District", db.Connect(), "proc");
+    
+        public List<Shoppinglist> GetAllListsCreatedByUser()
+        { 
+            SqlCommand cmd = db.CreateCommand("Proc_Get_All_Lists_Created_By_User", db.Connect(), "proc");
             DataTable tb = db.ReadAndClose(cmd);
             List<Shoppinglist> shoppinglist = db.ConvertDataTable<Shoppinglist>(tb);
             return shoppinglist;
         }
+
+        public List<Shoppinglist> GetAllListsUserIsAParticipant()
+        {
+            SqlCommand cmd = db.CreateCommand("Proc_Get_All_Lists_User_Is_A_Participant", db.Connect(), "proc");
+            DataTable tb = db.ReadAndClose(cmd);
+            List<Shoppinglist> shoppinglist = db.ConvertDataTable<Shoppinglist>(tb);
+            return shoppinglist;
+        }   
+
+
     }
 }
