@@ -1,14 +1,47 @@
-import * as React from 'react';
-import { View, Text } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, I18nManager } from 'react-native';
 import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
-
+import { Provider as PaperProvider } from 'react-native-paper';
+import paperTheme from './Utils/PaperTheme';
 import MyDrawer from './navigation/MyDrawer';
+import AppLoading from 'expo-app-loading';
+import * as Font from 'expo-font';
 
-export default function App() {
+// עושה שהאפליקציה תהיה מותאמת לכיוון עברית RTL
+I18nManager.forceRTL(true);
+I18nManager.allowRTL(true);
+
+// טוען את הפונטים שאנו רוצים
+const fetchFonts = () => {
+  return Font.loadAsync({
+    'our-font-thin': require('./assets/fonts/MPLUSRounded1c-Thin.ttf'),
+    'our-font-light': require('./assets/fonts/MPLUSRounded1c-Light.ttf'),
+    'our-font-regular': require('./assets/fonts/MPLUSRounded1c-Regular.ttf'),
+    'our-font-medium': require('./assets/fonts/MPLUSRounded1c-Medium.ttf'),
+    'our-font-bold': require('./assets/fonts/MPLUSRounded1c-Bold.ttf'),
+  });
+};
+
+export default function App(props) {
+  const [dataLoaded, setDataLoaded] = useState(false); //משתנה שבודק האם הפונטים כבר נטענו
+
+  // אם הפונטים עוד לא נטענו אז דואג לטעון אותם
+  if (!dataLoaded) {
+    return (
+      <AppLoading
+        startAsync={fetchFonts}
+        onFinish={() => setDataLoaded(true)}
+        onError={(err) => console.log(err)}
+      />
+    );
+  }
+
   return (
-    <NavigationContainer>
-      <MyDrawer />
-    </NavigationContainer>
+    <PaperProvider theme={paperTheme}>
+      <NavigationContainer>
+        <MyDrawer />
+      </NavigationContainer>
+    </PaperProvider>
   );
 }
