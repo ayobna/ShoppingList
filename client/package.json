@@ -7,7 +7,8 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "eject": "expo eject"
+    "eject": "expo eject",
+    "generate:apis": "npx openapi-generator-cli generate -i https://shoppinglist20220211160436.azurewebsites.net/swagger/v1/swagger.json -g typescript-axios -o generated"
   },
   "dependencies": {
     "@react-navigation/bottom-tabs": "^6.2.0",
@@ -15,6 +16,7 @@
     "@react-navigation/material-bottom-tabs": "^6.1.1",
     "@react-navigation/native": "^6.0.8",
     "@react-navigation/stack": "^6.1.1",
+    "axios": "^0.26.0",
     "expo": "~44.0.0",
     "expo-app-loading": "~1.3.0",
     "expo-font": "~10.0.5",
@@ -32,7 +34,11 @@
     "react-native-web": "0.17.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.9"
+    "@babel/core": "^7.12.9",
+    "@openapitools/openapi-generator-cli": "^2.4.26",
+    "typescript": "~4.3.5",
+    "@types/react": "~17.0.21",
+    "@types/react-native": "~0.64.12"
   },
   "private": true
 }

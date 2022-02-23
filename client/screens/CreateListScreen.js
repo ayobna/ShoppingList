@@ -4,7 +4,7 @@ import { TextInput, IconButton, Button, Text } from 'react-native-paper';
 import NumericInput from 'react-native-numeric-input'
 import AmountInput from '../components/AmountInput';
 
-
+import {userApi} from '../api/api';
 
 
 const CreateListScreen = (props) => {
@@ -41,6 +41,7 @@ const CreateListScreen = (props) => {
 
   // פעולה אשר אחראית על החסרה/הוספה של כמות
   const handlePlusMinusAmount = (operation) => {
+    console.log(userApi)
     if (amount === "") {
       setAmount("1");
       return

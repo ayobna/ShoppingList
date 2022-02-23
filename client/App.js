@@ -3,7 +3,7 @@ import { View, Text, I18nManager } from 'react-native';
 import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { Provider as PaperProvider } from 'react-native-paper';
-import paperTheme from './Utils/PaperTheme';
+import paperTheme from './utils/PaperTheme';
 import MyDrawer from './navigation/MyDrawer';
 import AppLoading from 'expo-app-loading';
 import * as Font from 'expo-font';
