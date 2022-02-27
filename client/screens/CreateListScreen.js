@@ -3,8 +3,9 @@ import { View, StyleSheet, FlatList } from 'react-native';
 import { TextInput, IconButton, Button, Text } from 'react-native-paper';
 import NumericInput from 'react-native-numeric-input'
 import AmountInput from '../components/AmountInput';
+import * as ImagePicker from 'expo-image-picker';
+import ProductCard from '../components/ProductCard';
 
-import {userApi} from '../api/api';
 
 
 const CreateListScreen = (props) => {
@@ -13,35 +14,25 @@ const CreateListScreen = (props) => {
   const { } = props;
 
   // states
-  const [products, setProducts] = useState([
-    { ProductID: 1, Name: "חלב", Amount: 5, Img: "https://octaegy.com/wp-content/uploads/2021/08/milk.jpg" },
-    { ProductID: 2, Name: "חלב", Amount: 5, Img: "https://octaegy.com/wp-content/uploads/2021/08/milk.jpg" },
-    { ProductID: 3, Name: "חלב", Amount: 5, Img: "https://octaegy.com/wp-content/uploads/2021/08/milk.jpg" },
-    { ProductID: 4, Name: "חלב", Amount: 5, Img: "https://octaegy.com/wp-content/uploads/2021/08/milk.jpg" },
-    { ProductID: 5, Name: "חלב", Amount: 5, Img: "https://octaegy.com/wp-content/uploads/2021/08/milk.jpg" },
-    { ProductID: 6, Name: "חלב", Amount: 5, Img: "https://octaegy.com/wp-content/uploads/2021/08/milk.jpg" },
-    { ProductID: 7, Name: "חלב", Amount: 5, Img: "https://octaegy.com/wp-content/uploads/2021/08/milk.jpg" },
-    { ProductID: 8, Name: "חלב", Amount: 5, Img: "https://octaegy.com/wp-content/uploads/2021/08/milk.jpg" },
-  ]);
+  const [products, setProducts] = useState([]);
 
   const [title, setTitle] = useState("");
   const [productName, setProductName] = useState("");
   const [amount, setAmount] = useState("1");
   const [imageBase64, setImageBase64] = useState();
+  const [imageUri, setImageUri] = useState();
+
 
 
 
   // מרנדר את המוצרים
   const renderListItem = (itemData) =>
   (
-    <View style={{ paddingHorizontal: 10, paddingVertical: 35, margin: 10, borderColor: "black", borderRadius: 5, borderWidth: 1 }}>
-      <Text>{itemData.item.Name}{itemData.item.ProductID}</Text>
-    </View>
+    <ProductCard data={itemData.item} handleDeleteProduct={handleDeleteProduct} />
   );
 
   // פעולה אשר אחראית על החסרה/הוספה של כמות
   const handlePlusMinusAmount = (operation) => {
-    console.log(userApi)
     if (amount === "") {
       setAmount("1");
       return
@@ -71,6 +62,61 @@ const CreateListScreen = (props) => {
 
   };
 
+  // בחירת תמונה מהגלריה
+  const pickFromGallery = async () => {
+
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync(); // בקשת הרשאה לגלריה
+
+    if (permissionResult.granted === false) {
+      Alert.alert("יש צורך בהרשאת גלריה");
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({ base64: true, quality: 0.3 });  // הרצת הגלריה
+
+    if (!result.cancelled) {
+      setImageUri(result.uri);
+      setImageBase64(result.base64);
+    }
+  }
+
+  // הוספת מוצר למערך
+  const handleAddProduct = () => {
+    //************************************* צריך לעשות בדיקות ולידציה */
+    let product = { ProductID: 1, Name: productName, Amount: amount, ImgUri: imageUri, ImageBase64: imageBase64 }
+    let tempProducts = [...products];
+    if (tempProducts.length !== 0) {
+      product.ProductID = (parseInt(tempProducts[tempProducts.length - 1].ProductID) + 1).toString();
+    }
+    tempProducts = [...tempProducts, product];
+    setProducts(tempProducts);
+    handleClearStates();
+  };
+
+  // ניקוי שדות לאחר הוספת מוצר חדש
+  const handleClearStates = () => {
+    setProductName("");
+    setAmount("1");
+    setImageBase64();
+    setImageUri();
+  };
+
+  const handleListEmptyComponent = () => {
+    return (
+      <View style={{ flexGrow: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text>אין מוצרים</Text>
+      </View>
+    );
+  };
+
+  const handleDeleteProduct = (productID) => {
+    let tempProducts = [...products];
+    tempProducts = tempProducts.filter(product => product.ProductID !== productID);
+    setProducts(tempProducts);
+  };
+
+
+  console.log(products);
   return (
     <View style={styles.container}>
       <TextInput
@@ -84,6 +130,8 @@ const CreateListScreen = (props) => {
         data={products}
         renderItem={(item) => renderListItem(item)}
         keyExtractor={(item) => String(item.ProductID)}
+        contentContainerStyle={{ flexGrow: 1 }}
+        ListEmptyComponent={handleListEmptyComponent}
       // ListFooterComponent={renderFooter}
       // refreshing={isFetching}
       // onRefresh={() => handleRefresh()}
@@ -108,11 +156,11 @@ const CreateListScreen = (props) => {
             <IconButton
               icon="image"
               size={25}
-              onPress={() => console.log('Pressed')}
+              onPress={pickFromGallery}
             />
           </View>
           <View style={{ width: "36%", justifyContent: "center", alignItems: "center" }}>
-            <Button contentStyle={{ width: "100%" }} mode="contained" onPress={() => console.log('Pressed')}>
+            <Button contentStyle={{ width: "100%" }} mode="contained" onPress={handleAddProduct}>
               הוספה
             </Button>
           </View>
