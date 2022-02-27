@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ShoppingList.Data;
+using ShoppingList.Hubs;
 using ShoppingList.Models;
 using ShoppingList.Models.Interfaces;
 using System;
@@ -27,13 +28,24 @@ namespace ShoppingList
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSwaggerGen();
+            services.AddSignalR();
             services.Add(new ServiceDescriptor(typeof(IDbConnection), new DbConnection()));
             services.AddSingleton<IShoppingList, ShoppingListData>();
            services.AddSingleton<IUser, UserData>();
-     //       services.Add(new ServiceDescriptor(typeof(IUser), new User()));
-       //     services.Add(new ServiceDescriptor(typeof(IShoppingList), new Shoppinglist()));
+            //       services.Add(new ServiceDescriptor(typeof(IUser), new User()));
+            //     services.Add(new ServiceDescriptor(typeof(IShoppingList), new Shoppinglist()));
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy( builder =>
+                {
+                    builder.AllowAnyOrigin()
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials();
+                });
+            });
 
-
+            services.AddSingleton<IDictionary<string, UserConnection>>(opts => new Dictionary<string, UserConnection>());
             services.AddControllersWithViews();
         }
 
@@ -45,7 +57,7 @@ namespace ShoppingList
             app.UseSwagger();
             app.UseSwaggerUI();
 
-     
+            app.UseCors();
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
@@ -72,6 +84,11 @@ namespace ShoppingList
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapHub<ChatHub>("/chat");
+            });
+
         }
     }
 }
