@@ -1,26 +1,26 @@
 import React from 'react';
 import { View, Text, StyleSheet, TextInput } from 'react-native';
-import { IconButton, Button } from 'react-native-paper';
+import { IconButton, Button, Avatar } from 'react-native-paper';
 
 
 const AmountInput = (props) => {
     // props
-    const { amount, handlePlusMinusAmount, handleOnChageAmount } = props;
+    const { amount, handlePlusMinusAmount, handleOnChageAmount, edit, isError } = props;
 
 
     return (
-        <View style={{ ...styles.container }}>
+        <View style={[styles.container, isError && { borderColor: "red" }]}>
             <IconButton
                 icon="plus"
                 style={{ margin: 0 }}
                 size={18}
-                onPress={() => handlePlusMinusAmount("+")}
+                onPress={() => handlePlusMinusAmount("+", edit)}
             />
 
             <TextInput
                 value={amount}
                 width={50}
-                onChangeText={(txt) => handleOnChageAmount(txt)}
+                onChangeText={(txt) => handleOnChageAmount(txt, edit)}
                 dense
                 mode="outlined"
                 keyboardType='numeric'
@@ -31,7 +31,7 @@ const AmountInput = (props) => {
                 style={{ margin: 0 }}
                 icon="minus"
                 size={18}
-                onPress={() => handlePlusMinusAmount("-")}
+                onPress={() => handlePlusMinusAmount("-", edit)}
             />
         </View>
     );

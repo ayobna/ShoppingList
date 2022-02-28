@@ -34,16 +34,16 @@ namespace ShoppingList
            services.AddSingleton<IUser, UserData>();
             //       services.Add(new ServiceDescriptor(typeof(IUser), new User()));
             //     services.Add(new ServiceDescriptor(typeof(IShoppingList), new Shoppinglist()));
-            services.AddCors(options =>
-            {
-                options.AddDefaultPolicy( builder =>
-                {
-                    builder.AllowAnyOrigin()
-                        .AllowAnyHeader()
-                        .AllowAnyMethod()
-                        .AllowCredentials();
-                });
-            });
+            //services.AddCors(options =>
+            //{
+            //    options.AddDefaultPolicy( builder =>
+            //    {
+            //        builder.AllowAnyOrigin()
+            //            .AllowAnyHeader()
+            //            .AllowAnyMethod()
+            //            .AllowCredentials();
+            //    });
+            //});
 
             services.AddSingleton<IDictionary<string, UserConnection>>(opts => new Dictionary<string, UserConnection>());
             services.AddControllersWithViews();
