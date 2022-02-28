@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const ProductCard = (props) => {
     // props
-    const { data, handleDeleteProduct } = props;
+    const { data, handleDeleteProduct, handleEditProduct } = props;
 
     //states 
     const [visibleMenu, setVisibleMenu] = useState(false);
@@ -13,24 +13,25 @@ const ProductCard = (props) => {
     const closeMenu = () => setVisibleMenu(false);
 
     // מרנדר תמונה של מוצר
-    const LeftContent = props => <Avatar.Image size={60} source={{ uri: `${data.ImgUri}` }} />
+    const leftContent = props => <Avatar.Image size={60} source={{ uri: `${data.ImgUri}` }} />
 
     // מרנדר אייקון שלוש נקודות לאופציות שניתן לבצע בכרטיס מוצר
-    const RightContent = props => <Menu
+    const rightContent = props => <Menu
         visible={visibleMenu}
         onDismiss={closeMenu}
         anchor={<IconButton {...props} icon="dots-vertical" onPress={openMenu} />}>
-        <Menu.Item icon="redo" onPress={null} title="ערוך" />
+        <Menu.Item icon="redo" onPress={editProduct} title="ערוך" />
 
 
         <Divider style={styles.menuDivider} />
 
-        <Menu.Item icon="delete" onPress={deleteProducts} title="מחק" />
+        <Menu.Item icon="delete" onPress={() => handleDeleteProduct(data.ProductID)} title="מחק" />
 
     </Menu>
 
-    const deleteProducts = () => {
-        handleDeleteProduct(data.ProductID);
+    const editProduct = () => {
+        closeMenu();
+        handleEditProduct(data);
     };
 
 
@@ -38,7 +39,7 @@ const ProductCard = (props) => {
         <View style={{ ...styles.container, ...props.style }}>
             <TouchableHighlight style={styles.touchableHighLight} underlayColor="red" onPress={null}>
                 <Card>
-                    <Card.Title titleNumberOfLines={3} title={data.Name} subtitle={`כמות: ${data.Amount}`} left={LeftContent} right={RightContent} />
+                    <Card.Title titleNumberOfLines={3} title={data.Name} subtitle={`כמות: ${data.Amount}`} left={leftContent} right={rightContent} />
                     {/* <Card.Content>
                         <Paragraph>מספר מזהה: {data.ProductID}</Paragraph>
                     </Card.Content>  */}

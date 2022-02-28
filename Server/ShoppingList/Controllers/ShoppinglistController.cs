@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ShoppingList.Data;
@@ -6,6 +7,7 @@ using ShoppingList.Models;
 using ShoppingList.Models.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -19,12 +21,15 @@ namespace ShoppingList.Controllers
 
         private readonly ILogger<ShoppinglistController> logger;
 
-        public ShoppinglistController(IShoppingList shoppingList_, ILogger<ShoppinglistController> logger_)
+        private readonly IWebHostEnvironment env;
+
+        public ShoppinglistController(IShoppingList shoppingList_, ILogger<ShoppinglistController> logger_, IWebHostEnvironment hostingEnvironment_)
         {
          
 
             shoppingList = shoppingList_;
             logger = logger_;
+            env = hostingEnvironment_;
         }
 
         [HttpGet]
@@ -36,6 +41,27 @@ namespace ShoppingList.Controllers
            //logger.LogError("Error test ");
             return Ok(1);
         }
+
+        [HttpPost]
+        [Route("api/CreateShoppingList")]
+        public IActionResult CreateShoppingList([FromBody] Shoppinglist shoppinglist)
+        {
+            try
+            {
+                return Ok(1);
+            }
+            catch (Exception e)
+            {
+
+                throw ;
+            }
+        }
+
+
+        
+
+
+
 
 
     }
