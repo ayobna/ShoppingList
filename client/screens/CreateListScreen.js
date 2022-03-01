@@ -247,13 +247,29 @@ const CreateListScreen = (props) => {
     if (regexValidationShoppingList() < 2) {
       return;
     }
-/* ----------------------------------------------------כאן עצרנו------------------------------------------------------------------ */
+    /* ----------------------------------------------------כאן עצרנו------------------------------------------------------------------ */
     // let result = {CreatorID, Title, Products}
 
   }
 
   const handleCreateShoppingListApi = async () => {
-
+    const settings = {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      }
+    };
+    try {
+      const fetchResponse = await fetch(`http://${location}:9000/api/sensors/`, settings);
+      if (!fetchResponse.ok) {
+        return;
+      }
+      const data = await fetchResponse.json();
+      return data;
+    } catch (error) {
+      console.log(error)
+    }
   };
 
   const regexValidationShoppingList = () => {

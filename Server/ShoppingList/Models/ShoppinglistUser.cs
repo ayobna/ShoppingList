@@ -9,7 +9,7 @@ namespace ShoppingList.Models
     {
         public int ListID { get; set; }
         public int UserID { get; set; }
-        public string Title { get; set; }
+        //public string Title { get; set; }
         public string JoinedDate { get; set; }
         public bool IsApproved { get; set; }
     }

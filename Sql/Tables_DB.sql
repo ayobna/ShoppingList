@@ -35,19 +35,18 @@ CREATE TABLE products
 	 CreatorID int not null,
 	 [Name] nvarchar (150) not null,
 	 Amount int not null,
-	 Img nvarchar(max) default 'user_default/user_default.png',
+	 Img nvarchar(max) default 'default/default_img.jpg',
 	 CreatedOn DateTime not null,
 	 IsActive bit default 1,
-
 )
 GO
 
 -- Drop Table shopping_lists_users
 CREATE TABLE shopping_lists_users
 (
-	 ListID int identity not null,
+	 ListID int not null,
 	 UserID int not null,
-	 Title nvarchar (150) not null,
+	 --Title nvarchar (150) not null,
 	 JoinedDate DateTime not null,
 	 IsApproved bit default 0
 )
@@ -196,3 +195,5 @@ AS
 Select * From [shopping_lists_users]
 where  [UserID]= @UserID
 Go
+
+

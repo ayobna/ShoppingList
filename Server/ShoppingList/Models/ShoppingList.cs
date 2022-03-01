@@ -11,7 +11,7 @@ namespace ShoppingList.Models
         public int ListID { get; set; }
         public int CreatorID { get; set; }
         public string Title { get; set; }
-        public string CreatedOn { get; set; }
+        public DateTime CreatedOn { get; set; }
         public bool IsActive { get; set; }
 
 
