@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -13,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace ShoppingList.Controllers
 {
-
+    [EnableCors("AllowMyOrigin")]
     public class ShoppinglistController : ControllerBase
     {
         private readonly IShoppingList shoppingList;
@@ -48,21 +49,18 @@ namespace ShoppingList.Controllers
         {
             try
             {
-                return Ok(1);
+                shoppinglist.CreatedOn = DateTime.Now;
+                int listID = shoppingList.CreateShoppinglist(shoppinglist);
+                logger.LogInformation($"Function name CreateShoppingList - Create shopping list with id {listID} success");
+                return Ok(listID);
             }
             catch (Exception e)
             {
-
-                throw ;
+                logger.LogError($"Function name CreateShoppingList - {e.Message}");
+                // need to think what to do here logs?
+                throw;
             }
         }
-
-
-        
-
-
-
-
 
     }
 }

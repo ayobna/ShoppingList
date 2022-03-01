@@ -31,19 +31,22 @@ namespace ShoppingList
             services.AddSignalR();
             services.Add(new ServiceDescriptor(typeof(IDbConnection), new DbConnection()));
             services.AddSingleton<IShoppingList, ShoppingListData>();
-           services.AddSingleton<IUser, UserData>();
+            services.AddSingleton<IProductData, ProductData>();
+            services.AddSingleton<IUser, UserData>();
             //       services.Add(new ServiceDescriptor(typeof(IUser), new User()));
             //     services.Add(new ServiceDescriptor(typeof(IShoppingList), new Shoppinglist()));
-            //services.AddCors(options =>
-            //{
-            //    options.AddDefaultPolicy( builder =>
-            //    {
-            //        builder.AllowAnyOrigin()
-            //            .AllowAnyHeader()
-            //            .AllowAnyMethod()
-            //            .AllowCredentials();
-            //    });
-            //});
+
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(
+                builder => builder
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .SetIsOriginAllowed(_ => true)
+                .AllowCredentials()
+                );
+            });
+
 
             services.AddSingleton<IDictionary<string, UserConnection>>(opts => new Dictionary<string, UserConnection>());
             services.AddControllersWithViews();
@@ -57,7 +60,6 @@ namespace ShoppingList
             app.UseSwagger();
             app.UseSwaggerUI();
 
-            app.UseCors();
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
@@ -75,6 +77,8 @@ namespace ShoppingList
          
 
             app.UseRouting();
+
+            app.UseCors();
 
             app.UseAuthorization();
 

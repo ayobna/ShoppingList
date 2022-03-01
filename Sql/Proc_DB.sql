@@ -63,3 +63,48 @@ AS
 Select * From [shopping_lists_users]
 where  [UserID]= @UserID
 Go
+
+-- Drop Proc Proc_Create_Shopping_List
+Create Proc Proc_Create_Shopping_List
+@CreatorID int,
+@Title Nvarchar(150),
+@CreatedOn DateTime,
+@ListID int out
+AS
+	INSERT INTO [shopping_lists] ([CreatorID], [Title], [CreatedOn])
+	VALUES (@CreatorID, @Title, @CreatedOn);
+	Set @ListID = @@IDENTITY
+Go
+
+declare @x int, @date datetime
+set @date = GetDate()
+exec Proc_Create_Shopping_List 1, 'try', @date , @x out
+
+-- Drop Proc Proc_Create_Product
+Create Proc Proc_Create_Product
+@ListID int,
+@CreatorID int,
+@Name Nvarchar(150),
+@Amount int,
+@CreatedOn DateTime,
+@ProductID int out
+AS
+	INSERT INTO [products] ([ListID], [CreatorID], [Name], [Amount], [CreatedOn])
+	VALUES (@ListID, @CreatorID, @Name, @Amount, @CreatedOn);
+	Set @ProductID = @@IDENTITY
+Go
+
+-- Drop Proc Proc_Update_Product
+Create Proc Proc_Update_Product
+@ProductID int,
+@Name Nvarchar(150),
+@Amount int,
+@Img Nvarchar(max),
+@IsActive bit
+AS
+	UPDATE [products]
+	SET [Name] = @Name, [Amount] = @Amount, [Img] = @Img, [IsActive] = @IsActive
+	WHERE [ProductID] = @ProductID;
+Go
+
+

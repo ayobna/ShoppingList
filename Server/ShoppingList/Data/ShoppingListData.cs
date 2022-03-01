@@ -20,8 +20,19 @@ namespace ShoppingList.Data
        
         public int CreateShoppinglist(Shoppinglist shoppinglist)
         {
-            throw new NotImplementedException();
-           
+            SqlCommand cmd = db.CreateCommand("Proc_Create_Shopping_List", db.Connect(), "proc");
+            cmd.Parameters.Add("@CreatorID", SqlDbType.Int).Value = shoppinglist.CreatorID;
+            cmd.Parameters.Add("@Title", SqlDbType.NVarChar).Value = shoppinglist.Title;
+            cmd.Parameters.Add("@CreatedOn", SqlDbType.DateTime).Value = shoppinglist.CreatedOn;
+            cmd.Parameters.Add("@ListID", SqlDbType.Int).Direction = ParameterDirection.Output;
+
+            int res = db.ExecuteAndClose(cmd);
+
+            if (res < 1)
+            {
+                throw new Exception("Somthing went wrong while adding shopping list in sql");
+            }
+            return Convert.ToInt32(cmd.Parameters["@ListID"].Value);
         }
 
     
