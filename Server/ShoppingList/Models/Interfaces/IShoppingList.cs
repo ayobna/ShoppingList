@@ -10,7 +10,7 @@ namespace ShoppingList.Models
       
 
         public int CreateShoppinglist(Shoppinglist shoppinglist);
-        public List<Shoppinglist> GetAllListsCreatedByUser();
-        public List<Shoppinglist> GetAllListsUserIsAParticipant();
+        public List<Shoppinglist> GetAllListsCreatedByUser(int id);
+        public List<Shoppinglist> GetAllListsUserIsAParticipant(int id);
     }
 }

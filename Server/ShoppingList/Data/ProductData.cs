@@ -36,7 +36,7 @@ namespace ShoppingList.Data
 
         public int UpdaeProduct(Product product)
         {
-            SqlCommand cmd = db.CreateCommand("Proc_Create_Product", db.Connect(), "proc");
+            SqlCommand cmd = db.CreateCommand("Proc_Update_Product", db.Connect(), "proc");
             cmd.Parameters.Add("@ProductID", SqlDbType.Int).Value = product.ProductID;
             cmd.Parameters.Add("@Name", SqlDbType.NVarChar).Value = product.Name;
             cmd.Parameters.Add("@Amount", SqlDbType.Int).Value = product.Amount;

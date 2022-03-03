@@ -36,17 +36,19 @@ namespace ShoppingList.Data
         }
 
     
-        public List<Shoppinglist> GetAllListsCreatedByUser()
+        public List<Shoppinglist> GetAllListsCreatedByUser(int id)
         { 
             SqlCommand cmd = db.CreateCommand("Proc_Get_All_Lists_Created_By_User", db.Connect(), "proc");
+            cmd.Parameters.Add("@CreatorID", SqlDbType.Int).Value = id;
             DataTable tb = db.ReadAndClose(cmd);
             List<Shoppinglist> shoppinglist = db.ConvertDataTable<Shoppinglist>(tb);
             return shoppinglist;
         }
 
-        public List<Shoppinglist> GetAllListsUserIsAParticipant()
+        public List<Shoppinglist> GetAllListsUserIsAParticipant(int id)
         {
             SqlCommand cmd = db.CreateCommand("Proc_Get_All_Lists_User_Is_A_Participant", db.Connect(), "proc");
+            cmd.Parameters.Add("@UserID", SqlDbType.Int).Value = id;
             DataTable tb = db.ReadAndClose(cmd);
             List<Shoppinglist> shoppinglist = db.ConvertDataTable<Shoppinglist>(tb);
             return shoppinglist;

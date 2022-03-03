@@ -9,8 +9,7 @@ using System.IO;
 
 namespace ShoppingList.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
+
     public class ProductController : ControllerBase
     {
         private readonly IProductData productData;
@@ -53,6 +52,7 @@ namespace ShoppingList.Controllers
                         }
                         string fileName = $"img_{productID}_{products[i].CreatorID}_{DateTime.Now.ToString("yyyyMMddHHmmssffff")}.jpg";
                         path = Path.Combine(path, fileName);
+                        logger.LogInformation("path Information", path);
                         UploadFile.Upload(path, products[i].Img);
                         products[i].ProductID = productID;
                         products[i].Img = sqlPath + "/" + fileName;
@@ -60,12 +60,12 @@ namespace ShoppingList.Controllers
                         productData.UpdaeProduct(products[i]);
                     }
                 }
-                return Ok();
+                return Ok("successfully");
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                // need to think what to do here logs?
-                throw;
+                logger.LogError(": Did not create sharp products in DB");
+                return NotFound(ex);
             }
         }
     }
