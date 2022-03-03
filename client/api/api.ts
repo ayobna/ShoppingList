@@ -1,6 +1,8 @@
-import { UserApi} from '../generated';
+import 'react-native-url-polyfill/auto';
+import { ProductApi, ShoppinglistApi, UserApi} from '../generated';
 
 
 const userApi = new UserApi();
-
-export { userApi};
+const shoppingListApi = new ShoppinglistApi();
+const  productApi= new ProductApi();
+export { userApi,shoppingListApi ,productApi};

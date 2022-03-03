@@ -24,6 +24,98 @@ import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError } fr
 /**
  * 
  * @export
+ * @interface Product
+ */
+export interface Product {
+    /**
+     * 
+     * @type {number}
+     * @memberof Product
+     */
+    'productID'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof Product
+     */
+    'listID'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof Product
+     */
+    'creatorID'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof Product
+     */
+    'name'?: string | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof Product
+     */
+    'amount'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof Product
+     */
+    'img'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof Product
+     */
+    'createdOn'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof Product
+     */
+    'isActive'?: boolean;
+}
+/**
+ * 
+ * @export
+ * @interface Shoppinglist
+ */
+export interface Shoppinglist {
+    /**
+     * 
+     * @type {number}
+     * @memberof Shoppinglist
+     */
+    'listID'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof Shoppinglist
+     */
+    'creatorID'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof Shoppinglist
+     */
+    'title'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof Shoppinglist
+     */
+    'createdOn'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof Shoppinglist
+     */
+    'isActive'?: boolean;
+}
+/**
+ * 
+ * @export
  * @interface User
  */
 export interface User {
@@ -84,11 +176,145 @@ export interface User {
 }
 
 /**
+ * ProductApi - axios parameter creator
+ * @export
+ */
+export const ProductApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @param {Array<Product>} [product] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiAddProductsToShoppingListPost: async (product?: Array<Product>, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/AddProductsToShoppingList`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(product, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * ProductApi - functional programming interface
+ * @export
+ */
+export const ProductApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = ProductApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @param {Array<Product>} [product] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiAddProductsToShoppingListPost(product?: Array<Product>, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiAddProductsToShoppingListPost(product, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+    }
+};
+
+/**
+ * ProductApi - factory interface
+ * @export
+ */
+export const ProductApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = ProductApiFp(configuration)
+    return {
+        /**
+         * 
+         * @param {Array<Product>} [product] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiAddProductsToShoppingListPost(product?: Array<Product>, options?: any): AxiosPromise<void> {
+            return localVarFp.apiAddProductsToShoppingListPost(product, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * ProductApi - object-oriented interface
+ * @export
+ * @class ProductApi
+ * @extends {BaseAPI}
+ */
+export class ProductApi extends BaseAPI {
+    /**
+     * 
+     * @param {Array<Product>} [product] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ProductApi
+     */
+    public apiAddProductsToShoppingListPost(product?: Array<Product>, options?: AxiosRequestConfig) {
+        return ProductApiFp(this.configuration).apiAddProductsToShoppingListPost(product, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+/**
  * ShoppinglistApi - axios parameter creator
  * @export
  */
 export const ShoppinglistApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
+        /**
+         * 
+         * @param {Shoppinglist} [shoppinglist] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiCreateShoppingListPost: async (shoppinglist?: Shoppinglist, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/CreateShoppingList`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(shoppinglist, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
         /**
          * 
          * @param {*} [options] Override http request option.
@@ -130,6 +356,16 @@ export const ShoppinglistApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
+         * @param {Shoppinglist} [shoppinglist] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiCreateShoppingListPost(shoppinglist?: Shoppinglist, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiCreateShoppingListPost(shoppinglist, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -149,6 +385,15 @@ export const ShoppinglistApiFactory = function (configuration?: Configuration, b
     return {
         /**
          * 
+         * @param {Shoppinglist} [shoppinglist] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiCreateShoppingListPost(shoppinglist?: Shoppinglist, options?: any): AxiosPromise<void> {
+            return localVarFp.apiCreateShoppingListPost(shoppinglist, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -165,6 +410,17 @@ export const ShoppinglistApiFactory = function (configuration?: Configuration, b
  * @extends {BaseAPI}
  */
 export class ShoppinglistApi extends BaseAPI {
+    /**
+     * 
+     * @param {Shoppinglist} [shoppinglist] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ShoppinglistApi
+     */
+    public apiCreateShoppingListPost(shoppinglist?: Shoppinglist, options?: AxiosRequestConfig) {
+        return ShoppinglistApiFp(this.configuration).apiCreateShoppingListPost(shoppinglist, options).then((request) => request(this.axios, this.basePath));
+    }
+
     /**
      * 
      * @param {*} [options] Override http request option.

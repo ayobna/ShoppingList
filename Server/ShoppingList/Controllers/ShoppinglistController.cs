@@ -34,15 +34,24 @@ namespace ShoppingList.Controllers
         }
 
         [HttpGet]
-        [Route("api/shoppingList")]
-        public IActionResult  GetAllListsUserIsAParticipant()
+        [Route("api/shoppingList/CreatedByUser/{id}")]
+        public IActionResult GetAllListsCreatedByUser(int id)
         {
-            shoppingList.GetAllListsCreatedByUser();
+         List<Shoppinglist> Shoppinglists =   shoppingList.GetAllListsCreatedByUser(id);
             logger.LogInformation("new test");
            //logger.LogError("Error test ");
-            return Ok(1);
+            return Ok(Shoppinglists);
         }
 
+        [HttpGet]
+        [Route("api/shoppingList/UserIsAParticipant/{id}")]
+        public IActionResult GetAllListsUserIsAParticipant(int id)
+        {
+            List<Shoppinglist> Shoppinglists = shoppingList.GetAllListsUserIsAParticipant(id);
+            logger.LogInformation("new test");
+            //logger.LogError("Error test ");
+            return Ok(Shoppinglists);
+        }
         [HttpPost]
         [Route("api/CreateShoppingList")]
         public IActionResult CreateShoppingList([FromBody] Shoppinglist shoppinglist)

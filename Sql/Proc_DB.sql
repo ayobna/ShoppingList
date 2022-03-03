@@ -76,9 +76,9 @@ AS
 	Set @ListID = @@IDENTITY
 Go
 
-declare @x int, @date datetime
-set @date = GetDate()
-exec Proc_Create_Shopping_List 1, 'try', @date , @x out
+--declare @x int, @date datetime
+--set @date = GetDate()
+--exec Proc_Create_Shopping_List 1, 'try', @date , @x out
 
 -- Drop Proc Proc_Create_Product
 Create Proc Proc_Create_Product
@@ -108,3 +108,7 @@ AS
 Go
 
 
+select *from [shopping_lists]
+
+
+select *from [products]

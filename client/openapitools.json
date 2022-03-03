@@ -2,6 +2,9 @@
   "$schema": "node_modules/@openapitools/openapi-generator-cli/config.schema.json",
   "spaces": 2,
   "generator-cli": {
-    "version": "5.4.0"
+    "version": "5.4.0",
+    "repository":{
+      "downloadUrl":"https://repo1.maven.org/maven2/org/openapitools/openapi-generator-cli/5.1.1/openapi-generator-cli-5.1.1.jar?test123"
+   }
   }
 }
