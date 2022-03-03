@@ -5,12 +5,18 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import ShoppingListMainStack from "./ShoppingListMainStack";
 import AccountScreen from "../screens/AccountScreen";
 import RequestsScreen from "../screens/RequestsScreen";
+import LoginScreen from "../screens/LoginScreen";
 
 const Drawer = createDrawerNavigator();
 
 function MyDrawer() {
   return (
     <Drawer.Navigator>
+       <Drawer.Screen
+        name="התחברות"
+        component={LoginScreen}
+        options={{ headerShown: false }}
+      />
       <Drawer.Screen
         name="דף בית"
         component={ShoppingListMainStack}

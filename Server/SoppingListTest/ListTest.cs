@@ -29,6 +29,26 @@ namespace SoppingListTest
         {
         }
 
+        //public void UserController_whenRetrievingGetAllUsers_returnUsers()
+        //{
+        //    var userMock = new Mock<IUser>();
+        //    var logger = new Mock<ILogger<UserController>>();
+        //    var userController = new UserController(userMock.Object, logger.Object);
+
+        //    var result = userController.GetAllUsers();
+
+        //    Assert.AreEqual(1, result);
+        //    userMock.Verify(v => v.GetAllUsers(), Times.Once());
+        //}
+
+        //public void ShoppingCart_WhenAdding2ItemsToShoppingCart_CheckTotalIsFor2Items()
+        //{
+        //    var shopingCart = new ShoppingCart();
+        //    shoppingCart.addItem(new Item(price = 5));
+        //    shoppingCart.addItem(new Item(price = 15));
+
+        //    Assert.AreEqual(20, shoppingCart.getTotal());
+        //}
 
         //[TestMethod]
         //public  void GetUserIDByEmailTest()

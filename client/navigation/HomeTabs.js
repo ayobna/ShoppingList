@@ -4,10 +4,18 @@ import { createMaterialBottomTabNavigator } from "@react-navigation/material-bot
 
 import MyShoppingListsStack from "./MyShoppingListsStack";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-
+import { shoppingListApi } from "../api/api";
 const Tab = createMaterialBottomTabNavigator();
 
-function HomeTabs() {
+const  HomeTabs=() =>{
+
+  
+  const [shoppingList, setShoppingList] = useState([]);
+  useEffect(() => {
+  
+    
+  }, [])
+  
   return (
     <Tab.Navigator>
       <Tab.Screen

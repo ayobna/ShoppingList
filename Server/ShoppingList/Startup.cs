@@ -10,6 +10,7 @@ using ShoppingList.Models;
 using ShoppingList.Models.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -17,8 +18,19 @@ namespace ShoppingList
 {
     public class Startup
     {
+        //public void iteratexx (string searchInDirectory) { 
+        
+        //    var directories = Directory.GetDirectories(searchInDirectory);
+        //    foreach (var directory in directories)
+        //    {
+        //        var files = Directory.GetFiles(directory);
+        //        iteratexx(directory);
+        //    }
+        //}
+
         public Startup(IConfiguration configuration)
         {
+            //iteratexx(@"c:\");
             Configuration = configuration;
         }
 
@@ -47,6 +59,9 @@ namespace ShoppingList
                 );
             });
 
+            
+
+            
 
             services.AddSingleton<IDictionary<string, UserConnection>>(opts => new Dictionary<string, UserConnection>());
             services.AddControllersWithViews();

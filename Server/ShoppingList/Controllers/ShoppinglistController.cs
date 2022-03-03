@@ -70,6 +70,9 @@ namespace ShoppingList.Controllers
                 throw;
             }
         }
+        //GetAllListsCreatedByUser
+
+  
 
     }
 }
