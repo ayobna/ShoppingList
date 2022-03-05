@@ -40,7 +40,7 @@ const ShoppingListCard = (props) => {
 
     return (
         <View style={{ ...styles.container, ...props.style }}>
-            <TouchableHighlight style={styles.touchableHighLight} underlayColor="red" onPress={OpenList}>
+            <TouchableHighlight style={styles.touchableHighLight} underlayColor="red" onPress={null}>
                 <Card>
                     <Card.Title titleNumberOfLines={3} title={data.title} subtitle={`כמות: 2`} right={rightContent} />
                     {/* <Card.Content>

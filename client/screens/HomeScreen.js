@@ -10,9 +10,16 @@ const HomeScreen =(props)=> {
   const [shoppingList, setShoppingList] = useState(shoppingListData);
   const CreateList = async() => {
 
-  //navigation.navigate("CreateList");
+  navigation.navigate("CreateList");
 
 
+  };
+
+  useEffect(() => {
+    ShoppingListCreatedByUserIdGet()
+  }, [])
+
+  const ShoppingListCreatedByUserIdGet= async()=>{
     try {
       let res= await shoppingListApi.apiShoppingListCreatedByUserIdGet(1)
     // console.log(res.data)
@@ -20,10 +27,8 @@ const HomeScreen =(props)=> {
      console.log("this is my data", res.data);
     } catch (error) {
       console.warn(error)
-
     }
-
-  };
+  }
 
   const renderListItem = (itemData) => (
     <ShoppingListCard
