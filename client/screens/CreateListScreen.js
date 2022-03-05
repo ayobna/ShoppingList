@@ -77,9 +77,9 @@ const CreateListScreen = (props) => {
     ) {
       edit
         ? setProductEditDetails((oldState) => ({
-            ...oldState,
-            Amount: "1",
-          }))
+          ...oldState,
+          Amount: "1",
+        }))
         : setAmount("1");
       return;
     }
@@ -92,9 +92,9 @@ const CreateListScreen = (props) => {
     }
     edit
       ? setProductEditDetails((oldState) => ({
-          ...oldState,
-          Amount: value.toString(),
-        }))
+        ...oldState,
+        Amount: value.toString(),
+      }))
       : setAmount(value.toString());
   };
 
@@ -107,9 +107,9 @@ const CreateListScreen = (props) => {
       }
       edit
         ? setProductEditDetails((oldState) => ({
-            ...oldState,
-            Amount: txt,
-          }))
+          ...oldState,
+          Amount: txt,
+        }))
         : setAmount(txt);
     }
   };
@@ -145,13 +145,13 @@ const CreateListScreen = (props) => {
 
   // הוספת מוצר למערך
   const handleAddProduct = () => {
-    // if (regexValidationProduct(false) < 2) {
-    //   return;
-    // }
+    if (regexValidationProduct(false) < 2) {
+      return;
+    }
     let product = {
       ProductID: 1,
       CreatorID: 1,
-      Name: productName,
+      Name: productName.trim(),
       Amount: amount,
       Img: imageBase64,
       ImgUri: imageUri
@@ -172,8 +172,7 @@ const CreateListScreen = (props) => {
   const regexValidationProduct = (edit) => {
     let counter = 0;
     const amountRgx = /^[1-9]+$/;
-    const nameRgx =
-      /^[\u05D0-\u05EAa-zA-Z0-9']+([ |\-][\u05D0-\u05EAa-zA-Z0-9']+){0,1}$/;
+    const nameRgx = /^[\u05D0-\u05EAa-zA-Z0-9']+([ |\-]*[\u05D0-\u05EAa-zA-Z0-9'\s]+){0,1}$/;
     if (!amountRgx.test(edit ? productEditDetails.Amount : amount)) {
       edit ? setEditAmountError(true) : setAmountError(true);
     } else {
@@ -243,58 +242,61 @@ const CreateListScreen = (props) => {
       (product) => product.ProductID === productEditDetails.ProductID
     );
     tempProducts[index] = productEditDetails;
+    tempProducts[index].Name = tempProducts[index].Name.trim();
+
     setProducts(tempProducts);
     handleClearStates();
   };
 
   const handleSaveShoppingList = () => {
     console.log("stam  test");
-    // if (regexValidationShoppingList() < 2) {
-    //   console.log("test error")
-    //   return;
-    // }
+    if (regexValidationShoppingList() < 2) {
+      console.log("test error")
+      return;
+    }
     /* ----------------------------------------------------כאן עצרנו------------------------------------------------------------------ */
 
     handleCreateShoppingListApi();
   };
 
   const handleCreateShoppingListApi = async () => {
-    let newShoppingList = { CreatorID: user.UserID, Title: title };
+    let newShoppingList = { CreatorID: user.UserID, Title: title.trim() };
 
-    // try {
-    //  const res =await shoppingListApi.apiShoppingListGet()
-    //  const res = await shoppingListApi.apiCreateShoppingListPost(result);
-    //   console.log(res.data)
-    // } catch (error) {
-    //   console.warn(error)
-
-    // }
-
-    const settings = {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(newShoppingList),
-    };
     try {
-      const fetchResponse = await fetch(
-        `https://shoppinglist20220211160436.azurewebsites.net/api/CreateShoppingList`,
-        settings
-      );
-
-      const listID = await fetchResponse.json();
-      console.log(listID);
-
-      UpdateNewShoppingList(listID);
+     
+     const res = await shoppingListApi.apiCreateShoppingListPost(newShoppingList)
+      console.log(res.data)
+      UpdateNewShoppingList(res.data)
     } catch (error) {
-      console.log(error);
+      console.warn(error)
+
     }
+
+    // const settings = {
+    //   method: "POST",
+    //   headers: {
+    //     Accept: "application/json",
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify(newShoppingList),
+    // };
+    // try {
+    //   const fetchResponse = await fetch(
+    //     `https://shoppinglist20220211160436.azurewebsites.net/api/CreateShoppingList`,
+    //     settings
+    //   );
+
+    //   const listID = await fetchResponse.json();
+    //   console.log(listID);
+
+    //   UpdateNewShoppingList(listID);
+    // } catch (error) {
+    //   console.log(error);
+    // }
   };
 
   const UpdateNewShoppingList = (id) => {
-   
+
     let ProductsFromList = products;
     let productsToServer = [];
     for (let index = 0; index < ProductsFromList.length; index++) {
@@ -308,32 +310,42 @@ const CreateListScreen = (props) => {
     }
     AddProductsToShoppingList(productsToServer)
   };
-  const AddProductsToShoppingList= async(productsToServer)=>{
-    const settings = {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(productsToServer),
-    };
-    try {
-      const fetchResponse = await fetch(
-        `https://shoppinglist20220211160436.azurewebsites.net/api/AddProductsToShoppingList`,
-        settings
-      );
+  const AddProductsToShoppingList = async (productsToServer) => {
 
-      const data = await JSON.parse(JSON.stringify(fetchResponse));
-      navigation.navigate('HomeScreen')
-    } catch (error) {
-      console.log(error);
-    }
+    try {
+     
+      const res = await productApi.apiAddProductsToShoppingListPost(productsToServer)
+       console.log(res.data)
+      
+     } catch (error) {
+       console.warn(error)
+ 
+     }
+    // const settings = {
+    //   method: "POST",
+    //   headers: {
+    //     Accept: "application/json",
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify(productsToServer),
+    // };
+    // try {
+    //   const fetchResponse = await fetch(
+    //     `https://shoppinglist20220211160436.azurewebsites.net/api/AddProductsToShoppingList`,
+    //     settings
+    //   );
+
+    //   const data = await JSON.parse(JSON.stringify(fetchResponse));
+    //   navigation.navigate('HomeScreen')
+    // } catch (error) {
+    //   console.log(error);
+    // }
   }
 
   const regexValidationShoppingList = () => {
     let counter = 0;
     const titleRgx =
-      /^[\u05D0-\u05EAa-zA-Z0-9']+([ |\-|.|/][\u05D0-\u05EAa-zA-Z0-9']+)*$/;
+      /^[\u05D0-\u05EAa-zA-Z0-9']+([ |\-|.|/][\u05D0-\u05EAa-zA-Z0-9'\s]+)*$/;
     if (products.length === 0) {
       console.log("didn't success");
     } else {
@@ -365,9 +377,9 @@ const CreateListScreen = (props) => {
         keyExtractor={(item) => String(item.ProductID)}
         contentContainerStyle={{ flexGrow: 1 }}
         ListEmptyComponent={handleListEmptyComponent}
-        // ListFooterComponent={renderFooter}
-        // refreshing={isFetching}
-        // onRefresh={() => handleRefresh()}
+      // ListFooterComponent={renderFooter}
+      // refreshing={isFetching}
+      // onRefresh={() => handleRefresh()}
       />
       <View
         style={{
