@@ -37,7 +37,7 @@ namespace ShoppingList.Controllers
         [Route("api/shoppingList/CreatedByUser/{id}")]
         public IActionResult GetAllListsCreatedByUser(int id)
         {
-         List<Shoppinglist> Shoppinglists =   shoppingList.GetAllListsCreatedByUser(id);
+         List<ShoppingListCard> Shoppinglists =   shoppingList.GetAllListsCreatedByUser(id);
             logger.LogInformation("new test");
            //logger.LogError("Error test ");
             return Ok(Shoppinglists);
@@ -52,8 +52,9 @@ namespace ShoppingList.Controllers
             //logger.LogError("Error test ");
             return Ok(Shoppinglists);
         }
+
         [HttpPost]
-        [Route("api/CreateShoppingList")]
+        [Route("api/shoppingList/CreateShoppingList")]
         public IActionResult CreateShoppingList([FromBody] Shoppinglist shoppinglist)
         {
             try
@@ -70,9 +71,77 @@ namespace ShoppingList.Controllers
                 throw;
             }
         }
+
+        [HttpPost]
+        [Route("api/shoppingList/UpdateShoppinglist")]
+        public IActionResult UpdateShoppinglist([FromBody] ShoppingListCard shoppinglist)
+        {
+            try
+            {
+                int res = shoppingList.UpdateShoppinglist(shoppinglist);
+                logger.LogInformation($"Function name UpdateShoppinglist - Update shopping list with id {shoppinglist.ListID} success");
+                return Ok(res);
+            }
+            catch (Exception e)
+            {
+                logger.LogError($"Function name UpdateShoppinglist - {e.Message}");
+                // need to think what to do here logs?
+                throw;
+            }
+        }
+
+        [HttpPost]
+        [Route("api/shoppingList/DeleteShoppinglist")]
+        public IActionResult DeleteShoppinglist(int id)
+        {
+            try
+            {
+                shoppingList.DeleteShoppinglist(id);
+                logger.LogInformation($"Function name DeleteShoppinglist - Delete shopping list with id {id} success");
+                return Ok($"Function name DeleteShoppinglist - Delete shopping list with id {id} success");
+            }
+            catch (Exception e)
+            {
+                logger.LogError($"Function name CreateShoppingList - {e.Message}");
+                // need to think what to do here logs?
+                throw;
+            }
+        }
+
+        [HttpPost]
+        [Route("api/shoppingList/CopyShoppingList")]
+        public IActionResult CopyShoppingList([FromBody] Shoppinglist shoppinglist)
+        {
+            try
+            {
+                shoppinglist.CreatedOn = DateTime.Now;
+                int copiedListID = shoppingList.CreateShoppinglist(shoppinglist);
+
+                string path = env.WebRootPath + $"/uploads/shoppingLists/shoppingList_{copiedListID}";
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+
+                shoppingList.CopyShoppingList(shoppinglist.ListID, copiedListID, shoppinglist.CreatorID);
+                logger.LogInformation($"Function name CopyShoppingList - copy shopping list with id {copiedListID} success");
+                return Ok(copiedListID);
+            }
+            catch (Exception e)
+            {
+                logger.LogError($"Function name CopyShoppingList - {e.Message}");
+                // need to think what to do here logs?
+                throw;
+            }
+        }
+
+
+
+
+
         //GetAllListsCreatedByUser
 
-  
+
 
     }
 }

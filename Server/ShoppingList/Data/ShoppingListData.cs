@@ -17,7 +17,7 @@ namespace ShoppingList.Data
         {
             db = db_;
         }
-       
+
         public int CreateShoppinglist(Shoppinglist shoppinglist)
         {
             SqlCommand cmd = db.CreateCommand("Proc_Create_Shopping_List", db.Connect(), "proc");
@@ -35,13 +35,42 @@ namespace ShoppingList.Data
             return Convert.ToInt32(cmd.Parameters["@ListID"].Value);
         }
 
-    
-        public List<Shoppinglist> GetAllListsCreatedByUser(int id)
-        { 
+
+        public int UpdateShoppinglist(ShoppingListCard shoppinglist)
+        {
+            SqlCommand cmd = db.CreateCommand("Proc_Update_List", db.Connect(), "proc");
+            cmd.Parameters.Add("@ListID", SqlDbType.Int).Value = shoppinglist.ListID;
+            cmd.Parameters.Add("@Title", SqlDbType.NVarChar).Value = shoppinglist.Title;
+
+            int res = db.ExecuteAndClose(cmd);
+
+            if (res < 1)
+            {
+                throw new Exception("Somthing went wrong while update shopping list in sql");
+            }
+            return res;
+        }
+
+        public void DeleteShoppinglist(int id)
+        {
+            SqlCommand cmd = db.CreateCommand("Proc_Delete_List", db.Connect(), "proc");
+            cmd.Parameters.Add("@ListID", SqlDbType.Int).Value = id;
+
+            int res = db.ExecuteAndClose(cmd);
+
+            if (res < 1)
+            {
+                throw new Exception("Somthing went wrong while delete shopping list in sql"); // its not delete only update status
+            }
+        }
+
+
+        public List<ShoppingListCard> GetAllListsCreatedByUser(int id)
+        {
             SqlCommand cmd = db.CreateCommand("Proc_Get_All_Lists_Created_By_User", db.Connect(), "proc");
             cmd.Parameters.Add("@CreatorID", SqlDbType.Int).Value = id;
             DataTable tb = db.ReadAndClose(cmd);
-            List<Shoppinglist> shoppinglist = db.ConvertDataTable<Shoppinglist>(tb);
+            List<ShoppingListCard> shoppinglist = db.ConvertDataTable<ShoppingListCard>(tb);
             return shoppinglist;
         }
 
@@ -52,8 +81,25 @@ namespace ShoppingList.Data
             DataTable tb = db.ReadAndClose(cmd);
             List<Shoppinglist> shoppinglist = db.ConvertDataTable<Shoppinglist>(tb);
             return shoppinglist;
-        }   
+        }
 
+
+
+        public void CopyShoppingList(int originalListID, int copiedListID, int creatorID)
+        {
+            SqlCommand cmd = db.CreateCommand("Proc_Insert_Products_To_Copied_List", db.Connect(), "proc");
+            cmd.Parameters.Add("@OriginalListID", SqlDbType.Int).Value = originalListID;
+            cmd.Parameters.Add("@CopiedListID", SqlDbType.Int).Value = copiedListID;
+            cmd.Parameters.Add("@CreatorID", SqlDbType.Int).Value = creatorID;
+
+            int res = db.ExecuteAndClose(cmd);
+
+            if (res < 1)
+            {
+                throw new Exception("Somthing went wrong inserting prodeuct to copied list.");
+            }
+        }
 
     }
+
 }

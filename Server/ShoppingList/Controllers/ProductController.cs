@@ -30,7 +30,7 @@ namespace ShoppingList.Controllers
 
 
         [HttpPost]
-        [Route("api/AddProductsToShoppingList")]
+        [Route("api/Product/AddProductsToShoppingList")]
         public IActionResult AddProductsToShoppingList([FromBody] Product[] products)
         {
             try

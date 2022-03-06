@@ -254,23 +254,23 @@ const CreateListScreen = (props) => {
       console.log("test error")
       return;
     }
-     handleCreateShoppingListApi();
+    handleCreateShoppingListApi();
   };
 
   const handleCreateShoppingListApi = async () => {
     let newShoppingList = { CreatorID: user.UserID, Title: title.trim() };
 
-    try {     
-     const res = await shoppingListApi.apiCreateShoppingListPost(newShoppingList)
-      console.log("Id for Shopping list after created",res.data)
-      UpdateNewShoppingList(res.data)
+    try {
+      const res = await shoppingListApi.apiShoppingListCreateShoppingListPost(newShoppingList)
+      console.log("Id for Shopping list after created", res.data)
+      updateNewShoppingList(res.data)
     } catch (error) {
       console.warn(error)
     }
 
   };
 
-  const UpdateNewShoppingList = (id) => {
+  const updateNewShoppingList = (id) => {
     let ProductsFromList = products;
     let productsToServer = [];
     for (let index = 0; index < ProductsFromList.length; index++) {
@@ -282,17 +282,18 @@ const CreateListScreen = (props) => {
         img: ProductsFromList[index].Img,
       });
     }
-    AddProductsToShoppingList(productsToServer)
+    addProductsToShoppingList(productsToServer)
   };
-  const AddProductsToShoppingList = async (productsToServer) => {
-    try {     
-      const res = await productApi.apiAddProductsToShoppingListPost(productsToServer)
-       console.log(res.data)
-       navigation.navigate('HomeScreen')
-     } catch (error) {
-       console.warn(error) 
-     }
-  
+
+  const addProductsToShoppingList = async (productsToServer) => {
+    try {
+      const res = await productApi.apiProductAddProductsToShoppingListPost(productsToServer)
+      console.log(res.data)
+      navigation.navigate('HomeScreen')
+    } catch (error) {
+      console.warn(error)
+    }
+
   }
 
   const regexValidationShoppingList = () => {
@@ -411,7 +412,7 @@ const CreateListScreen = (props) => {
       </View>
       {productEditDetails && (
         <PopupDialog
-          title={"עריכה"}
+          title={"עריכת מוצר"}
           visible={popupDialogVisible}
           cancel={handleCancelPopupDialog}
           confirm={handleConfirmEdit}
