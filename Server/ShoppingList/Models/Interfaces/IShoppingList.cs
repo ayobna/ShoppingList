@@ -10,7 +10,11 @@ namespace ShoppingList.Models
       
 
         public int CreateShoppinglist(Shoppinglist shoppinglist);
-        public List<Shoppinglist> GetAllListsCreatedByUser(int id);
+        public int UpdateShoppinglist(ShoppingListCard shoppinglist);
+        public List<ShoppingListCard> GetAllListsCreatedByUser(int id);
         public List<Shoppinglist> GetAllListsUserIsAParticipant(int id);
+        public void CopyShoppingList(int originalListID, int copiedListID, int creatorID);
+        public void DeleteShoppinglist(int id);
+
     }
 }

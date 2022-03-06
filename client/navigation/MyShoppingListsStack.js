@@ -15,7 +15,7 @@ function MyShoppingListsStack(props) {
         name="HomeScreen"
         component={HomeScreen}
         options={{
-          title: "My List",
+          title: "הרשימות שלי",
           headerLeft: () => (
             <Icon.Button
               name="ios-menu"
