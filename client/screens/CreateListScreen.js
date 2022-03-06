@@ -254,49 +254,23 @@ const CreateListScreen = (props) => {
       console.log("test error")
       return;
     }
-    /* ----------------------------------------------------כאן עצרנו------------------------------------------------------------------ */
-
-    handleCreateShoppingListApi();
+     handleCreateShoppingListApi();
   };
 
   const handleCreateShoppingListApi = async () => {
     let newShoppingList = { CreatorID: user.UserID, Title: title.trim() };
 
-    try {
-     
+    try {     
      const res = await shoppingListApi.apiCreateShoppingListPost(newShoppingList)
-      console.log(res.data)
+      console.log("Id for Shopping list after created",res.data)
       UpdateNewShoppingList(res.data)
     } catch (error) {
       console.warn(error)
-
     }
 
-    // const settings = {
-    //   method: "POST",
-    //   headers: {
-    //     Accept: "application/json",
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify(newShoppingList),
-    // };
-    // try {
-    //   const fetchResponse = await fetch(
-    //     `https://shoppinglist20220211160436.azurewebsites.net/api/CreateShoppingList`,
-    //     settings
-    //   );
-
-    //   const listID = await fetchResponse.json();
-    //   console.log(listID);
-
-    //   UpdateNewShoppingList(listID);
-    // } catch (error) {
-    //   console.log(error);
-    // }
   };
 
   const UpdateNewShoppingList = (id) => {
-
     let ProductsFromList = products;
     let productsToServer = [];
     for (let index = 0; index < ProductsFromList.length; index++) {
@@ -311,35 +285,14 @@ const CreateListScreen = (props) => {
     AddProductsToShoppingList(productsToServer)
   };
   const AddProductsToShoppingList = async (productsToServer) => {
-
-    try {
-     
+    try {     
       const res = await productApi.apiAddProductsToShoppingListPost(productsToServer)
        console.log(res.data)
-      
+       navigation.navigate('HomeScreen')
      } catch (error) {
-       console.warn(error)
- 
+       console.warn(error) 
      }
-    // const settings = {
-    //   method: "POST",
-    //   headers: {
-    //     Accept: "application/json",
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify(productsToServer),
-    // };
-    // try {
-    //   const fetchResponse = await fetch(
-    //     `https://shoppinglist20220211160436.azurewebsites.net/api/AddProductsToShoppingList`,
-    //     settings
-    //   );
-
-    //   const data = await JSON.parse(JSON.stringify(fetchResponse));
-    //   navigation.navigate('HomeScreen')
-    // } catch (error) {
-    //   console.log(error);
-    // }
+  
   }
 
   const regexValidationShoppingList = () => {
