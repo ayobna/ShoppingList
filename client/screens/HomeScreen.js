@@ -1,6 +1,6 @@
 import react, { useEffect, useState, useCallback } from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
-import { FAB, TextInput } from 'react-native-paper';
+import { FAB, TextInput, Searchbar } from 'react-native-paper';
 import { clockRunning } from "react-native-reanimated";
 import { shoppingListApi, userApi } from "../api/api";
 import ShoppingListCard from "../components/ShoppingListCard";
@@ -10,22 +10,30 @@ import { User } from "../User";
 
 const HomeScreen = (props) => {
   // props
-  const { navigation, shoppingListData } = props;
+  const { navigation } = props;
 
   // states
-  const [shoppingList, setShoppingList] = useState(shoppingListData);
+  const [shoppingLists, setShoppingLists] = useState([]);
+  const [renderedShoppingLists, setRenderedShoppingLists] = useState([]);
   const [chosenListDetails, setChosenListDetails] = useState();
   const [popupDialogVisible, setPopupDialogVisible] = useState(false);
   const [titleError, setTitleError] = useState(false);
   const [chosenMethod, setChosenMethod] = useState();
   const [currentUser, setCureentUser] = useState(User);
+  const [searchQuery, setSearchQuery] = useState('');
 
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', async () => {
       ShoppingListCreatedByUserIdGet();
     });
+    return unsubscribe;
+  }, []);
 
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('blur', async () => {
+      setSearchQuery("");
+    });
     return unsubscribe;
   }, []);
 
@@ -34,6 +42,15 @@ const HomeScreen = (props) => {
       setPopupDialogVisible(true);
     }
   }, [chosenListDetails]);
+
+  // בכל שינוי בחיםוש, מסנן לפי שם קורס
+  useEffect(() => {
+    let newData = shoppingLists.filter(item => {
+      const itemData = `${item.title.toUpperCase()}`;
+      return itemData.indexOf(searchQuery.toUpperCase()) > -1;
+    });
+    setRenderedShoppingLists(newData);
+  }, [searchQuery]);
 
   const CreateList = async () => {
     navigation.navigate("CreateList");
@@ -46,7 +63,8 @@ const HomeScreen = (props) => {
   const ShoppingListCreatedByUserIdGet = async () => {
     try {
       let res = await shoppingListApi.apiShoppingListCreatedByUserIdGet(1)
-      setShoppingList(res.data)
+      setShoppingLists(res.data)
+      setRenderedShoppingLists(res.data);
     } catch (error) {
       console.warn(error)
     }
@@ -154,10 +172,16 @@ const HomeScreen = (props) => {
 
   return (
     <View style={styles.container}>
-
+      <Searchbar
+        placeholder="חיפוש"
+        onChangeText={(txt) => setSearchQuery(txt)}
+        value={searchQuery}
+        theme={{ colors: { primary: "black" }, roundness: 0 }}
+        iconColor="black"
+      />
       <FlatList
         showsVerticalScrollIndicator={false}
-        data={shoppingList}
+        data={renderedShoppingLists}
         renderItem={(item) => renderListItem(item)}
         keyExtractor={(item) => String(item.listID)}
         contentContainerStyle={{ flexGrow: 1 }}
