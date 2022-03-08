@@ -78,8 +78,8 @@ const ShoppingListCard = (props) => {
     handleChoice(data, choiceMethod);
   };
 
-  const OpenList = () => {
-    navigation.navigate("ShoppingListTabs");
+  const openList = () => {
+    navigation.navigate("ShoppingListTabs", { shoppingListID: data.listID });
   };
 
   const handleDateFormat = () => {
@@ -91,16 +91,15 @@ const ShoppingListCard = (props) => {
     <View style={{ ...styles.container, ...props.style }}>
       <TouchableHighlight
         style={styles.touchableHighLight}
-        underlayColor="red"
-        onPress={null}
+        underlayColor="black"
+        onPress={openList}
       >
         <Card>
           <Card.Title
             titleNumberOfLines={3}
             title={data.title}
-            subtitle={`נוצר ע"י: ${
-              data.firstName + " " + data.lastName
-            }\nנוצר ב: ${handleDateFormat()}\n`}
+            subtitle={`נוצר ע"י: ${data.firstName + " " + data.lastName
+              }\nנוצר ב: ${handleDateFormat()}\n`}
             subtitleNumberOfLines={3}
             right={rightContent}
           />
@@ -116,6 +115,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     marginTop: 10,
   },
+  touchableHighLight: {
+    borderRadius: 5
+  }
 });
 
 export default ShoppingListCard;

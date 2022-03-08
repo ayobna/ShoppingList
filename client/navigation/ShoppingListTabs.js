@@ -8,21 +8,37 @@ import ParticipantsScreen from "../screens/ParticipantsScreen";
 
 const Tab = createMaterialBottomTabNavigator();
 
-function ShoppingListTabs() {
+function ShoppingListTabs(props) {
+  const { navigation, route } = props;
+  const data = route.params;
+
   return (
     <Tab.Navigator>
       <Tab.Screen
         name="ListScreen"
         component={ListScreen}
+        initialParams={data}
         options={{
-          tabBarLabel: "הרשימה שלי",
+          tabBarLabel: "הרשימה",
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="home" color={color} size={24} />
           ),
         }}
       />
-      <Tab.Screen name="Chat" component={ChatScreen} />
-      <Tab.Screen name="ParticipantsScreen" component={ParticipantsScreen} />
+      <Tab.Screen name="Chat" component={ChatScreen} initialParams={data}
+        options={{
+          tabBarLabel: "צ'אט",
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="home" color={color} size={24} />
+          ),
+        }} />
+      <Tab.Screen name="ParticipantsScreen" component={ParticipantsScreen} initialParams={data}
+        options={{
+          tabBarLabel: "משתתפים",
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="home" color={color} size={24} />
+          ),
+        }} />
     </Tab.Navigator>
   );
 }

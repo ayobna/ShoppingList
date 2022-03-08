@@ -10,13 +10,13 @@ const Stack = createStackNavigator();
 function ShoppingListMainStack() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="HomeTabs" component={HomeTabs}options={{ headerShown: false }}/>
-      <Stack.Screen name="CreateList" component={CreateListScreen}/>
-      <Stack.Screen name="ShoppingListTabs" component={ShoppingListTabs}/>
+      <Stack.Screen name="HomeTabs" component={HomeTabs} options={{ headerShown: false }} />
+      <Stack.Screen name="CreateList" component={CreateListScreen} options={{ title:"יצירת רשימה"}} />
+      <Stack.Screen name="ShoppingListTabs" component={ShoppingListTabs} options={{ title:""}}/>
     </Stack.Navigator>
 
     //CreateList
   );
 }
 
-export default  ShoppingListMainStack;
+export default ShoppingListMainStack;

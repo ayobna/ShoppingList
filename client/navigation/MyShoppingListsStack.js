@@ -8,9 +8,9 @@ import HomeScreen from "../screens/HomeScreen";
 const Stack = createStackNavigator();
 
 function MyShoppingListsStack(props) {
- // console.log("MyShoppingListsStack props  ",props)
-  const { navigation ,route} = props;
-  const data=route.params;
+  // console.log("MyShoppingListsStack props  ",props)
+  const { navigation, route } = props;
+  const data = route.params;
 
   return (
     <Stack.Navigator>
@@ -19,7 +19,7 @@ function MyShoppingListsStack(props) {
         component={HomeScreen}
         initialParams={data}
         options={{
-          title: "הרשימות שלי",
+          title: `${data.extraData === 1 ? "הרשימות שלי" : "רשימות משותפות"}`,
           headerLeft: () => (
             <Icon.Button
               name="ios-menu"
