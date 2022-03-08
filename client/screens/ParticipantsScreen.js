@@ -1,13 +1,25 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text } from 'react-native';
+import ShoppingListCard from '../components/ShoppingListCard';
 
+const ParticipantsScreen = (props) => {
+  const { navigation, route } = props;
 
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", async () => {
 
-const ParticipantsScreen =()=> {
+    });
+    return unsubscribe;
+  }, [route]);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("blur", async () => {
+    });
+    return unsubscribe;
+  }, [route]);
+
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Participants  Screen</Text>
-    </View>
+    <View><Text>List Screen {route.params.shoppingListID}</Text></View>
   );
 }
 

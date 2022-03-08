@@ -299,7 +299,7 @@ const CreateListScreen = (props) => {
   const regexValidationShoppingList = () => {
     let counter = 0;
     const titleRgx =
-      /^[\u05D0-\u05EAa-zA-Z0-9']+([ |\-|.|/][\u05D0-\u05EAa-zA-Z0-9'\s]+)*$/;
+      /^[\u05D0-\u05EAa-zA-Z0-9']+([ |\-|.|/]*[\u05D0-\u05EAa-zA-Z0-9'\s]+)*$/;
     if (products.length === 0) {
       console.log("didn't success");
     } else {

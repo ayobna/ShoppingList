@@ -33,6 +33,7 @@ const HomeScreen = (props) => {
   useEffect(() => {
     const unsubscribe = navigation.addListener("blur", async () => {
       setSearchQuery("");
+      handleCancelPopupDialog();
     });
     return unsubscribe;
   }, [route]);
@@ -96,6 +97,7 @@ const HomeScreen = (props) => {
     setPopupDialogVisible(false);
     setChosenMethod();
     setChosenListDetails();
+    setTitleError(false);
   };
 
   const handleConfirmEdit = () => {
@@ -120,7 +122,8 @@ const HomeScreen = (props) => {
   const regexValidationShoppingList = () => {
     let counter = 0;
     const titleRgx =
-      /^[\u05D0-\u05EAa-zA-Z0-9']+([ |\-|.|/][\u05D0-\u05EAa-zA-Z0-9'\s]+)*$/;
+    /^[\u05D0-\u05EAa-zA-Z0-9']+([ |\-|.|/]*[\u05D0-\u05EAa-zA-Z0-9'\s]+)*$/;
+
     if (!titleRgx.test(chosenListDetails.title)) {
       setTitleError(true);
     } else {
@@ -141,7 +144,7 @@ const HomeScreen = (props) => {
     const data = {
       ListID: chosenListDetails.listID,
       CreatorID: currentUser.UserID,
-      Title: chosenListDetails.title,
+      Title: chosenListDetails.title.trim(),
     };
     try {
       let res = await shoppingListApi.apiShoppingListCopyShoppingListPost(data);
@@ -165,7 +168,7 @@ const HomeScreen = (props) => {
   };
   const exitShoppingList = async () => {
     try {
-      let res = await shoppingListApi.apiShoppingListExitShoppingListPost(chosenListDetails.listID,currentUser.UserID);
+      let res = await shoppingListApi.apiShoppingListExitShoppingListPost(chosenListDetails.listID, currentUser.UserID);
       handleCancelPopupDialog();
       ShoppingListsGetFromAPI();
     } catch (error) {
@@ -176,7 +179,7 @@ const HomeScreen = (props) => {
   const handelChosenMethod = () => {
     console.log(chosenMethod)
     if (chosenMethod === "edit") {
-  
+
       handleConfirmEdit();
     } else if (chosenMethod === "copy") {
       handleConfirmCopyList();
@@ -193,7 +196,7 @@ const HomeScreen = (props) => {
       <View
         style={{ flexGrow: 1, justifyContent: "center", alignItems: "center" }}
       >
-         <Text>אין מוצרים</Text>
+        <Text>אין מוצרים</Text>
       </View>
     );
   };
@@ -211,7 +214,7 @@ const HomeScreen = (props) => {
   return (
     <View style={styles.container}>
       <Searchbar
-       placeholder="חיפוש"
+        placeholder="חיפוש"
         onChangeText={(txt) => setSearchQuery(txt)}
         value={searchQuery}
         theme={{ colors: { primary: "black" }, roundness: 0 }}
@@ -225,8 +228,8 @@ const HomeScreen = (props) => {
         contentContainerStyle={{ flexGrow: 1 }}
         ListEmptyComponent={handleListEmptyComponent}
         ListFooterComponent={renderFooter}
-        // refreshing={isFetching}
-        // onRefresh={() => handleRefresh()}
+      // refreshing={isFetching}
+      // onRefresh={() => handleRefresh()}
       />
       {extraDataForTabs === 1 && (
         <FAB
@@ -238,35 +241,35 @@ const HomeScreen = (props) => {
       )}
       {chosenListDetails && chosenMethod && (
         <PopupDialog
-        title={"עריכת רשימה"}
+          title={"עריכת רשימה"}
           visible={popupDialogVisible}
           cancel={handleCancelPopupDialog}
           confirm={handelChosenMethod}
         >
           {chosenMethod === "delete" ? (
-               <Text>ברצונך למחוק את הרשימה?</Text>
+            <Text>ברצונך למחוק את הרשימה?</Text>
           ) :
-          chosenMethod==="exit"? 
-          <Text>ברצונך לצת מהרשימה?</Text>
-          :
-          
-          (
-            <TextInput
-            label="שם מוצר"
-              value={chosenListDetails.title}
-              onChangeText={(txt) =>
-                setChosenListDetails((oldstate) => ({
-                  ...oldstate,
-                  title: txt,
-                }))
-              }
-              dense={true}
-              error={titleError}
-              mode="outlined"
-            />
-          )
-            
-        }
+            chosenMethod === "exit" ?
+              <Text>ברצונך לצת מהרשימה?</Text>
+              :
+
+              (
+                <TextInput
+                  label="שם מוצר"
+                  value={chosenListDetails.title}
+                  onChangeText={(txt) =>
+                    setChosenListDetails((oldstate) => ({
+                      ...oldstate,
+                      title: txt,
+                    }))
+                  }
+                  dense={true}
+                  error={titleError}
+                  mode="outlined"
+                />
+              )
+
+          }
         </PopupDialog>
       )}
     </View>
