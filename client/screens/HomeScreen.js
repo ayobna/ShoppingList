@@ -1,16 +1,14 @@
 import react, { useEffect, useState, useCallback } from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
-import { FAB, TextInput, Searchbar } from 'react-native-paper';
-import { clockRunning } from "react-native-reanimated";
+import { FAB, TextInput, Searchbar } from "react-native-paper";
 import { shoppingListApi, userApi } from "../api/api";
 import ShoppingListCard from "../components/ShoppingListCard";
-import { useFocusEffect } from '@react-navigation/native';
 import PopupDialog from "../components/PopupDialog";
 import { User } from "../User";
 
 const HomeScreen = (props) => {
   // props
-  const { navigation } = props;
+  const { navigation, route } = props;
 
   // states
   const [shoppingLists, setShoppingLists] = useState([]);
@@ -19,23 +17,25 @@ const HomeScreen = (props) => {
   const [popupDialogVisible, setPopupDialogVisible] = useState(false);
   const [titleError, setTitleError] = useState(false);
   const [chosenMethod, setChosenMethod] = useState();
-  const [currentUser, setCureentUser] = useState(User);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [currentUser, setCurrentUser] = useState(User);
+  const [searchQuery, setSearchQuery] = useState("");
 
+  const extraDataForTabs = route.params.extraData;
 
+  // console.log("HomeScreen route.params.extraData  ",route.params.extraData)
   useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', async () => {
-      ShoppingListCreatedByUserIdGet();
+    const unsubscribe = navigation.addListener("focus", async () => {
+      ShoppingListsGetFromAPI();
     });
     return unsubscribe;
-  }, []);
+  }, [route]);
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener('blur', async () => {
+    const unsubscribe = navigation.addListener("blur", async () => {
       setSearchQuery("");
     });
     return unsubscribe;
-  }, []);
+  }, [route]);
 
   useEffect(() => {
     if (chosenListDetails) {
@@ -43,9 +43,9 @@ const HomeScreen = (props) => {
     }
   }, [chosenListDetails]);
 
-  // בכל שינוי בחיםוש, מסנן לפי שם קורס
+  // ??? ????? ??????, ???? ??? ?? ????
   useEffect(() => {
-    let newData = shoppingLists.filter(item => {
+    let newData = shoppingLists.filter((item) => {
       const itemData = `${item.title.toUpperCase()}`;
       return itemData.indexOf(searchQuery.toUpperCase()) > -1;
     });
@@ -60,43 +60,35 @@ const HomeScreen = (props) => {
   //   ShoppingListCreatedByUserIdGet()
   // }, [])
 
-  const ShoppingListCreatedByUserIdGet = async () => {
+  const ShoppingListsGetFromAPI = async () => {
+    let res = null;
     try {
-      let res = await shoppingListApi.apiShoppingListCreatedByUserIdGet(1)
-      setShoppingLists(res.data)
+      if (extraDataForTabs == 1)
+        res = await shoppingListApi.apiShoppingListCreatedByUserIdGet(currentUser.UserID);
+      else
+        res = await shoppingListApi.apiShoppingListUserIsAParticipantIdGet(currentUser.UserID);
+
+      setShoppingLists(res.data);
       setRenderedShoppingLists(res.data);
     } catch (error) {
-      console.warn(error)
+      console.warn(error);
     }
-  }
+  };
 
   const renderListItem = (itemData) => (
     <ShoppingListCard
       data={itemData.item}
       navigation={navigation}
+      extraDataForTabs={extraDataForTabs}
       // handleDeleteProduct={handleDeleteProduct}
-      handleChoise={handleChoise}
+      handleChoice={handleChoice}
     />
   );
 
-  const handleListEmptyComponent = () => {
-    return (
-      <View
-        style={{ flexGrow: 1, justifyContent: "center", alignItems: "center" }}
-      >
-        <Text>אין מוצרים</Text>
-      </View>
-    );
-  };
 
-  const renderFooter = () => {
-    return (
-      <View style={styles.renderFooter} />
-    );
-  };
 
-  const handleChoise = (productDetails, choise) => {
-    setChosenMethod(choise);
+  const handleChoice = (productDetails, choice) => {
+    setChosenMethod(choice);
     setChosenListDetails(productDetails);
   };
 
@@ -114,15 +106,15 @@ const HomeScreen = (props) => {
   };
 
   const updateShoppingList = async () => {
-
     try {
-      const res = await shoppingListApi.apiShoppingListUpdateShoppinglistPost(chosenListDetails);
+      const res = await shoppingListApi.apiShoppingListUpdateShoppinglistPost(
+        chosenListDetails
+      );
       handleCancelPopupDialog();
-      ShoppingListCreatedByUserIdGet();
+      ShoppingListsGetFromAPI();
     } catch (error) {
-      console.warn(error)
+      console.warn(error);
     }
-
   };
 
   const regexValidationShoppingList = () => {
@@ -145,35 +137,81 @@ const HomeScreen = (props) => {
     copyShoppingList();
   };
 
-
   const copyShoppingList = async () => {
-    const data = { ListID: chosenListDetails.listID, CreatorID: currentUser.UserID, Title: chosenListDetails.title };
+    const data = {
+      ListID: chosenListDetails.listID,
+      CreatorID: currentUser.UserID,
+      Title: chosenListDetails.title,
+    };
     try {
       let res = await shoppingListApi.apiShoppingListCopyShoppingListPost(data);
       handleCancelPopupDialog();
-      ShoppingListCreatedByUserIdGet();
-
+      ShoppingListsGetFromAPI();
     } catch (error) {
-      console.warn(error)
+      console.warn(error);
     }
   };
 
   const deleteShoppingList = async () => {
     try {
-      let res = await shoppingListApi.apiShoppingListDeleteShoppinglistPost(chosenListDetails.listID);
+      let res = await shoppingListApi.apiShoppingListDeleteShoppinglistPost(
+        chosenListDetails.listID
+      );
       handleCancelPopupDialog();
-      ShoppingListCreatedByUserIdGet();
-
+      ShoppingListsGetFromAPI();
     } catch (error) {
-      console.warn(error)
+      console.warn(error);
+    }
+  };
+  const exitShoppingList = async () => {
+    try {
+      let res = await shoppingListApi.apiShoppingListExitShoppingListPost(chosenListDetails.listID,currentUser.UserID);
+      handleCancelPopupDialog();
+      ShoppingListsGetFromAPI();
+    } catch (error) {
+      console.warn(error);
+    }
+  };
+
+  const handelChosenMethod = () => {
+    console.log(chosenMethod)
+    if (chosenMethod === "edit") {
+  
+      handleConfirmEdit();
+    } else if (chosenMethod === "copy") {
+      handleConfirmCopyList();
+    } else if (chosenMethod === "delete") {
+      deleteShoppingList();
+    } else {
+      exitShoppingList();
     }
   };
 
 
+  const handleListEmptyComponent = () => {
+    return (
+      <View
+        style={{ flexGrow: 1, justifyContent: "center", alignItems: "center" }}
+      >
+         <Text>אין מוצרים</Text>
+      </View>
+    );
+  };
+
+  const renderFooter = () => {
+    return (
+      <View
+        style={
+          extraDataForTabs === 1 ? styles.renderFooter1 : styles.renderFooter2
+        }
+      />
+    );
+  };
+
   return (
     <View style={styles.container}>
       <Searchbar
-        placeholder="חיפוש"
+       placeholder="חיפוש"
         onChangeText={(txt) => setSearchQuery(txt)}
         value={searchQuery}
         theme={{ colors: { primary: "black" }, roundness: 0 }}
@@ -187,42 +225,48 @@ const HomeScreen = (props) => {
         contentContainerStyle={{ flexGrow: 1 }}
         ListEmptyComponent={handleListEmptyComponent}
         ListFooterComponent={renderFooter}
-      // refreshing={isFetching}
-      // onRefresh={() => handleRefresh()}
+        // refreshing={isFetching}
+        // onRefresh={() => handleRefresh()}
       />
-
-      <FAB
-        style={styles.fab}
-        color="white"
-        icon="plus"
-        onPress={CreateList}
-      />
-
+      {extraDataForTabs === 1 && (
+        <FAB
+          style={styles.fab}
+          color="white"
+          icon="plus"
+          onPress={CreateList}
+        />
+      )}
       {chosenListDetails && chosenMethod && (
         <PopupDialog
-          title={"עריכת רשימה"}
+        title={"עריכת רשימה"}
           visible={popupDialogVisible}
           cancel={handleCancelPopupDialog}
-          confirm={chosenMethod === "edit" ? handleConfirmEdit : chosenMethod === "copy" ? handleConfirmCopyList : deleteShoppingList}
+          confirm={handelChosenMethod}
         >
-          {
-            chosenMethod === "delete" ?
-              <Text>ברצונך למחוק את הרשימה?</Text>
-              :
-              <TextInput
-                label="שם מוצר"
-                value={chosenListDetails.title}
-                onChangeText={(txt) =>
-                  setChosenListDetails((oldstate) => ({
-                    ...oldstate,
-                    title: txt,
-                  }))
-                }
-                dense={true}
-                error={titleError}
-                mode="outlined"
-              />
-          }
+          {chosenMethod === "delete" ? (
+               <Text>ברצונך למחוק את הרשימה?</Text>
+          ) :
+          chosenMethod==="exit"? 
+          <Text>ברצונך לצת מהרשימה?</Text>
+          :
+          
+          (
+            <TextInput
+            label="שם מוצר"
+              value={chosenListDetails.title}
+              onChangeText={(txt) =>
+                setChosenListDetails((oldstate) => ({
+                  ...oldstate,
+                  title: txt,
+                }))
+              }
+              dense={true}
+              error={titleError}
+              mode="outlined"
+            />
+          )
+            
+        }
         </PopupDialog>
       )}
     </View>
@@ -235,15 +279,16 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   fab: {
-    backgroundColor: 'black',
-    position: 'absolute',
+    backgroundColor: "black",
+    position: "absolute",
     margin: 16,
     right: 0,
     bottom: 0,
   },
-  renderFooter: {
-    paddingBottom: 90
+  renderFooter1: {
+    paddingBottom: 90,
   },
-})
-
-
+  renderFooter2: {
+    paddingBottom: 10,
+  },
+});

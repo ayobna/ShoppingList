@@ -20,6 +20,7 @@ const  HomeTabs=() =>{
       <Tab.Screen
         name="Home"
         component={MyShoppingListsStack}
+        initialParams={{extraData:1}}
         options={{
           tabBarLabel: "הרשימות שלי",
           tabBarIcon: ({ color }) => (
@@ -29,6 +30,7 @@ const  HomeTabs=() =>{
       />
       <Tab.Screen
         name="Home2"
+        initialParams={{extraData:2}}
         component={MyShoppingListsStack}
         options={{
           tabBarLabel:"המשתפות",

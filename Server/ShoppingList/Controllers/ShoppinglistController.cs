@@ -37,20 +37,40 @@ namespace ShoppingList.Controllers
         [Route("api/shoppingList/CreatedByUser/{id}")]
         public IActionResult GetAllListsCreatedByUser(int id)
         {
-         List<ShoppingListCard> Shoppinglists =   shoppingList.GetAllListsCreatedByUser(id);
-            logger.LogInformation("new test");
-           //logger.LogError("Error test ");
-            return Ok(Shoppinglists);
+            try
+            {
+                List<ShoppingListCard> Shoppinglists = shoppingList.GetAllListsCreatedByUser(id);
+                logger.LogInformation("new test");
+                //logger.LogError("Error test ");
+                return Ok(Shoppinglists);
+            }
+            catch (Exception e)
+            {
+                logger.LogError($"Function name GetAllListsCreatedByUser - {e.Message}");
+                // need to think what to do here logs?
+                throw;
+            }
         }
 
         [HttpGet]
         [Route("api/shoppingList/UserIsAParticipant/{id}")]
         public IActionResult GetAllListsUserIsAParticipant(int id)
         {
-            List<Shoppinglist> Shoppinglists = shoppingList.GetAllListsUserIsAParticipant(id);
-            logger.LogInformation("new test");
-            //logger.LogError("Error test ");
-            return Ok(Shoppinglists);
+            try
+            {
+                List<ShoppingListCard> Shoppinglists = shoppingList.GetAllListsUserIsAParticipant(id);
+                logger.LogInformation("new test");
+                //logger.LogError("Error test ");
+                return Ok(Shoppinglists);
+            }
+            catch (Exception e)
+            {
+                logger.LogError($"Function name GetAllListsUserIsAParticipant    - {e.Message}");
+                // need to think what to do here logs?
+                throw;
+            }
+
+
         }
 
         [HttpPost]
@@ -85,7 +105,7 @@ namespace ShoppingList.Controllers
             catch (Exception e)
             {
                 logger.LogError($"Function name UpdateShoppinglist - {e.Message}");
-                // need to think what to do here logs?
+             
                 throw;
             }
         }
@@ -103,7 +123,7 @@ namespace ShoppingList.Controllers
             catch (Exception e)
             {
                 logger.LogError($"Function name CreateShoppingList - {e.Message}");
-                // need to think what to do here logs?
+       
                 throw;
             }
         }
@@ -130,16 +150,35 @@ namespace ShoppingList.Controllers
             catch (Exception e)
             {
                 logger.LogError($"Function name CopyShoppingList - {e.Message}");
-                // need to think what to do here logs?
+          
                 throw;
             }
         }
 
 
 
+        [HttpPost]
+        [Route("api/shoppingList/ExitShoppingList")]
+        public IActionResult ExitShoppingList(int ListID, int UserID)
+        {
+            try
+            {
+             
+
+                shoppingList.ExitShoppingList(ListID, UserID);
+                logger.LogInformation($"Function name ExitShoppingList - Exit shopping list with id {ListID} for User id {UserID} success");
+                return Ok($"Exit shopping list with id {ListID} for User id {UserID} success");
+            }
+            catch (Exception e)
+            {
+                logger.LogError($"Function name ExitShoppingList - {e.Message}");
+                
+                throw;
+            }
+        }
 
 
-        //GetAllListsCreatedByUser
+    
 
 
 

@@ -49,7 +49,7 @@ go
 
 -------------------------------------------------List----------------------------------------------
 
-Create Proc Proc_Get_All_Lists_Created_By_User
+Alter Proc Proc_Get_All_Lists_Created_By_User
 @CreatorID int
 AS
 SELECT			shopping_lists.ListID, shopping_lists.Title, shopping_lists.CreatedOn, users.FirstName, users.LastName
@@ -134,14 +134,31 @@ AS
 Go
 
 
-Create Proc Proc_Get_All_Lists_User_Is_A_Participant
+Alter Proc Proc_Get_All_Lists_User_Is_A_Participant
 @UserID int
 AS
-Select * From [shopping_lists_users]
-where  [UserID]= @UserID
+SELECT        shopping_lists.ListID, shopping_lists.Title, shopping_lists.CreatedOn, users.FirstName, users.LastName
+FROM            shopping_lists INNER JOIN
+                         shopping_lists_users ON shopping_lists.ListID = shopping_lists_users.ListID INNER JOIN
+                         users ON shopping_lists.CreatorID = users.UserID
+WHERE        (shopping_lists_users.UserID = @UserID) AND (NOT (shopping_lists.CreatorID =@UserID)) AND (shopping_lists.IsActive = 1) AND (shopping_lists_users.IsApproved = 1)
+ORDER BY shopping_lists.CreatedOn DESC
 Go
 
+exec Proc_Get_All_Lists_User_Is_A_Participant 1
 
+
+
+
+Create Proc Proc_Exit_From_List_User_is_A_Participant
+@ListID int,
+@UserID int
+AS
+delete from [shopping_lists_users]
+WHERE  [ListID]= @ListID ANd [UserID]=@UserID
+Go
+
+exec  Proc_Exit_From_List_User_is_A_Participant 24,1
 -------------------------------------------------Product----------------------------------------------
 
 --declare @x int, @date datetime

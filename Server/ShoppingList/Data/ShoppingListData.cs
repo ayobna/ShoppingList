@@ -74,12 +74,12 @@ namespace ShoppingList.Data
             return shoppinglist;
         }
 
-        public List<Shoppinglist> GetAllListsUserIsAParticipant(int id)
+        public List<ShoppingListCard> GetAllListsUserIsAParticipant(int id)
         {
             SqlCommand cmd = db.CreateCommand("Proc_Get_All_Lists_User_Is_A_Participant", db.Connect(), "proc");
             cmd.Parameters.Add("@UserID", SqlDbType.Int).Value = id;
             DataTable tb = db.ReadAndClose(cmd);
-            List<Shoppinglist> shoppinglist = db.ConvertDataTable<Shoppinglist>(tb);
+            List<ShoppingListCard> shoppinglist = db.ConvertDataTable<ShoppingListCard>(tb);
             return shoppinglist;
         }
 
@@ -91,6 +91,21 @@ namespace ShoppingList.Data
             cmd.Parameters.Add("@OriginalListID", SqlDbType.Int).Value = originalListID;
             cmd.Parameters.Add("@CopiedListID", SqlDbType.Int).Value = copiedListID;
             cmd.Parameters.Add("@CreatorID", SqlDbType.Int).Value = creatorID;
+
+            int res = db.ExecuteAndClose(cmd);
+
+            if (res < 1)
+            {
+                throw new Exception("Somthing went wrong inserting prodeuct to copied list.");
+            }
+        }
+
+        public void ExitShoppingList(int ListID, int UserID)
+        {
+            SqlCommand cmd = db.CreateCommand("Proc_Exit_From_List_User_is_A_Participant", db.Connect(), "proc");
+            cmd.Parameters.Add("@ListID", SqlDbType.Int).Value = ListID;
+            cmd.Parameters.Add("@UserID", SqlDbType.Int).Value = UserID;
+         
 
             int res = db.ExecuteAndClose(cmd);
 
