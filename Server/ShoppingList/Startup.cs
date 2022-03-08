@@ -43,6 +43,8 @@ namespace ShoppingList
             services.AddSignalR();
             services.Add(new ServiceDescriptor(typeof(IDbConnection), new DbConnection()));
             services.AddSingleton<IShoppingList, ShoppingListData>();
+            services.AddSingleton<IChatData, ChatData>();
+
             services.AddSingleton<IProductData, ProductData>();
             services.AddSingleton<IUser, UserData>();
             //       services.Add(new ServiceDescriptor(typeof(IUser), new User()));

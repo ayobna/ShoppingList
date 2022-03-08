@@ -11,6 +11,7 @@
     "generate:apis": "npx openapi-generator-cli generate -i https://shoppinglist20220211160436.azurewebsites.net/swagger/v1/swagger.json -g typescript-axios -o generated"
   },
   "dependencies": {
+    "@microsoft/signalr": "^6.0.2",
     "@react-navigation/bottom-tabs": "^6.2.0",
     "@react-navigation/drawer": "^6.3.1",
     "@react-navigation/material-bottom-tabs": "^6.1.1",
