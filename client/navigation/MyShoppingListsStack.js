@@ -8,12 +8,16 @@ import HomeScreen from "../screens/HomeScreen";
 const Stack = createStackNavigator();
 
 function MyShoppingListsStack(props) {
-  const { navigation } = props;
+ // console.log("MyShoppingListsStack props  ",props)
+  const { navigation ,route} = props;
+  const data=route.params;
+
   return (
     <Stack.Navigator>
       <Stack.Screen
         name="HomeScreen"
         component={HomeScreen}
+        initialParams={data}
         options={{
           title: "הרשימות שלי",
           headerLeft: () => (

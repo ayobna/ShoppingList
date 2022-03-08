@@ -454,6 +454,45 @@ export const ShoppinglistApiAxiosParamCreator = function (configuration?: Config
         },
         /**
          * 
+         * @param {number} [listID] 
+         * @param {number} [userID] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiShoppingListExitShoppingListPost: async (listID?: number, userID?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/shoppingList/ExitShoppingList`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (listID !== undefined) {
+                localVarQueryParameter['ListID'] = listID;
+            }
+
+            if (userID !== undefined) {
+                localVarQueryParameter['UserID'] = userID;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @param {ShoppingListCard} [shoppingListCard] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -570,6 +609,17 @@ export const ShoppinglistApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @param {number} [listID] 
+         * @param {number} [userID] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiShoppingListExitShoppingListPost(listID?: number, userID?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiShoppingListExitShoppingListPost(listID, userID, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
          * @param {ShoppingListCard} [shoppingListCard] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -633,6 +683,16 @@ export const ShoppinglistApiFactory = function (configuration?: Configuration, b
          */
         apiShoppingListDeleteShoppinglistPost(id?: number, options?: any): AxiosPromise<void> {
             return localVarFp.apiShoppingListDeleteShoppinglistPost(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {number} [listID] 
+         * @param {number} [userID] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiShoppingListExitShoppingListPost(listID?: number, userID?: number, options?: any): AxiosPromise<void> {
+            return localVarFp.apiShoppingListExitShoppingListPost(listID, userID, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -704,6 +764,18 @@ export class ShoppinglistApi extends BaseAPI {
      */
     public apiShoppingListDeleteShoppinglistPost(id?: number, options?: AxiosRequestConfig) {
         return ShoppinglistApiFp(this.configuration).apiShoppingListDeleteShoppinglistPost(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {number} [listID] 
+     * @param {number} [userID] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ShoppinglistApi
+     */
+    public apiShoppingListExitShoppingListPost(listID?: number, userID?: number, options?: AxiosRequestConfig) {
+        return ShoppinglistApiFp(this.configuration).apiShoppingListExitShoppingListPost(listID, userID, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
