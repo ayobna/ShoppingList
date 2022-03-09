@@ -39,8 +39,14 @@ namespace ShoppingList
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
             services.AddSwaggerGen();
-            services.AddSignalR();
+
+
+      
+
+            services.AddSignalR()
+            .AddAzureSignalR("Endpoint=https://shoppinglistservice.service.signalr.net;AccessKey=28qVuqpHKH+ZOy9aD0aGfBKh6bwEB2S70cNSzLM3zXU=;Version=1.0;");
             services.Add(new ServiceDescriptor(typeof(IDbConnection), new DbConnection()));
             services.AddSingleton<IShoppingList, ShoppingListData>();
             services.AddSingleton<IChatData, ChatData>();
@@ -53,17 +59,27 @@ namespace ShoppingList
             services.AddCors(options =>
             {
                 options.AddDefaultPolicy(
-                builder => builder
-                .AllowAnyHeader()
+                builder => builder.AllowAnyHeader()         
                 .AllowAnyMethod()
                 .SetIsOriginAllowed(_ => true)
                 .AllowCredentials()
                 );
+
+                options.AddPolicy("AnotherPolicy",
+                    builder =>
+                    {
+                        builder.WithOrigins("http://localhost:3000")
+                                            .AllowAnyHeader()
+                                            .AllowAnyMethod();
+                    });
             });
 
-            
 
-            
+
+
+
+
+
 
             services.AddSingleton<IDictionary<string, UserConnection>>(opts => new Dictionary<string, UserConnection>());
             services.AddControllersWithViews();
@@ -105,7 +121,8 @@ namespace ShoppingList
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
-            app.UseEndpoints(endpoints =>
+        
+            app.UseAzureSignalR (endpoints =>
             {
                 endpoints.MapHub<ChatHub>("/chat");
             });

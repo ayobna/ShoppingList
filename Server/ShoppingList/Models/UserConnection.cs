@@ -7,7 +7,7 @@ namespace ShoppingList.Models
 {
     public class UserConnection
     {
+        public string User { get; set; }
         public int ListID { get; set; }
-
     }
 }
