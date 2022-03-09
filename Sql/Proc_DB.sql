@@ -196,20 +196,29 @@ Go
 -- chat
 
 -- Drop Proc_Get_Chat_Messages
-Create Proc Proc_Get_Chat_Messages
+Alter Proc Proc_Get_Chat_Messages
 @ListID int
 AS
 SELECT			shopping_lists_messages.UserID, shopping_lists_messages.Message, shopping_lists_messages.CreatedOn, users.FirstName, users.LastName, users.Img
 FROM            shopping_lists_messages INNER JOIN users 
 				ON shopping_lists_messages.UserID = users.UserID
 WHERE        (shopping_lists_messages.ListID = @ListID) AND (shopping_lists_messages.IsActive = 1)
+ORDER BY shopping_lists_messages.CreatedOn
 Go
 
+exec Proc_Get_Chat_Messages 45
 
 
-
-
-
+Create Proc Proc_Create_Message
+@ListID int,
+@UserID int,
+@Message nvarchar(150),
+@CreatedOn datetime
+AS
+	INSERT INTO  [shopping_lists_messages]([ListID],[UserID],[CreatedOn],[Message],[IsActive])
+								 VALUES (@ListID, @UserID,@CreatedOn, @Message, 1);
+Go
+--select* from [dbo].[shopping_lists_messages]
 
 
 
