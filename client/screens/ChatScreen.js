@@ -12,6 +12,8 @@ import {
 } from "react-native-paper";
 import { User } from "../User";
 import { chatApi } from "../api/api";
+
+// Test branch tal
 const ChatScreen = (props) => {
   // props
   const { navigation, route } = props;
