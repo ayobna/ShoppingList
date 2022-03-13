@@ -53,6 +53,7 @@ namespace ShoppingList
 
             services.AddSingleton<IProductData, ProductData>();
             services.AddSingleton<IUser, UserData>();
+            services.AddSingleton<IListUsers, ListUsersData>();
             //       services.Add(new ServiceDescriptor(typeof(IUser), new User()));
             //     services.Add(new ServiceDescriptor(typeof(IShoppingList), new Shoppinglist()));
 
