@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { View, FlatList, StyleSheet } from "react-native";
 import ShoppingListCard from "../components/ShoppingListCard";
 import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
@@ -22,6 +22,9 @@ const ChatScreen = (props) => {
   const [users, setUsers] = useState([]);
   const [message, setMessage] = useState("");
   const [user, setUser] = useState(User);
+
+  const flatListRef = useRef();
+
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", async () => {
       joinChat();
@@ -40,36 +43,28 @@ const ChatScreen = (props) => {
   }, [route, navigation]);
 
   const getMessages = async () => {
-    let res = await chatApi.apiShoppingListChatMessagesIdGet(route.params.shoppingListID);
-    setMessages(res.data);
+    let res = await chatApi.apiShoppingListChatMessagesIdGet(
+      route.params.shoppingListID
+    );
+    let data= res.data
+
+    setMessages(data);
+    flatListRef.current.initialScrollIndex(data.length-1)  
   };
   const joinChat = async () => {
-    let tempUser = user.FirstName;
     try {
       const connection = new HubConnectionBuilder()
-        .withUrl("http://localhost:44632/chat")
+        .withUrl("https://shoppinglist20220211160436.azurewebsites.net/chat")
         .withAutomaticReconnect()
         .build();
 
       connection.on("ReceiveMessage", (chatMessageCard) => {
-        console.log("chatMessageCard", chatMessageCard)
-        const tempMessages = [...messages];
-        tempMessages = [tempMessages, chatMessageCard];
-        setMessages(tempMessages);
-        // setFirstJoin(false)
+        console.log(
+          "send message => ReceiveMessage chatMessageCard",
+          chatMessageCard
+        );
+        setMessages((messages) => [...messages, chatMessageCard]);
       });
-
-      // connection.on("Messages", (chatMessageCard) => {
-      //   setTempMessages(chatMessageCard);
-      //   console.log("Messages", chatMessageCard);
-
-      //   chatMessageCard.forEach((chatMessageCard) => {
-      //     let tempUser = chatMessageCard.firstName;
-      //     let message = chatMessageCard.message;
-      //     setMessages((messages) => [...messages, { tempUser, message }]);
-      //   });
-      // });
-
       connection.onclose((e) => {
         setConnection();
         setMessages([]);
@@ -87,26 +82,25 @@ const ChatScreen = (props) => {
   };
 
   const sendMessage = async () => {
-    console.log("sendMessage")
+    console.log("sendMessage");
     let chatMessageCard = {
       ListID: route.params.shoppingListID,
       UserID: user.UserID,
       Message: message,
       FirstName: user.FirstName,
       LastName: user.LastName,
-      Img: user.Img
-    }
+      Img: user.Img,
+    };
     try {
       await connection.invoke("SendMessage", chatMessageCard);
-      setMessage("")
+      setMessage("");
     } catch (e) {
       console.log(e);
     }
   };
 
-
   const closeConnection = async () => {
-    console.log("closeConnection")
+    console.log("closeConnection");
     try {
       await connection.stop();
     } catch (e) {
@@ -132,19 +126,24 @@ const ChatScreen = (props) => {
   };
   return (
     <View style={styles.container}>
-      {/* <Text>List Screen {route.params.shoppingListID}</Text> */}
+      {messages.length>0&&
       <FlatList
-        showsVerticalScrollIndicator={false}
+        ref={flatListRef}
+        onContentSizeChange={() => flatListRef.current.scrollToEnd({animated: true})  }
+     //   showsVerticalScrollIndicator={false}
+       // inverted
+      initialScrollIndex={messages.length-1}
         data={messages}
         renderItem={(item) => renderListItem(item)}
         keyExtractor={(item, index) => String(index)}
         contentContainerStyle={{ flexGrow: 1 }}
         ListEmptyComponent={handleListEmptyComponent}
         ListFooterComponent={renderFooter}
-      // refreshing={isFetching}
-      // onRefresh={() => handleRefresh()}
+        // refreshing={isFetching}
+        // onRefresh={() => handleRefresh()}
       />
-
+    
+      }
       <View
         style={{
           width: "100%",
@@ -165,7 +164,7 @@ const ChatScreen = (props) => {
             onChangeText={(txt) => setMessage(txt)}
             //  dense={true}
             mode="outlined"
-          //   error={null}
+            //   error={null}
           />
         </View>
         <View

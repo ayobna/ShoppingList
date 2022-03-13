@@ -8,7 +8,7 @@ const ChatCard = (props) => {
     const { data } = props;
 
     //states 
-    console.log(data)
+     console.log(data)
 
 
     return (
