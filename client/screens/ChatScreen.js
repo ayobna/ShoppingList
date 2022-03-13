@@ -11,7 +11,6 @@ import {
   Avatar,
 } from "react-native-paper";
 import { User } from "../User";
-import { ChatApi } from "../generated";
 import { chatApi } from "../api/api";
 const ChatScreen = (props) => {
   // props
@@ -25,7 +24,7 @@ const ChatScreen = (props) => {
   const [user, setUser] = useState(User);
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", async () => {
-     joinChat();
+      joinChat();
       getMessages();
     });
     return unsubscribe;
@@ -33,33 +32,30 @@ const ChatScreen = (props) => {
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("blur", async () => {
-   closeConnection();
-    setMessage("");
-    setMessages("");
+      closeConnection();
+      setMessage("");
+      setMessages("");
     });
     return unsubscribe;
-  }, [route,navigation]);
+  }, [route, navigation]);
 
   const getMessages = async () => {
-    let res = await chatApi.apiShoppingListChatMessagesIdGet(45);
-    let dbMessages = res.data;
-    dbMessages.forEach((dbMessages) => {
-      let tempUser = dbMessages.firstName;
-      let message = dbMessages.message;
-      setMessages((messages) => [...messages, { tempUser, message }]);
-    });
+    let res = await chatApi.apiShoppingListChatMessagesIdGet(route.params.shoppingListID);
+    setMessages(res.data);
   };
   const joinChat = async () => {
     let tempUser = user.FirstName;
     try {
       const connection = new HubConnectionBuilder()
-        .withUrl("https://shoppinglist20220211160436.azurewebsites.net/chat")
+        .withUrl("http://localhost:44632/chat")
         .withAutomaticReconnect()
         .build();
 
-      connection.on("ReceiveMessage", (tempUser, message) => {4
-        
-        setMessages((messages) => [...messages, { tempUser, message }]);
+      connection.on("ReceiveMessage", (chatMessageCard) => {
+        console.log("chatMessageCard", chatMessageCard)
+        const tempMessages = [...messages];
+        tempMessages = [tempMessages, chatMessageCard];
+        setMessages(tempMessages);
         // setFirstJoin(false)
       });
 
@@ -80,32 +76,34 @@ const ChatScreen = (props) => {
       });
 
       await connection.start();
-      let ListID = parseInt(45);
-      await connection.invoke("JoinRoom", { tempUser, ListID });
-      
+      let listID = route.params.shoppingListID;
+      let userID = user.UserID;
+      await connection.invoke("JoinRoom", { listID, userID });
+
       setConnection(connection);
     } catch (e) {
       console.log(e);
     }
   };
 
-  const sendMessage =  async () => {
+  const sendMessage = async () => {
     console.log("sendMessage")
-   let shoppingListCard={
-    ListID:route.params.shoppingListID,
-    UserID:user.UserID,
-    Message:message,
-    FirstName:user.FirstName,
-    LastName:user.LastName
-   }
+    let chatMessageCard = {
+      ListID: route.params.shoppingListID,
+      UserID: user.UserID,
+      Message: message,
+      FirstName: user.FirstName,
+      LastName: user.LastName,
+      Img: user.Img
+    }
     try {
-     await connection.invoke("SendMessage", shoppingListCard);
-     setMessage("")
+      await connection.invoke("SendMessage", chatMessageCard);
+      setMessage("")
     } catch (e) {
       console.log(e);
     }
   };
- 
+
 
   const closeConnection = async () => {
     console.log("closeConnection")

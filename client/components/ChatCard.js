@@ -9,14 +9,14 @@ const ChatCard = (props) => {
 
     //states 
     console.log(data)
-  
+
 
     return (
         <View style={{ ...styles.container, ...props.style }}>
             <TouchableHighlight style={styles.touchableHighLight} underlayColor="red" onPress={null}>
                 <Card>
-                    <Card.Title titleNumberOfLines={3} subtitle={data.tempUser} title={data.message}  />
-                  
+                    <Card.Title titleNumberOfLines={3} subtitle={data.firstName + " " + data.lastName} title={data.message} />
+
                 </Card>
             </TouchableHighlight>
         </View >
@@ -26,8 +26,8 @@ const ChatCard = (props) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        marginHorizontal:10,
-        marginTop:10
+        marginHorizontal: 10,
+        marginTop: 10
     },
 });
 
