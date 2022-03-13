@@ -56,7 +56,7 @@ GO
 -- Drop Table shopping_lists_messages
 CREATE TABLE shopping_lists_messages
 (
-	 ListID int identity not null,
+	 ListID int not null,
 	 UserID int not null,
 	 CreatedOn DateTime not null,
 	 [Message] nvarchar (150) not null,

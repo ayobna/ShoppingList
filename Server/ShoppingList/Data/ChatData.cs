@@ -32,7 +32,7 @@ namespace ShoppingList.Data
             cmd.Parameters.Add("@ListID", SqlDbType.Int).Value = chatMessageCard.ListID;
             cmd.Parameters.Add("@UserID", SqlDbType.Int).Value = chatMessageCard.UserID;
             cmd.Parameters.Add("@Message", SqlDbType.NVarChar).Value = chatMessageCard.Message;
-            cmd.Parameters.Add("@CreatedOn", SqlDbType.DateTime).Value = DateTime.Now;
+            cmd.Parameters.Add("@CreatedOn", SqlDbType.DateTime).Value = chatMessageCard.CreatedOn;
 
             int res = db.ExecuteAndClose(cmd);
 

@@ -199,7 +199,7 @@ Go
 Alter Proc Proc_Get_Chat_Messages
 @ListID int
 AS
-SELECT			shopping_lists_messages.UserID, shopping_lists_messages.Message, shopping_lists_messages.CreatedOn, users.FirstName, users.LastName, users.Img
+SELECT			shopping_lists_messages.ListID, shopping_lists_messages.UserID, shopping_lists_messages.Message, shopping_lists_messages.CreatedOn, users.FirstName, users.LastName, users.Img
 FROM            shopping_lists_messages INNER JOIN users 
 				ON shopping_lists_messages.UserID = users.UserID
 WHERE        (shopping_lists_messages.ListID = @ListID) AND (shopping_lists_messages.IsActive = 1)
