@@ -5,7 +5,7 @@ import { IconButton, Button, Avatar } from 'react-native-paper';
 
 const AmountInput = (props) => {
     // props
-    const { amount, handlePlusMinusAmount, handleOnChageAmount, edit, isError } = props;
+    const { amount, handlePlusMinusAmount, handleOnChangeAmount, edit, isError } = props;
 
 
     return (
@@ -20,7 +20,7 @@ const AmountInput = (props) => {
             <TextInput
                 value={amount}
                 width={50}
-                onChangeText={(txt) => handleOnChageAmount(txt, edit)}
+                onChangeText={(txt) => handleOnChangeAmount(txt, edit)}
                 dense
                 mode="outlined"
                 keyboardType='numeric'

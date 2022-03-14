@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using ShoppingList.Models;
 using ShoppingList.Models.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace ShoppingList.Controllers
@@ -21,8 +22,6 @@ namespace ShoppingList.Controllers
 
         public ProductController(IProductData productData_, ILogger<ShoppinglistController> logger_, IWebHostEnvironment hostingEnvironment_)
         {
-
-
             productData = productData_;
             logger = logger_;
             env = hostingEnvironment_;
@@ -41,23 +40,16 @@ namespace ShoppingList.Controllers
                 {
                     products[i].CreatedOn = DateTime.Now;
                     int productID = productData.CreateProduct(products[i]);
-                    if (!String.IsNullOrEmpty(products[i].Img))
+                    products[i].ProductID = productID;
+                    Product product = products[i];
+                    if (!String.IsNullOrEmpty(product.Img))
                     {
-                        string path = env.WebRootPath + $"/uploads/shoppingLists/";
-                        string sqlPath = $"shoppingList_{products[i].ListID}";
-                        path = path + sqlPath;
-                        if (!Directory.Exists(path))
-                        {
-                            Directory.CreateDirectory(path);
-                        }
-                        string fileName = $"img_{productID}_{products[i].CreatorID}_{DateTime.Now.ToString("yyyyMMddHHmmssffff")}.jpg";
-                        path = Path.Combine(path, fileName);
-                        logger.LogInformation("path Information", path);
-                        UploadFile.Upload(path, products[i].Img);
-                        products[i].ProductID = productID;
-                        products[i].Img = sqlPath + "/" + fileName;
-                        products[i].IsActive = true;
-                        productData.UpdaeProduct(products[i]);
+                        string sqlPath, fileName;
+                        UploadFile(product, out sqlPath, out fileName);
+                        product.ProductID = product.ProductID;
+                        product.Img = sqlPath + "/" + fileName;
+                        product.IsActive = true;
+                        productData.UpdateProduct(product);
                     }
                 }
                 return Ok("successfully");
@@ -66,6 +58,83 @@ namespace ShoppingList.Controllers
             {
                 logger.LogError(": Did not create sharp products in DB");
                 return NotFound(ex);
+            }
+        }
+
+        private void UploadFile(Product product, out string sqlPath, out string fileName)
+        {
+            string path = env.WebRootPath + $"/uploads/shoppingLists/";
+            sqlPath = $"shoppingList_{product.ListID}";
+            path = path + sqlPath;
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+            fileName = $"img_{product.ProductID}_{product.CreatorID}_{DateTime.Now.ToString("yyyyMMddHHmmssffff")}.jpg";
+            path = Path.Combine(path, fileName);
+            logger.LogInformation("path Information", path);
+            Models.UploadFile.Upload(path, product.Img);
+        }
+
+        [HttpPost]
+        [Route("Api/UpdateProductNewImg")]
+        public IActionResult UpdateProductNewImg([FromBody] Product product)
+        {
+            try
+            {
+                string sqlPath, fileName;
+                UploadFile(product, out sqlPath, out fileName);
+                product.Img = sqlPath + "/" + fileName;
+                productData.UpdateProduct(product);
+                return Ok("successfully");
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(": Did not Get Products by ListId DB");
+                return BadRequest(ex);
+            }
+        }
+        [HttpPost]
+        [Route("Api/UpdateProduct")]
+        public IActionResult UpdateProduct([FromBody] Product product)
+        {
+            try
+            {
+                productData.UpdateProduct(product);
+                return Ok("successfully");
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(": Did not Get Products by ListId DB");
+                return BadRequest(ex);
+            }
+        }
+
+
+
+
+        [HttpGet]
+        [Route("Api/GetProductsByListId/{id}")]
+        public IActionResult GetProductbyListId(int id)
+        {
+            try
+            {
+                List<Product> products = productData.GetProductsByListId(id);
+                if (products == null)
+                {
+                    logger.LogWarning(" Id not exists");
+                    return NotFound();
+                }
+                else
+                {
+                    logger.LogInformation("List by Id" + " " + id);
+                    return Ok(products);
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(": Did not Get Products by ListId DB");
+                return BadRequest(ex);
             }
         }
     }

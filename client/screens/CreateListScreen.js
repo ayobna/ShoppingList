@@ -19,7 +19,7 @@ import * as ImagePicker from "expo-image-picker";
 import ProductCard from "../components/ProductCard";
 import PopupDialog from "../components/PopupDialog";
 import { productApi, shoppingListApi } from "../api/api";
-import { User } from "../User";
+import { _getData } from "../utils/Functions";
 
 const CreateListScreen = (props) => {
   // props
@@ -40,8 +40,8 @@ const CreateListScreen = (props) => {
   const [editAmountError, setEditAmountError] = useState(false);
   const [editNameError, setEditNameError] = useState(false);
   const [titleError, setTitleError] = useState(false);
-  const [user, setUser] = useState(User);
-
+  const [user, setUser] = useState();
+const ScreenName = props.route.name;
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -60,12 +60,26 @@ const CreateListScreen = (props) => {
     }
   }, [productEditDetails]);
 
+  useEffect(() => {
+    LoadUser()
+  }, []);
+  const LoadUser = async () => {
+    let u = await _getData("User");
+    console.log(u)
+    if (u != null) {
+      setUser(u);
+    }
+  };
+
   // מרנדר את המוצרים
   const renderListItem = (itemData) => (
+    
     <ProductCard
       data={itemData.item}
       handleDeleteProduct={handleDeleteProduct}
       handleEditProduct={handleEditProduct}
+      ScreenName={ScreenName}
+      user={user}
     />
   );
 
@@ -73,17 +87,17 @@ const CreateListScreen = (props) => {
   const handlePlusMinusAmount = (operation, edit) => {
     if (
       amount === "" ||
-      (productEditDetails && productEditDetails.Amount === "")
+      (productEditDetails && productEditDetails.amount === "")
     ) {
       edit
         ? setProductEditDetails((oldState) => ({
           ...oldState,
-          Amount: "1",
+          amount: "1",
         }))
         : setAmount("1");
       return;
     }
-    let value = parseInt(edit ? productEditDetails.Amount : amount);
+    let value = parseInt(edit ? productEditDetails.amount : amount);
 
     if (operation === "+") {
       if (value !== 1000) value += 1;
@@ -93,13 +107,13 @@ const CreateListScreen = (props) => {
     edit
       ? setProductEditDetails((oldState) => ({
         ...oldState,
-        Amount: value.toString(),
+        amount: value.toString(),
       }))
       : setAmount(value.toString());
   };
 
   // פעולה האחראית על שינוי הכמות דרך המקלדת
-  const handleOnChageAmount = (txt, edit) => {
+  const handleOnChangeAmount = (txt, edit) => {
     if (parseInt(txt) !== 0) {
       const amountRgx = /^[1-9]*([0-9]*)$/;
       if (!amountRgx.test(txt) || parseInt(txt) > 1000) {
@@ -108,7 +122,7 @@ const CreateListScreen = (props) => {
       edit
         ? setProductEditDetails((oldState) => ({
           ...oldState,
-          Amount: txt,
+          amount: txt,
         }))
         : setAmount(txt);
     }
@@ -133,7 +147,7 @@ const CreateListScreen = (props) => {
       if (edit) {
         setProductEditDetails((oldState) => ({
           ...oldState,
-          ImgUri: result.uri,
+          img: result.uri,
           ImageBase64: result.base64,
         }));
       } else {
@@ -149,19 +163,19 @@ const CreateListScreen = (props) => {
       return;
     }
     let product = {
-      ProductID: 1,
-      CreatorID: 1,
-      Name: productName.trim(),
-      Amount: amount,
-      Img: imageBase64,
-      ImgUri: imageUri
+     productID: 1,
+      creatorID:user.UserID,
+      name: productName.trim(),
+      amount: amount,
+      imgUri : imageBase64,
+      img     : imageUri
         ? imageUri
         : "https://media.istockphoto.com/vectors/no-image-available-sign-vector-id922962354?k=20&m=922962354&s=612x612&w=0&h=f-9tPXlFXtz9vg_-WonCXKCdBuPUevOBkp3DQ-i0xqo=",
     };
     let tempProducts = [...products];
     if (tempProducts.length !== 0) {
-      product.ProductID = (
-        parseInt(tempProducts[tempProducts.length - 1].ProductID) + 1
+      product.productID = (
+        parseInt(tempProducts[tempProducts.length - 1].productID) + 1
       ).toString();
     }
     tempProducts = [...tempProducts, product];
@@ -173,14 +187,14 @@ const CreateListScreen = (props) => {
     let counter = 0;
     const amountRgx = /^[1-9]+$/;
     const nameRgx = /^[\u05D0-\u05EAa-zA-Z0-9']+([ |\-]*[\u05D0-\u05EAa-zA-Z0-9'\s]+){0,1}$/;
-    if (!amountRgx.test(edit ? productEditDetails.Amount : amount)) {
+    if (!amountRgx.test(edit ? productEditDetails.amount : amount)) {
       edit ? setEditAmountError(true) : setAmountError(true);
     } else {
       edit ? setEditAmountError(false) : setAmountError(false);
 
       counter++;
     }
-    if (!nameRgx.test(edit ? productEditDetails.Name : productName)) {
+    if (!nameRgx.test(edit ? productEditDetails.name : productName)) {
       edit ? setEditNameError(true) : setNameError(true);
     } else {
       edit ? setEditNameError(false) : setNameError(false);
@@ -220,7 +234,7 @@ const CreateListScreen = (props) => {
   const handleDeleteProduct = (productID) => {
     let tempProducts = [...products];
     tempProducts = tempProducts.filter(
-      (product) => product.ProductID !== productID
+      (product) => product.productID !== productID
     );
     setProducts(tempProducts);
   };
@@ -239,26 +253,25 @@ const CreateListScreen = (props) => {
     console.log(tempProducts);
 
     let index = tempProducts.findIndex(
-      (product) => product.ProductID === productEditDetails.ProductID
+      (product) => product.productID === productEditDetails.productID
     );
     tempProducts[index] = productEditDetails;
-    tempProducts[index].Name = tempProducts[index].Name.trim();
+    tempProducts[index].name = tempProducts[index].name.trim();
 
     setProducts(tempProducts);
     handleClearStates();
   };
 
   const handleSaveShoppingList = () => {
-    console.log("stam  test");
     if (regexValidationShoppingList() < 2) {
-      console.log("test error")
+      console.log("handleSaveShoppingList error")
       return;
     }
     handleCreateShoppingListApi();
   };
 
   const handleCreateShoppingListApi = async () => {
-    let newShoppingList = { CreatorID: user.UserID, Title: title.trim() };
+    let newShoppingList = { creatorID: user.UserID, Title: title.trim() };
 
     try {
       const res = await shoppingListApi.apiShoppingListCreateShoppingListPost(newShoppingList)
@@ -272,14 +285,15 @@ const CreateListScreen = (props) => {
 
   const updateNewShoppingList = (id) => {
     let ProductsFromList = products;
+
     let productsToServer = [];
     for (let index = 0; index < ProductsFromList.length; index++) {
       productsToServer.push({
         listID: id,
         creatorID: user.UserID,
-        name: ProductsFromList[index].Name,
-        amount: ProductsFromList[index].Amount,
-        img: ProductsFromList[index].Img,
+        name: ProductsFromList[index].name,
+        amount: ProductsFromList[index].amount,
+        img: ProductsFromList[index].imgUri,
       });
     }
     addProductsToShoppingList(productsToServer)
@@ -328,7 +342,7 @@ const CreateListScreen = (props) => {
         showsVerticalScrollIndicator={false}
         data={products}
         renderItem={(item) => renderListItem(item)}
-        keyExtractor={(item) => String(item.ProductID)}
+        keyExtractor={(item) => String(item.productID)}
         contentContainerStyle={{ flexGrow: 1 }}
         ListEmptyComponent={handleListEmptyComponent}
       // ListFooterComponent={renderFooter}
@@ -377,7 +391,7 @@ const CreateListScreen = (props) => {
               isError={amountError}
               amount={amount}
               handlePlusMinusAmount={handlePlusMinusAmount}
-              handleOnChageAmount={handleOnChageAmount}
+              handleOnChangeAmount={handleOnChangeAmount}
             />
           </View>
           <View
@@ -419,11 +433,11 @@ const CreateListScreen = (props) => {
         >
           <TextInput
             label="שם מוצר"
-            value={productEditDetails.Name}
+            value={productEditDetails.name}
             onChangeText={(txt) =>
               setProductEditDetails((oldstate) => ({
                 ...oldstate,
-                Name: txt,
+                name: txt,
               }))
             }
             dense={true}
@@ -442,9 +456,9 @@ const CreateListScreen = (props) => {
             <AmountInput
               isError={editAmountError}
               edit={true}
-              amount={productEditDetails.Amount}
+              amount={productEditDetails.amount}
               handlePlusMinusAmount={handlePlusMinusAmount}
-              handleOnChageAmount={handleOnChageAmount}
+              handleOnChangeAmount={handleOnChangeAmount}
             />
           </View>
           <View style={styles.editImageContainer}>
@@ -453,7 +467,7 @@ const CreateListScreen = (props) => {
                 size={100}
                 // theme={{ colors: { primary: Colors.avatarBackground } }}
                 source={{
-                  uri: productEditDetails.ImgUri,
+                  uri: productEditDetails.img,
                 }}
               />
             </View>
@@ -481,7 +495,7 @@ const CreateListScreen = (props) => {
                 onPress={() =>
                   setProductEditDetails((oldState) => ({
                     ...oldState,
-                    ImgUri:
+                    img:
                       "https://media.istockphoto.com/vectors/no-image-available-sign-vector-id922962354?k=20&m=922962354&s=612x612&w=0&h=f-9tPXlFXtz9vg_-WonCXKCdBuPUevOBkp3DQ-i0xqo=",
                     ImageBase64: null,
                   }))
