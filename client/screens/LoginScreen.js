@@ -16,10 +16,12 @@ import {
   Avatar,
 } from "react-native-paper";
 
+//ayoub test 2
+
+
 // maya
 
 // tal was here
-
 
 const LoginScreen = (props) => {
   const { navigation } = props;
