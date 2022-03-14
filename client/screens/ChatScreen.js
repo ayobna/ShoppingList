@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
-<<<<<<< HEAD
 import { View, FlatList, StyleSheet, Keyboard } from "react-native";
-=======
-import { View, FlatList, StyleSheet } from "react-native";
->>>>>>> master
+
+
 import ShoppingListCard from "../components/ShoppingListCard";
 import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import ChatCard from "../components/ChatCard";
@@ -31,10 +29,7 @@ const ChatScreen = (props) => {
 
   const flatListRef = useRef();
 
-<<<<<<< HEAD
 
-=======
->>>>>>> master
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", async () => {
       joinChat();
@@ -69,16 +64,10 @@ const ChatScreen = (props) => {
         .build();
 
       connection.on("ReceiveMessage", (chatMessageCard) => {
-<<<<<<< HEAD
+
         setMessages((messages) => [...messages, chatMessageCard]);
         // setFirstJoin(false)
-=======
-        console.log(
-          "send message => ReceiveMessage chatMessageCard",
-          chatMessageCard
-        );
-        setMessages((messages) => [...messages, chatMessageCard]);
->>>>>>> master
+
       });
       connection.onclose((e) => {
         setConnection();
@@ -150,29 +139,20 @@ const ChatScreen = (props) => {
       {messages.length>0&&
       <FlatList
         ref={flatListRef}
-<<<<<<< HEAD
         onContentSizeChange={() => flatListRef.current.scrollToEnd()}
         showsVerticalScrollIndicator={false}
-=======
-        onContentSizeChange={() => flatListRef.current.scrollToEnd({animated: true})  }
-     //   showsVerticalScrollIndicator={false}
-       // inverted
-      initialScrollIndex={messages.length-1}
->>>>>>> master
+
         data={messages}
         renderItem={(item) => renderListItem(item)}
         keyExtractor={(item, index) => String(index)}
         contentContainerStyle={{ flexGrow: 1 }}
         ListEmptyComponent={handleListEmptyComponent}
         ListFooterComponent={renderFooter}
-<<<<<<< HEAD
+
         ItemSeparatorComponent={handleSeparatorComponent}
       // refreshing={isFetching}
       // onRefresh={() => handleRefresh()}
-=======
-        // refreshing={isFetching}
-        // onRefresh={() => handleRefresh()}
->>>>>>> master
+
       />
     
       }
