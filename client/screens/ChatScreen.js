@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View, FlatList, StyleSheet, Keyboard } from "react-native";
+import { View, FlatList, StyleSheet, Keyboard, TextInput } from "react-native";
 
 
 import ShoppingListCard from "../components/ShoppingListCard";
 import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import ChatCard from "../components/ChatCard";
 import {
-  TextInput,
   IconButton,
   Button,
   Text,
@@ -36,7 +35,7 @@ const ChatScreen = (props) => {
       getMessages();
     });
     return unsubscribe;
-  }, [route]);
+  }, [navigation]);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("blur", async () => {
@@ -45,7 +44,7 @@ const ChatScreen = (props) => {
       setMessages("");
     });
     return unsubscribe;
-  }, [route, navigation]);
+  }, [navigation]);
 
   const getMessages = async () => {
     let res = await chatApi.apiShoppingListChatMessagesIdGet(
@@ -64,7 +63,7 @@ const ChatScreen = (props) => {
 
       connection.on("ReceiveMessage", (chatMessageCard) => {
 
-        setMessages((messages) => [...messages, chatMessageCard]);
+        setMessages((messages) => [chatMessageCard, ...messages]);
         // setFirstJoin(false)
 
       });
@@ -133,66 +132,43 @@ const ChatScreen = (props) => {
   const renderFooter = () => {
     return <View />;
   };
+
+  console.log("messages", messages)
   return (
     <View style={styles.container}>
-      {messages.length > 0 &&
-        <FlatList
-          ref={flatListRef}
-          onContentSizeChange={() => flatListRef.current.scrollToEnd()}
-          showsVerticalScrollIndicator={false}
+      <FlatList
+        ref={flatListRef}
+        // onContentSizeChange={() => flatListRef.current.scrollToEnd()}
+        showsVerticalScrollIndicator={false}
+        inverted
 
-          data={messages}
-          renderItem={(item) => renderListItem(item)}
-          keyExtractor={(item, index) => String(index)}
-          contentContainerStyle={{ flexGrow: 1 }}
-          ListEmptyComponent={handleListEmptyComponent}
-          ListFooterComponent={renderFooter}
+        data={messages}
+        renderItem={(item) => renderListItem(item)}
+        keyExtractor={(item, index) => String(index)}
+        contentContainerStyle={{ flexGrow: 1 }}
+        // ListEmptyComponent={handleListEmptyComponent}
+        ListFooterComponent={renderFooter}
 
-          ItemSeparatorComponent={handleSeparatorComponent}
-        // refreshing={isFetching}
-        // onRefresh={() => handleRefresh()}
+        ItemSeparatorComponent={handleSeparatorComponent}
+      // refreshing={isFetching}
+      // onRefresh={() => handleRefresh()}
 
-        />
-
-      }
-      <View
-        style={{
-          width: "100%",
-          alignItems: "flex-end",
-          flexDirection: "row",
-          justifyContent: "space-around",
-          bottom: 5,
-        }}
-      >
-        <View
-          style={{
-            width: "75%",
-          }}
-        >
-          <TextInput
-            label="הודעה"
-            value={message}
-            // onFocus={() => flatListRef.current.scrollToEnd()}
-            // onBlur={() => flatListRef.current.scrollToEnd()}
-            onChangeText={(txt) => setMessage(txt)}
-            //  dense={true}
-            mode="outlined"
-          //   error={null}
-          />
+      />
+      <View style={{ flexDirection: "row", backgroundColor: "#f1f1f1", justifyContent: "center", alignItems: "flex-end", paddingVertical: 10, paddingLeft: 10, borderTopColor: "#e1e1e1", borderTopWidth: 1, maxHeight: 150 }}>
+        <View style={{ flex: 1, backgroundColor: "white", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 2 }}>
+          <TextInput value={message} onChangeText={(txt) => setMessage(txt)} selectionColor="black" placeholder="תרשום תרשום.." style={{ fontFamily: "our-font-regular" }} numberOfLines={2} multiline />
         </View>
-        <View
-          style={{
-            width: "20%",
-          }}
-        ></View>
-        <Button
-          //  contentStyle={{ width: "50%" }}
-          //   mode="contained"
-          onPress={sendMessage}
-        >
-          הוספה
-        </Button>
+        <IconButton
+          icon="send"
+          size={20}
+          onPress={() => sendMessage()}
+          style={{ transform: [{ rotateY: '180deg' }] }}
+          disabled={message.length === 0}
+        />
       </View>
+
+
+
     </View>
   );
 };
