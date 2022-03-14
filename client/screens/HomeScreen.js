@@ -64,6 +64,7 @@ const HomeScreen = (props) => {
 
   const ShoppingListsGetFromAPI = async () => {
     let res = null;
+    console.log(currentUser.UserID)
     try {
       if (extraDataForTabs == 1)
         res = await shoppingListApi.apiShoppingListCreatedByUserIdGet(currentUser.UserID);

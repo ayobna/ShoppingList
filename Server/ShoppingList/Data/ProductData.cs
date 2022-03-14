@@ -1,6 +1,7 @@
 ﻿using ShoppingList.Models;
 using ShoppingList.Models.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -34,7 +35,7 @@ namespace ShoppingList.Data
             return Convert.ToInt32(cmd.Parameters["@ProductID"].Value);
         }
 
-        public int UpdaeProduct(Product product)
+        public int UpdateProduct(Product product)
         {
             SqlCommand cmd = db.CreateCommand("Proc_Update_Product", db.Connect(), "proc");
             cmd.Parameters.Add("@ProductID", SqlDbType.Int).Value = product.ProductID;
@@ -53,12 +54,18 @@ namespace ShoppingList.Data
         }
 
 
-        //public List<Shoppinglist> GetAllListsCreatedByUser()
-        //{
-        //    SqlCommand cmd = db.CreateCommand("Proc_Get_All_Lists_Created_By_User", db.Connect(), "proc");
-        //    DataTable tb = db.ReadAndClose(cmd);
-        //    List<Shoppinglist> shoppinglist = db.ConvertDataTable<Shoppinglist>(tb);
-        //    return shoppinglist;
-        //}
+        public List<Product> GetProductsByListId(int id)
+        {
+            SqlCommand cmd = db.CreateCommand("Proc_Get_Products_By_ListId", db.Connect(), "proc");
+            cmd.Parameters.Add("@ListID", SqlDbType.Int).Value = id;
+            DataTable tb = db.ReadAndClose(cmd);
+            List<Product> products = db.ConvertDataTable<Product>(tb);
+            if (products == null)
+            {
+                return null;
+            }
+            return products;
+        }
+
     }
 }

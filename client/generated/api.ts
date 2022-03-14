@@ -321,12 +321,111 @@ export const ProductApiAxiosParamCreator = function (configuration?: Configurati
     return {
         /**
          * 
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiGetProductsByListIdIdGet: async (id: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('apiGetProductsByListIdIdGet', 'id', id)
+            const localVarPath = `/Api/GetProductsByListId/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @param {Array<Product>} [product] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
         apiProductAddProductsToShoppingListPost: async (product?: Array<Product>, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/Product/AddProductsToShoppingList`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(product, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {Product} [product] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiUpdateProductNewImgPost: async (product?: Product, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/Api/UpdateProductNewImg`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(product, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {Product} [product] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiUpdateProductPost: async (product?: Product, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/Api/UpdateProduct`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -364,12 +463,42 @@ export const ProductApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiGetProductsByListIdIdGet(id: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiGetProductsByListIdIdGet(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
          * @param {Array<Product>} [product] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
         async apiProductAddProductsToShoppingListPost(product?: Array<Product>, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.apiProductAddProductsToShoppingListPost(product, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {Product} [product] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiUpdateProductNewImgPost(product?: Product, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiUpdateProductNewImgPost(product, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {Product} [product] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiUpdateProductPost(product?: Product, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiUpdateProductPost(product, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
     }
@@ -384,12 +513,39 @@ export const ProductApiFactory = function (configuration?: Configuration, basePa
     return {
         /**
          * 
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiGetProductsByListIdIdGet(id: number, options?: any): AxiosPromise<void> {
+            return localVarFp.apiGetProductsByListIdIdGet(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @param {Array<Product>} [product] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
         apiProductAddProductsToShoppingListPost(product?: Array<Product>, options?: any): AxiosPromise<void> {
             return localVarFp.apiProductAddProductsToShoppingListPost(product, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {Product} [product] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiUpdateProductNewImgPost(product?: Product, options?: any): AxiosPromise<void> {
+            return localVarFp.apiUpdateProductNewImgPost(product, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {Product} [product] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiUpdateProductPost(product?: Product, options?: any): AxiosPromise<void> {
+            return localVarFp.apiUpdateProductPost(product, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -403,6 +559,17 @@ export const ProductApiFactory = function (configuration?: Configuration, basePa
 export class ProductApi extends BaseAPI {
     /**
      * 
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ProductApi
+     */
+    public apiGetProductsByListIdIdGet(id: number, options?: AxiosRequestConfig) {
+        return ProductApiFp(this.configuration).apiGetProductsByListIdIdGet(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @param {Array<Product>} [product] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -410,6 +577,28 @@ export class ProductApi extends BaseAPI {
      */
     public apiProductAddProductsToShoppingListPost(product?: Array<Product>, options?: AxiosRequestConfig) {
         return ProductApiFp(this.configuration).apiProductAddProductsToShoppingListPost(product, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {Product} [product] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ProductApi
+     */
+    public apiUpdateProductNewImgPost(product?: Product, options?: AxiosRequestConfig) {
+        return ProductApiFp(this.configuration).apiUpdateProductNewImgPost(product, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {Product} [product] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ProductApi
+     */
+    public apiUpdateProductPost(product?: Product, options?: AxiosRequestConfig) {
+        return ProductApiFp(this.configuration).apiUpdateProductPost(product, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

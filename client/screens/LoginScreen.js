@@ -7,8 +7,8 @@ import {
   Image,
 
 } from "react-native";
-
-
+import { User } from "../User";
+import { _storeData , _getData} from "../utils/Functions";
 import {
   Button,
   TextInput,
@@ -22,8 +22,21 @@ const LoginScreen = (props) => {
   const [hidePass, setHidePass] = useState(true);
   const [eye, seteye] = useState("eye");
   const CheckLogin = async () => {
+
+    _storeData('User', User);
     navigation.navigate('דף בית')
   };
+
+
+
+
+
+
+
+
+
+
+
 
   return (
     <View style={styles.container}>
