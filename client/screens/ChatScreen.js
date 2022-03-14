@@ -14,7 +14,7 @@ import {
   Divider,
 } from "react-native-paper";
 import { User } from "../User";
-import { chatApi } from "../api/api";
+import { API, chatApi } from "../api/api";
 
 const ChatScreen = (props) => {
   // props
@@ -59,7 +59,7 @@ const ChatScreen = (props) => {
   const joinChat = async () => {
     try {
       const connection = new HubConnectionBuilder()
-        .withUrl("https://shoppinglist20220211160436.azurewebsites.net/chat")
+        .withUrl(API)
         .withAutomaticReconnect()
         .build();
 
