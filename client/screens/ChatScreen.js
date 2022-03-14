@@ -30,21 +30,24 @@ const ChatScreen = (props) => {
 
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", async () => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      console.log("enter chat")
       joinChat();
       getMessages();
     });
     return unsubscribe;
-  }, [navigation]);
+  }, [navigation, route]);
+
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("blur", async () => {
+      console.log("leave chat")
       closeConnection();
-      setMessage("");
-      setMessages("");
     });
     return unsubscribe;
-  }, [navigation]);
+  }, [navigation, route]);
+
+
 
   const getMessages = async () => {
     let res = await chatApi.apiShoppingListChatMessagesIdGet(
@@ -54,6 +57,7 @@ const ChatScreen = (props) => {
 
     setMessages(data);
   };
+
   const joinChat = async () => {
     try {
       const connection = new HubConnectionBuilder()
@@ -102,9 +106,10 @@ const ChatScreen = (props) => {
   };
 
   const closeConnection = async () => {
-    console.log("closeConnection");
     try {
-      await connection.stop();
+      if (connection)
+        await connection.stop();
+      console.log("closeConnection");
     } catch (e) {
       console.log(e);
     }
@@ -133,7 +138,6 @@ const ChatScreen = (props) => {
     return <View />;
   };
 
-  console.log("messages", messages)
   return (
     <View style={styles.container}>
       <FlatList
@@ -164,6 +168,13 @@ const ChatScreen = (props) => {
           onPress={() => sendMessage()}
           style={{ transform: [{ rotateY: '180deg' }] }}
           disabled={message.length === 0}
+        />
+
+        <IconButton
+          icon="home"
+          size={20}
+          onPress={() => closeConnection()}
+          style={{ transform: [{ rotateY: '180deg' }] }}
         />
       </View>
 

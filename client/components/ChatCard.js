@@ -11,7 +11,6 @@ const ChatCard = (props) => {
 
     //states 
 
-    console.log(data)
     const leftContent = props => <Avatar.Image style={{ alignSelf: "center" }} size={40} source={{ uri: `${API}/uploads/users/${data.img}` }} />
 
 

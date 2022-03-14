@@ -25,7 +25,8 @@ function ShoppingListTabs(props) {
           ),
         }}
       />
-      <Tab.Screen name="Chat" component={ChatScreen} initialParams={data}
+      <Tab.Screen name="Chat" component={ChatScreen}
+        initialParams={data}
         options={{
           tabBarLabel: "צ'אט",
           tabBarIcon: ({ color }) => (
