@@ -203,7 +203,7 @@ SELECT			shopping_lists_messages.ListID, shopping_lists_messages.UserID, shoppin
 FROM            shopping_lists_messages INNER JOIN users 
 				ON shopping_lists_messages.UserID = users.UserID
 WHERE        (shopping_lists_messages.ListID = @ListID) AND (shopping_lists_messages.IsActive = 1)
-ORDER BY shopping_lists_messages.CreatedOn
+ORDER BY  shopping_lists_messages.CreatedOn desc
 Go
 
 exec Proc_Get_Chat_Messages 45
@@ -222,17 +222,16 @@ Go
 
 
 ------------------------------------------------------------------members---------------------------------------------------------------------
- Create Proc Proc_Get_List_Users
- @ListID int,
- @UserID int
+ Alter Proc Proc_Get_List_Users
+ @ListID int
  As
- SELECT shopping_lists_users.UserID, users.FirstName, users.LastName, users.Img
+ SELECT shopping_lists_users.UserID, users.FirstName, users.LastName, users.Img, dbo.Func_Return_True_If_Creator_Of_List(@ListID,shopping_lists_users.UserID) As IsCreator
 FROM     shopping_lists_users INNER JOIN
                   users ON dbo.shopping_lists_users.UserID = dbo.users.UserID
-Where (shopping_lists_users.ListID = @ListID) And (shopping_lists_users.IsApproved = 1) And (Not (shopping_lists_users.UserID = @UserID))
+Where (shopping_lists_users.ListID = @ListID) And (shopping_lists_users.IsApproved = 1)
 Go
 
---exec Proc_Get_List_Users 6,2
+--exec Proc_Get_List_Users 6
 --select * from [shopping_lists_users]
 --select * from users
 
@@ -246,15 +245,16 @@ INSERT INTO [shopping_lists_users] ([ListID],[UserID],[JoinedDate])
 Go
 --exec Proc_Add_User_To_List 6,5
 
- Create Proc Proc_User_Confirmation_Of…_Joining 
+ Alter Proc Proc_User_Confirmation_Of…_Joining 
  @ListID int,
  @UserID int,
+  @JoinedDate DateTime,
  @IsApproved bit
  As
  If(@IsApproved = 1)
 	Begin
 		UPDATE [shopping_lists_users]
-		SET  ListID= @ListID, UserID = @UserID, [JoinedDate] = GETDATE(), [IsApproved] = 1
+		SET  ListID= @ListID, UserID = @UserID, [JoinedDate] = @JoinedDate, [IsApproved] = 1
 		WHERE ListID = @ListID And UserID= @UserID
 	End
 Else
@@ -264,4 +264,4 @@ Else
 	End
 Go
 
- --exec Proc_User_Confirmation_Of…_Joining 6, 5, 0
+ --exec Proc_User_Confirmation_Of…_Joining 6, 5, null,0
