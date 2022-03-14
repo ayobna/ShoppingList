@@ -236,12 +236,13 @@ Go
 --select * from [shopping_lists_users]
 --select * from users
 
- Create Proc Proc_Add_User_To_List
+ alter Proc Proc_Add_User_To_List
  @ListID int,
- @UserID int
+ @UserID int,
+ @JoinedDate DateTime
  As
-INSERT INTO [shopping_lists_users] ([ListID],[UserID],[JoinedDate],[IsApproved])
-						    VALUES (@ListID, @UserID,GETDATE(), 0);
+INSERT INTO [shopping_lists_users] ([ListID],[UserID],[JoinedDate])
+						    VALUES (@ListID, @UserID,@JoinedDate);
 Go
 --exec Proc_Add_User_To_List 6,5
 
