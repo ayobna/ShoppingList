@@ -51,15 +51,14 @@ const ChatScreen = (props) => {
     let res = await chatApi.apiShoppingListChatMessagesIdGet(
       route.params.shoppingListID
     );
-    let data= res.data
+    let data = res.data
 
     setMessages(data);
-    flatListRef.current.initialScrollIndex(data.length-1)  
   };
   const joinChat = async () => {
     try {
       const connection = new HubConnectionBuilder()
-        .withUrl(API)
+        .withUrl(API + "/chat")
         .withAutomaticReconnect()
         .build();
 
@@ -127,7 +126,7 @@ const ChatScreen = (props) => {
 
   const handleSeparatorComponent = () => {
     return (
-      <Divider inset/>
+      <Divider inset />
     );
   };
 
@@ -136,25 +135,25 @@ const ChatScreen = (props) => {
   };
   return (
     <View style={styles.container}>
-      {messages.length>0&&
-      <FlatList
-        ref={flatListRef}
-        onContentSizeChange={() => flatListRef.current.scrollToEnd()}
-        showsVerticalScrollIndicator={false}
+      {messages.length > 0 &&
+        <FlatList
+          ref={flatListRef}
+          onContentSizeChange={() => flatListRef.current.scrollToEnd()}
+          showsVerticalScrollIndicator={false}
 
-        data={messages}
-        renderItem={(item) => renderListItem(item)}
-        keyExtractor={(item, index) => String(index)}
-        contentContainerStyle={{ flexGrow: 1 }}
-        ListEmptyComponent={handleListEmptyComponent}
-        ListFooterComponent={renderFooter}
+          data={messages}
+          renderItem={(item) => renderListItem(item)}
+          keyExtractor={(item, index) => String(index)}
+          contentContainerStyle={{ flexGrow: 1 }}
+          ListEmptyComponent={handleListEmptyComponent}
+          ListFooterComponent={renderFooter}
 
-        ItemSeparatorComponent={handleSeparatorComponent}
-      // refreshing={isFetching}
-      // onRefresh={() => handleRefresh()}
+          ItemSeparatorComponent={handleSeparatorComponent}
+        // refreshing={isFetching}
+        // onRefresh={() => handleRefresh()}
 
-      />
-    
+        />
+
       }
       <View
         style={{
@@ -173,12 +172,12 @@ const ChatScreen = (props) => {
           <TextInput
             label="הודעה"
             value={message}
-            onFocus={() => flatListRef.current.scrollToEnd()}
-            onBlur={() => flatListRef.current.scrollToEnd()}
+            // onFocus={() => flatListRef.current.scrollToEnd()}
+            // onBlur={() => flatListRef.current.scrollToEnd()}
             onChangeText={(txt) => setMessage(txt)}
             //  dense={true}
             mode="outlined"
-            //   error={null}
+          //   error={null}
           />
         </View>
         <View
