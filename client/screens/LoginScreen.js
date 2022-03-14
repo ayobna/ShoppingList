@@ -16,6 +16,8 @@ import {
   Avatar,
 } from "react-native-paper";
 
+// tal was here
+
 const LoginScreen = (props) => {
   const { navigation } = props;
   const [ErrorMsg, setErrorMsg] = useState("");
