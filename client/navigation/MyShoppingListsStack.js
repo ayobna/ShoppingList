@@ -11,6 +11,7 @@ function MyShoppingListsStack(props) {
   // console.log("MyShoppingListsStack props  ",props)
   const { navigation, route } = props;
   const data = route.params;
+  
 
   return (
     <Stack.Navigator>

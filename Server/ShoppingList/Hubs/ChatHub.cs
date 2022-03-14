@@ -24,6 +24,7 @@ namespace ShoppingList.Hubs
             if (_connections.TryGetValue(Context.ConnectionId, out UserConnection userConnection))
             {
                 _connections.Remove(Context.ConnectionId);
+                Context.Abort();
                 //Clients.Group(userConnection.ListID.ToString()).SendAsync("ReceiveMessage", _botUser, $"{userConnection.User} has left");
                 //SendUsersConnected(userConnection.ListID);
             }
