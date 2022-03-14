@@ -15,7 +15,7 @@ import {
   HelperText,
   Avatar,
 } from "react-native-paper";
-
+//ayoub test 2
 const LoginScreen = (props) => {
   const { navigation } = props;
   const [ErrorMsg, setErrorMsg] = useState("");
