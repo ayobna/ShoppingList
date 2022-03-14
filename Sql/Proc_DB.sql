@@ -221,4 +221,46 @@ Go
 --select* from [dbo].[shopping_lists_messages]
 
 
+------------------------------------------------------------------members---------------------------------------------------------------------
+ Create Proc Proc_Get_List_Users
+ @ListID int,
+ @UserID int
+ As
+ SELECT shopping_lists_users.UserID, users.FirstName, users.LastName, users.Img
+FROM     shopping_lists_users INNER JOIN
+                  users ON dbo.shopping_lists_users.UserID = dbo.users.UserID
+Where (shopping_lists_users.ListID = @ListID) And (shopping_lists_users.IsApproved = 1) And (Not (shopping_lists_users.UserID = @UserID))
+Go
 
+--exec Proc_Get_List_Users 6,2
+--select * from [shopping_lists_users]
+--select * from users
+
+ Create Proc Proc_Add_User_To_List
+ @ListID int,
+ @UserID int
+ As
+INSERT INTO [shopping_lists_users] ([ListID],[UserID],[JoinedDate],[IsApproved])
+						    VALUES (@ListID, @UserID,GETDATE(), 0);
+Go
+--exec Proc_Add_User_To_List 6,5
+
+ Create Proc Proc_User_Confirmation_Of…_Joining 
+ @ListID int,
+ @UserID int,
+ @IsApproved bit
+ As
+ If(@IsApproved = 1)
+	Begin
+		UPDATE [shopping_lists_users]
+		SET  ListID= @ListID, UserID = @UserID, [JoinedDate] = GETDATE(), [IsApproved] = 1
+		WHERE ListID = @ListID And UserID= @UserID
+	End
+Else
+	Begin
+		Delete From [shopping_lists_users]
+		Where ListID = @ListID And UserID= @UserID
+	End
+Go
+
+ --exec Proc_User_Confirmation_Of…_Joining 6, 5, 0
