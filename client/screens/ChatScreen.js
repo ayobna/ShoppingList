@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { View, FlatList, StyleSheet } from "react-native";
+import React, { useState, useEffect, useRef } from "react";
+import { View, FlatList, StyleSheet, Keyboard } from "react-native";
 import ShoppingListCard from "../components/ShoppingListCard";
 import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import ChatCard from "../components/ChatCard";
@@ -9,11 +9,11 @@ import {
   Button,
   Text,
   Avatar,
+  Divider,
 } from "react-native-paper";
 import { User } from "../User";
 import { chatApi } from "../api/api";
 
-// Test branch tal
 const ChatScreen = (props) => {
   // props
   const { navigation, route } = props;
@@ -24,6 +24,10 @@ const ChatScreen = (props) => {
   const [users, setUsers] = useState([]);
   const [message, setMessage] = useState("");
   const [user, setUser] = useState(User);
+
+  const flatListRef = useRef();
+
+
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", async () => {
       joinChat();
@@ -49,15 +53,12 @@ const ChatScreen = (props) => {
     let tempUser = user.FirstName;
     try {
       const connection = new HubConnectionBuilder()
-        .withUrl("http://localhost:44632/chat")
+        .withUrl("https://shoppinglist20220211160436.azurewebsites.net/chat")
         .withAutomaticReconnect()
         .build();
 
       connection.on("ReceiveMessage", (chatMessageCard) => {
-        console.log("chatMessageCard", chatMessageCard)
-        const tempMessages = [...messages];
-        tempMessages = [tempMessages, chatMessageCard];
-        setMessages(tempMessages);
+        setMessages((messages) => [...messages, chatMessageCard]);
         // setFirstJoin(false)
       });
 
@@ -129,6 +130,12 @@ const ChatScreen = (props) => {
     );
   };
 
+  const handleSeparatorComponent = () => {
+    return (
+      <Divider inset/>
+    );
+  };
+
   const renderFooter = () => {
     return <View />;
   };
@@ -136,6 +143,8 @@ const ChatScreen = (props) => {
     <View style={styles.container}>
       {/* <Text>List Screen {route.params.shoppingListID}</Text> */}
       <FlatList
+        ref={flatListRef}
+        onContentSizeChange={() => flatListRef.current.scrollToEnd()}
         showsVerticalScrollIndicator={false}
         data={messages}
         renderItem={(item) => renderListItem(item)}
@@ -143,6 +152,7 @@ const ChatScreen = (props) => {
         contentContainerStyle={{ flexGrow: 1 }}
         ListEmptyComponent={handleListEmptyComponent}
         ListFooterComponent={renderFooter}
+        ItemSeparatorComponent={handleSeparatorComponent}
       // refreshing={isFetching}
       // onRefresh={() => handleRefresh()}
       />
@@ -164,6 +174,8 @@ const ChatScreen = (props) => {
           <TextInput
             label="הודעה"
             value={message}
+            onFocus={() => flatListRef.current.scrollToEnd()}
+            onBlur={() => flatListRef.current.scrollToEnd()}
             onChangeText={(txt) => setMessage(txt)}
             //  dense={true}
             mode="outlined"
