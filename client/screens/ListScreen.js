@@ -74,11 +74,7 @@ const ListScreen = (props) => {
 
   useEffect(() => {
     if (productEditDetails) {
-      if(productEditDetails.ImageBase64===undefined)
-      console.log("productEditDetails",productEditDetails.img)
-      // if (productEditDetails!===) {
-        
-      // }
+     
       setPopupDialogVisible(true);
     }
   }, [productEditDetails]);
@@ -245,30 +241,43 @@ console.log("Add new product to server is ", res.data);
     if (regexValidationProduct(true) < 2) {
       return;
     }
+    let  tempProduct = productEditDetails;
+    tempProduct.name = tempProduct.name.trim();
+    if(tempProduct.ImageBase64===undefined){
+      updateProduct(tempProduct)
+   
+    }else{
+      tempProduct.img=tempProduct.ImageBase64
+      updateProductNewImg(tempProduct)
+    }
+ 
 
-    let tempProducts = [...products];
-    console.log("handleConfirmEdit", tempProducts);
 
-    let index = tempProducts.findIndex(
-      (product) => product.productID === productEditDetails.productID
-    );
-    tempProducts[index] = productEditDetails;
-    tempProducts[index].name = tempProducts[index].name.trim();
 
-    setProducts(tempProducts);
     handleClearStates();
   };
 
-
-
-
-
-
-
   const handleEditProduct = (shoppingList) => {
-     console.log("handleEditProduct=> shoppingList Data:", shoppingList);
-     setProductEditDetails(shoppingList)
-  };
+    setProductEditDetails(shoppingList)
+ };
+
+  const updateProduct=async(Product)=>{
+    let res = await productApi.apiUpdateProductPost(Product)
+    let data= res.data
+    console.log( "apiUpdateProductPost data",data)
+    GetProducts()
+  }
+   const updateProductNewImg=async(Product)=>{
+    let res = await productApi.apiUpdateProductNewImgPost(Product)
+    let data= res.data
+    console.log( "updateProductNewImg data",data)
+    GetProducts()
+  }
+
+
+
+
+  
 
   const handleDeleteProduct = (productID) => {
     console.log("handleDeleteProduct=>productID: ", productID);
@@ -425,7 +434,7 @@ console.log("Add new product to server is ", res.data);
                 size={100}
                 // theme={{ colors: { primary: Colors.avatarBackground } }}
                 source={{
-                  uri:  API + `/uploads/shoppingLists/`+ productEditDetails.img,
+                  uri: productEditDetails.ImageBase64===undefined?  API + `/uploads/shoppingLists/`+  productEditDetails.img:productEditDetails.img,
                 }}
               />
             </View>
@@ -453,7 +462,7 @@ console.log("Add new product to server is ", res.data);
                 onPress={() =>
                   setProductEditDetails((oldState) => ({
                     ...oldState,
-                    img: "https://media.istockphoto.com/vectors/no-image-available-sign-vector-id922962354?k=20&m=922962354&s=612x612&w=0&h=f-9tPXlFXtz9vg_-WonCXKCdBuPUevOBkp3DQ-i0xqo=",
+                    img: API + `/uploads/shoppingLists/default/default_img.jpg`,
                     ImageBase64: null,
                   }))
                 }
