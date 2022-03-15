@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState ,useEffect} from "react";
 import {
   View,
   Text,
@@ -17,9 +17,9 @@ import {
   Checkbox
 } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { API } from "../api/api";
+import { API ,shoppingListApi } from "../api/api";
 const ProductCard = (props) => {
-  const { data, handleDeleteProduct, handleEditProduct, ScreenName, user } =
+  const { data, handleDeleteProduct, handleEditProduct, ScreenName, user,listCreatorId } =
     props;
   //states
   const [visibleMenu, setVisibleMenu] = useState(false);
@@ -27,13 +27,20 @@ const ProductCard = (props) => {
   const closeMenu = () => setVisibleMenu(false);
   const [checked, setChecked] = useState(false);
 
-  
   const ImgName = () => {
     const imgArray = data.img.split(":/");
     let img = data.img;
 
+
+    useEffect(() => {
+console.log("listCreatorId in ProductCard comp=>",listCreatorId)
+      
+    }, [])
+    
+
   
     if (ScreenName !== "CreateList") {
+
       if (data.productID!==0) {   img =
         imgArray[0] === "file"
           ? data.img
@@ -71,7 +78,7 @@ const ProductCard = (props) => {
         </Menu>
       );
     } else {
-      if (data.creatorID === user.UserID)
+      if (data.creatorID === user.UserID||listCreatorId===user.UserID)
         return (
           <Menu
             visible={visibleMenu}
