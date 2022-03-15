@@ -26,6 +26,7 @@ namespace ShoppingList.Data
             List<ChatMessageCard> messageList = db.ConvertDataTable<ChatMessageCard>(tb);
             return messageList;
         }
+
         public void CreateChatMessage(ChatMessageCard chatMessageCard)
         {
             SqlCommand cmd = db.CreateCommand("Proc_Create_Message", db.Connect(), "proc");

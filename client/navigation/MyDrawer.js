@@ -4,15 +4,15 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 
 import ShoppingListMainStack from "./ShoppingListMainStack";
 import AccountScreen from "../screens/AccountScreen";
-import RequestsScreen from "../screens/RequestsScreen";
 import LoginScreen from "../screens/LoginScreen";
+import RequestsStack from "./RequestsStack";
 
 const Drawer = createDrawerNavigator();
 
 function MyDrawer() {
   return (
     <Drawer.Navigator>
-       <Drawer.Screen
+      <Drawer.Screen
         name="התחברות"
         component={LoginScreen}
         options={{ headerShown: false }}
@@ -22,15 +22,15 @@ function MyDrawer() {
         component={ShoppingListMainStack}
         options={{ headerShown: false }}
       />
-     <Drawer.Screen
+      <Drawer.Screen
         name="בקשות"
-        component={RequestsScreen}
-   
+        component={RequestsStack}
+        options={{ headerShown: false }}
       />
-       <Drawer.Screen
+      <Drawer.Screen
         name="חשבון"
         component={AccountScreen}
-  
+
       />
     </Drawer.Navigator>
   );

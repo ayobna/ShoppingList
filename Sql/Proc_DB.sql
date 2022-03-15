@@ -265,3 +265,18 @@ Else
 Go
 
  --exec Proc_User_Confirmation_Of…_Joining 6, 5, null,0
+
+
+ ---------------------------- Requests -------------------------------------------------------+
+ Create Proc Proc_Get_Requests_By_User
+ @UserID int
+ As
+	SELECT         shopping_lists_users.ListID, shopping_lists.Title, users.NotificationToken, users.FirstName, users.LastName
+	FROM            shopping_lists INNER JOIN shopping_lists_users 
+	ON shopping_lists.ListID = shopping_lists_users.ListID INNER JOIN users 
+	ON shopping_lists.CreatorID = users.UserID
+	WHERE        (shopping_lists_users.IsApproved = 0) AND (shopping_lists.IsActive = 1) AND (users.IsActive = 1) AND (shopping_lists_users.UserID = @UserID)
+	ORDER BY shopping_lists_users.JoinedDate DESC
+ GO
+
+ -- exec Proc_Get_Requests_By_User 1
