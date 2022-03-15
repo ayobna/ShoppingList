@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Cors;
+﻿    using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -91,7 +91,7 @@ namespace ShoppingList.Controllers
                 throw;
             }
         }
-
+  
         [HttpPost]
         [Route("api/shoppingList/UpdateShoppinglist")]
         public IActionResult UpdateShoppinglist([FromBody] ShoppingListCard shoppinglist)
@@ -178,7 +178,27 @@ namespace ShoppingList.Controllers
         }
 
 
-    
+
+        //GetListCreatorByListID
+        [HttpGet]
+        [Route("api/shoppingList/GetListCreatorByListID/{id}")]
+        public IActionResult GetListCreatorByListID(int id)
+        {
+            try
+            {
+                Shoppinglist Shoppinglist = shoppingList.GetListCreatorByListID(id);
+                logger.LogInformation("Get List Creator By List ID"+id);
+                //logger.LogError("Error test ");
+                return Ok(Shoppinglist);
+            }
+            catch (Exception e)
+            {
+                logger.LogError($"Function name GetListCreatorByListID    - {e.Message}");
+                throw;
+            }
+
+
+        }
 
 
 

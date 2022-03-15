@@ -31,3 +31,14 @@ UPDATE [products]
 Go
 
 exec Proc_Update_Product_By_ProductId_And_CreatorID 64,1
+
+
+
+Create Proc Proc_Get_List_Creator_By_ListID
+@ListID int
+AS
+select *from [shopping_lists]
+where [ListID]=@ListID
+go
+
+exec Proc_Get_List_CreatorId_By_ListID 55

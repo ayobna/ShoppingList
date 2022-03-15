@@ -27,17 +27,20 @@ const ProductCard = (props) => {
   const closeMenu = () => setVisibleMenu(false);
   const [checked, setChecked] = useState(false);
 
-  console.log(user);
+  
   const ImgName = () => {
     const imgArray = data.img.split(":/");
     let img = data.img;
 
+  
     if (ScreenName !== "CreateList") {
-      img =
+      if (data.productID!==0) {   img =
         imgArray[0] === "file"
           ? data.img
-          : API + `/uploads/shoppingLists/` + data.img;
+          : API + `/uploads/shoppingLists/` + data.img;     
+        }
     }
+
     return img;
   };
   // מרנדר תמונה של מוצר
@@ -104,12 +107,6 @@ const ProductCard = (props) => {
         onPress={null}
       >
         <Card>
-          <Checkbox
-            status={checked ? "checked" : "unchecked"}
-            onPress={() => {
-              setChecked(!checked);
-            }}
-          />
           <Card.Title
             titleNumberOfLines={3}
             title={data.name}
