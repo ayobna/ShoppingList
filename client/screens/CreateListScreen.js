@@ -18,7 +18,7 @@ import AmountInput from "../components/AmountInput";
 import * as ImagePicker from "expo-image-picker";
 import ProductCard from "../components/ProductCard";
 import PopupDialog from "../components/PopupDialog";
-import { productApi, shoppingListApi } from "../api/api";
+import { productApi, shoppingListApi,API } from "../api/api";
 import { _getData } from "../utils/Functions";
 
 const CreateListScreen = (props) => {
@@ -80,6 +80,7 @@ const ScreenName = props.route.name;
       handleEditProduct={handleEditProduct}
       ScreenName={ScreenName}
       user={user}
+      listCreatorId={0}
     />
   );
 

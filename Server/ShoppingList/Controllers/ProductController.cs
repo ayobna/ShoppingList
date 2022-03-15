@@ -60,6 +60,33 @@ namespace ShoppingList.Controllers
                 return NotFound(ex);
             }
         }
+        [HttpPost]
+        [Route("api/Product/AddProductToShoppingList")]
+        public IActionResult AddProductToShoppingList([FromBody] Product product)
+        {
+            try
+            {
+                product.CreatedOn = DateTime.Now;
+                int productID = productData.CreateProduct(product);
+                product.ProductID = productID;
+                if (!String.IsNullOrEmpty(product.Img))
+                {
+                    string sqlPath, fileName;
+                    UploadFile(product, out sqlPath, out fileName);
+                    product.ProductID = product.ProductID;
+                    product.Img = sqlPath + "/" + fileName;
+                    product.IsActive = true;
+                    productData.UpdateProduct(product);
+                }
+
+                return Ok("successfully");
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(": Did not create sharp products in DB");
+                return NotFound(ex);
+            }
+        }
 
         private void UploadFile(Product product, out string sqlPath, out string fileName)
         {
@@ -86,7 +113,7 @@ namespace ShoppingList.Controllers
                 UploadFile(product, out sqlPath, out fileName);
                 product.Img = sqlPath + "/" + fileName;
                 productData.UpdateProduct(product);
-                return Ok("successfully");
+                return Ok(" UpdateProduct successfully");
             }
             catch (Exception ex)
             {
