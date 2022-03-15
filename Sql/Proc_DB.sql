@@ -245,29 +245,30 @@ INSERT INTO [shopping_lists_users] ([ListID],[UserID],[JoinedDate])
 Go
 --exec Proc_Add_User_To_List 6,5
 
- Alter Proc Proc_User_Confirmation_Of…_Joining 
- @ListID int,
- @UserID int,
-  @JoinedDate DateTime,
- @IsApproved bit
- As
- If(@IsApproved = 1)
-	Begin
-		UPDATE [shopping_lists_users]
-		SET  ListID= @ListID, UserID = @UserID, [JoinedDate] = @JoinedDate, [IsApproved] = 1
-		WHERE ListID = @ListID And UserID= @UserID
-	End
-Else
-	Begin
-		Delete From [shopping_lists_users]
-		Where ListID = @ListID And UserID= @UserID
-	End
-Go
+-- Alter Proc Proc_User_Confirmation_Of…_Joining 
+-- @ListID int,
+-- @UserID int,
+-- @JoinedDate DateTime,
+-- @IsApproved bit
+-- As
+-- If(@IsApproved = 1)
+--	Begin
+--		UPDATE [shopping_lists_users]
+--		SET  ListID= @ListID, UserID = @UserID, [JoinedDate] = @JoinedDate, [IsApproved] = 1
+--		WHERE ListID = @ListID And UserID= @UserID
+--	End
+--Else
+--	Begin
+--		Delete From [shopping_lists_users]
+--		Where ListID = @ListID And UserID= @UserID
+--	End
+--Go
 
  --exec Proc_User_Confirmation_Of…_Joining 6, 5, null,0
 
 
  ---------------------------- Requests -------------------------------------------------------+
+ -- Drop proc Proc_Get_Requests_By_User
  Create Proc Proc_Get_Requests_By_User
  @UserID int
  As
@@ -278,5 +279,25 @@ Go
 	WHERE        (shopping_lists_users.IsApproved = 0) AND (shopping_lists.IsActive = 1) AND (users.IsActive = 1) AND (shopping_lists_users.UserID = @UserID)
 	ORDER BY shopping_lists_users.JoinedDate DESC
  GO
-
  -- exec Proc_Get_Requests_By_User 1
+
+  -- Drop proc Proc_Confirm_Request
+ Create Proc Proc_Confirm_Request
+ @ListID int , 
+ @UserID int,
+ @JoinedDate DateTime
+ As
+		UPDATE [shopping_lists_users]
+		SET  [JoinedDate] = @JoinedDate, [IsApproved] = 1
+		WHERE ListID = @ListID And UserID= @UserID
+ GO
+
+ -- Drop proc Proc_Decline_Request
+ Create Proc Proc_Decline_Request
+ @ListID int , 
+ @UserID int
+ As
+		Delete From [shopping_lists_users] WHERE ListID = @ListID And UserID= @UserID
+ GO
+
+
