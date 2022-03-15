@@ -23,7 +23,6 @@ const ListScreen = (props) => {
   const [listCreatorId, setListCreatorId] = useState();
   const [products, setProducts] = useState();
   const [user, setUser] = useState();
-  const [title, setTitle] = useState("");
   const [productName, setProductName] = useState("");
   const [amount, setAmount] = useState("1");
   const [imageBase64, setImageBase64] = useState();
@@ -34,7 +33,7 @@ const ListScreen = (props) => {
   const [nameError, setNameError] = useState(false);
   const [editAmountError, setEditAmountError] = useState(false);
   const [editNameError, setEditNameError] = useState(false);
-  const [titleError, setTitleError] = useState(false);
+
   const [fromDB, setFromDB] = useState(true);
 
   useEffect(() => {
@@ -53,7 +52,7 @@ const ListScreen = (props) => {
   const GetProducts = async () => {
     let res = await productApi.apiGetProductsByListIdIdGet(shoppingListID);
     let data = res.data;
-   // await GetListCreatorByListID();    
+    await GetListCreatorByListID();    
     setProducts(data);
   };
   const GetListCreatorByListID = async () => {
@@ -71,20 +70,15 @@ const ListScreen = (props) => {
     }
   };
 
-  useEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <View style={styles.headerSaveButtonWrapper}>
-          <Button mode="text" compact onPress={handleSaveShoppingList}>
-            שמור
-          </Button>
-        </View>
-      ),
-    });
-  }, [title, products]);
+  
 
   useEffect(() => {
     if (productEditDetails) {
+      if(productEditDetails.ImageBase64===undefined)
+      console.log("productEditDetails",productEditDetails.img)
+      // if (productEditDetails!===) {
+        
+      // }
       setPopupDialogVisible(true);
     }
   }, [productEditDetails]);
@@ -169,6 +163,7 @@ const ListScreen = (props) => {
       return;
     }
     let product = {
+      listId:shoppingListID,
       productID: 0,
       creatorID: user.UserID,
       name: productName.trim(),
@@ -176,8 +171,7 @@ const ListScreen = (props) => {
       imgUri: imageBase64,
       img: imageUri ? imageUri : `default/default_img.jpg`,
     };
-    console.log("handleAddProduct product==> ");
-    addANewProductToTheList(product);
+    NewProductToTheList(product);
     setFromDB(false);
     let tempProducts = [...products];
     if (tempProducts.length !== 0) {
@@ -189,9 +183,22 @@ const ListScreen = (props) => {
     setProducts(tempProducts);
     handleClearStates();
   };
-  const addANewProductToTheList = (product) => {
-    console.log(product);
+  const NewProductToTheList = (product) => {
+    console.log( "NewProductToTheList ===>");
+    let newProductToList={
+      listID: product.listId,
+      creatorID: product.creatorID,
+      name:product.name,
+      amount:product.amount,
+      img:product.imgUri===undefined?product.img :product.imgUri,
+    }
+    addANewProductToTheList(newProductToList)
+  
   };
+const  addANewProductToTheList =async(newProductToList)=>{
+let res =await productApi.apiProductAddProductToShoppingListPost(newProductToList)
+console.log("Add new product to server is ", res.data);
+}
   const regexValidationProduct = (edit) => {
     let counter = 0;
     const amountRgx = /^[1-9]+$/;
@@ -229,6 +236,7 @@ const ListScreen = (props) => {
   };
 
   const handleCancelPopupDialog = () => {
+
     setPopupDialogVisible(false);
     setProductEditDetails();
   };
@@ -251,59 +259,11 @@ const ListScreen = (props) => {
     handleClearStates();
   };
 
-  const handleSaveShoppingList = () => {
-    if (regexValidationShoppingList() < 2) {
-      console.log("handleSaveShoppingList error");
-      return;
-    }
-  };
 
-  // const updateNewShoppingList = (id) => {
-  //   let ProductsFromList = products;
 
-  //   let productsToServer = [];
-  //   for (let index = 0; index < ProductsFromList.length; index++) {
-  //     productsToServer.push({
-  //       listID: id,
-  //       creatorID: user.UserID,
-  //       name: ProductsFromList[index].name,
-  //       amount: ProductsFromList[index].amount,
-  //       img: ProductsFromList[index].imgUri,
-  //     });
-  //   }
-  //   addProductsToShoppingList(productsToServer);
-  // };
 
-  const addProductsToShoppingList = async (productsToServer) => {
-    try {
-      const res = await productApi.apiProductAddProductsToShoppingListPost(
-        productsToServer
-      );
-      console.log("addProductsToShoppingList", res.data);
-      navigation.navigate("HomeScreen");
-    } catch (error) {
-      console.warn(error);
-    }
-  };
 
-  const regexValidationShoppingList = () => {
-    let counter = 0;
-    const titleRgx =
-      /^[\u05D0-\u05EAa-zA-Z0-9']+([ |\-|.|/]*[\u05D0-\u05EAa-zA-Z0-9'\s]+)*$/;
-    if (products.length === 0) {
-      console.log("didn't success");
-    } else {
-      console.log("success");
-      counter++;
-    }
-    if (!titleRgx.test(title)) {
-      setTitleError(true);
-    } else {
-      setTitleError(false);
-      counter++;
-    }
-    return counter;
-  };
+
 
   const handleEditProduct = (shoppingList) => {
      console.log("handleEditProduct=> shoppingList Data:", shoppingList);
@@ -338,13 +298,6 @@ const ListScreen = (props) => {
 
   return (
     <View style={styles.container}>
-      <TextInput
-        label="כותרת"
-        value={title}
-        onChangeText={(txt) => setTitle(txt)}
-        dense={true}
-        error={titleError}
-      />
       <FlatList
         showsVerticalScrollIndicator={false}
         data={products}
@@ -352,9 +305,7 @@ const ListScreen = (props) => {
         keyExtractor={(item) => String(item.productID)}
         contentContainerStyle={{ flexGrow: 1 }}
         ListEmptyComponent={handleListEmptyComponent}
-        // ListFooterComponent={renderFooter}
-        // refreshing={isFetching}
-        // onRefresh={() => handleRefresh()}
+
       />
       <View
         style={{
