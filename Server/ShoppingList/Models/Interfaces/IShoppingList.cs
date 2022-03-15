@@ -7,8 +7,6 @@ namespace ShoppingList.Models
 {
     public interface IShoppingList
     {
-      
-
         public int CreateShoppinglist(Shoppinglist shoppinglist);
         public int UpdateShoppinglist(ShoppingListCard shoppinglist);
         public List<ShoppingListCard> GetAllListsCreatedByUser(int id);
@@ -16,6 +14,6 @@ namespace ShoppingList.Models
         public void CopyShoppingList(int originalListID, int copiedListID, int creatorID);
         public void DeleteShoppinglist(int id);
         public void ExitShoppingList(int ListID, int UserID);
-
+        public Shoppinglist GetListCreatorByListID(int id);
     }
 }
