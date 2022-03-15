@@ -26,7 +26,7 @@ const LoginScreen = (props) => {
   const CheckLogin = async () => {
 
     _storeData('User', User);
-    navigation.navigate('דף בית')
+    navigation.navigate('homeStack')
   };
 
 

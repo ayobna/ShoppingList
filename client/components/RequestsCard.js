@@ -15,14 +15,14 @@ const RequestsCard = (props) => {
             color='white'
             style={{ backgroundColor: "#990f02" }}
             size={20}
-            onPress={() => console.log('Pressed')}
+            onPress={() => handleDeclineRequest(data.listID)}
         />
         <IconButton
             icon="check-bold"
             color='white'
             style={{ backgroundColor: "green" }}
             size={20}
-            onPress={() => console.log('Pressed')}
+            onPress={() => handleConfirmRequest(data.listID)}
         />
     </View>
 
@@ -30,7 +30,7 @@ const RequestsCard = (props) => {
     return (
         <View style={{ ...styles.container, ...props.style }}>
             <List.Item
-                title={data.title}
+                title={"הצטרפות ל: " + data.title}
                 description={'הוזמנת ע"י: ' + data.firstName + " " + data.lastName}
                 right={rightContent}
                 // style={{ paddingBottom: 0 }}

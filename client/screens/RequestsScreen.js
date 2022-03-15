@@ -51,12 +51,25 @@ const RequestsScreen = (props) => {
     );
   };
 
-  const handleConfirmRequest = () => {
-    console.log("Confirm request")
+  const handleConfirmRequest = async (listID) => {
+    try {
+      await requestApi.apiRequestsApiRequestsConfirmRequestPost({ listID: listID, userID: currentUser.UserID });
+      getRequests(currentUser.UserID);
+
+    } catch (e) {
+      console.log(e);
+    }
   };
 
-  const handleDeclineRequest = () => {
-    console.log("Decline request")
+  const handleDeclineRequest = async (listID) => {
+    try {
+      await requestApi.apiRequestsApiRequestsDeclineRequestPost({ listID: listID, userID: currentUser.UserID });
+      getRequests(currentUser.UserID);
+
+    } catch (e) {
+      console.log(e);
+    }
+
   };
 
 

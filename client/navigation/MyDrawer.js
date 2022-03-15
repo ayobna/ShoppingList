@@ -13,23 +13,25 @@ function MyDrawer() {
   return (
     <Drawer.Navigator>
       <Drawer.Screen
-        name="התחברות"
+        name="login"
         component={LoginScreen}
-        options={{ headerShown: false }}
+        options={{ headerShown: false , title:"התחברות"}}
       />
       <Drawer.Screen
-        name="דף בית"
+        name="homeStack"
         component={ShoppingListMainStack}
-        options={{ headerShown: false }}
+        options={{ headerShown: false , title:"דף בית"}}
       />
       <Drawer.Screen
-        name="בקשות"
+        name="requestsStack"
         component={RequestsStack}
-        options={{ headerShown: false }}
+        options={{ headerShown: false, title:"בקשות" }}
       />
       <Drawer.Screen
-        name="חשבון"
+        name="profileStack"
         component={AccountScreen}
+        options={{ title:"חשבון"}}
+
 
       />
     </Drawer.Navigator>
