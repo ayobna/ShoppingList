@@ -8,21 +8,13 @@ import { API } from '../api/api';
 const ChatCard = (props) => {
     // props
     const { data } = props;
-
-    //states 
-
+    
     const leftContent = props => <Avatar.Image style={{ alignSelf: "center" }} size={40} source={{ uri: `${API}/uploads/users/${data.img}` }} />
 
 
 
     return (
         <View style={{ ...styles.container, ...props.style }}>
-            {/* <TouchableHighlight style={styles.touchableHighLight} underlayColor="red" onPress={null}>
-                <Card>
-                    <Card.Title titleNumberOfLines={3} subtitle={data.firstName + " " + data.lastName} title={data.message} />
-
-                </Card>
-            </TouchableHighlight> */}
             <List.Item
                 title={data.firstName + " " + data.lastName}
                 description={data.message}
