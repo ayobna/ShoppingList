@@ -53,7 +53,7 @@ namespace ShoppingList.Data
             return res;
         }
 
-
+        //Proc_Delete_Product_By_ID
         public List<Product> GetProductsByListId(int id)
         {
             SqlCommand cmd = db.CreateCommand("Proc_Get_Products_By_ListId", db.Connect(), "proc");
@@ -66,6 +66,19 @@ namespace ShoppingList.Data
             }
             return products;
         }
+        public int DeleteProductByID(int ProductID)
+        {
+            SqlCommand cmd = db.CreateCommand("Proc_Delete_Product_By_ID", db.Connect(), "proc");
+            cmd.Parameters.Add("@ProductID", SqlDbType.Int).Value = ProductID;
+  
 
+            int res = db.ExecuteAndClose(cmd);
+
+            if (res != 1)
+            {
+                throw new Exception("Somthing went wrong whilDelete product in sql");
+            }
+            return res;
+        }
     }
 }

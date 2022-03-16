@@ -1,8 +1,8 @@
-create Proc Proc_Get_Products_By_ListId
+Alter Proc Proc_Get_Products_By_ListId
 @ListID int
 AS
 select *from [products]
-where [ListID] = @ListID
+where [ListID] = @ListID ANd [IsActive]=1
 Go
 
 --create Proc Proc_Get_Products_By_ListId
@@ -41,4 +41,15 @@ select *from [shopping_lists]
 where [ListID]=@ListID
 go
 
-exec Proc_Get_List_CreatorId_By_ListID 55
+--exec Proc_Get_List_CreatorId_By_ListID 55
+
+
+Create Proc Proc_Delete_Product_By_ID
+@ProductID int
+AS
+	UPDATE [products]
+	SET [IsActive]=0
+	WHERE [ProductID] =@ProductID  
+go
+
+select *from [products]

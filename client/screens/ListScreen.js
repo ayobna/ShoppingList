@@ -279,8 +279,11 @@ console.log("Add new product to server is ", res.data);
 
   
 
-  const handleDeleteProduct = (productID) => {
-    console.log("handleDeleteProduct=>productID: ", productID);
+  const handleDeleteProduct =async (productID) => {   
+    let res = await productApi.apiDeleteProductIdPost(productID)
+    let data=res.data
+    console.log("handleDeleteProduct ",data)
+    GetProducts()
   };
 
   const handleListEmptyComponent = () => {
