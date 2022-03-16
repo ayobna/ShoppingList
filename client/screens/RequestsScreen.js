@@ -2,16 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, FlatList } from 'react-native';
 import { Text, Divider } from 'react-native-paper';
 import { requestApi } from "../api/api";
+import PopupDialog from '../components/PopupDialog';
 import RequestsCard from '../components/RequestsCard';
 import { _getData } from '../utils/Functions';
 
 
 
 const RequestsScreen = (props) => {
+  // props
   const { navigation, route } = props;
 
+  // states
   const [currentUser, setCurrentUser] = useState();
   const [requests, setRequests] = useState([]);
+  const [popupDialogVisible, setPopupDialogVisible] = useState(false);
+  const [requestData, setRequestData] = useState();
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", async () => {
@@ -23,6 +28,12 @@ const RequestsScreen = (props) => {
     });
     return unsubscribe;
   }, [navigation, route]);
+
+  useEffect(() => {
+    if (requestData) {
+      setPopupDialogVisible(true);
+    }
+  }, [requestData]);
 
   const getRequests = async (userID) => {
     let res = await requestApi.apiRequestsApiRequestsGetRequestsByUserIdIdGet(userID);
@@ -61,15 +72,24 @@ const RequestsScreen = (props) => {
     }
   };
 
-  const handleDeclineRequest = async (listID) => {
+  const handleDeclineRequest = (listID) => {
+    setRequestData(listID);
+  };
+
+  const handleCancelPopupDialog = () => {
+    setRequestData();
+    setPopupDialogVisible(false);
+  };
+
+  const declineRequest = async () => {
     try {
-      await requestApi.apiRequestsApiRequestsDeclineRequestPost({ listID: listID, userID: currentUser.UserID });
+      await requestApi.apiRequestsApiRequestsDeclineRequestPost({ listID: requestData, userID: currentUser.UserID });
       getRequests(currentUser.UserID);
+      handleCancelPopupDialog();
 
     } catch (e) {
       console.log(e);
     }
-
   };
 
 
@@ -86,6 +106,12 @@ const RequestsScreen = (props) => {
       // ListFooterComponent={renderFooter}
       // refreshing={isFetching}
       // onRefresh={() => handleRefresh()}
+      />
+      <PopupDialog
+        title={"האם ברצונך לבטל בקשה?"}
+        visible={popupDialogVisible}
+        cancel={handleCancelPopupDialog}
+        confirm={declineRequest}
       />
     </View>
   );
