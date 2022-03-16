@@ -52,7 +52,7 @@ namespace ShoppingList.Controllers
                         productData.UpdateProduct(product);
                     }
                 }
-                return Ok("successfully");
+                return Ok("Add Products To ShoppingList successfully");
             }
             catch (Exception ex)
             {
@@ -79,7 +79,7 @@ namespace ShoppingList.Controllers
                     productData.UpdateProduct(product);
                 }
 
-                return Ok("successfully");
+                return Ok(" Add Product To ShoppingList successfully");
             }
             catch (Exception ex)
             {
@@ -128,7 +128,7 @@ namespace ShoppingList.Controllers
             try
             {
                 productData.UpdateProduct(product);
-                return Ok("successfully");
+                return Ok("Update Product successfully");
             }
             catch (Exception ex)
             {
@@ -164,5 +164,23 @@ namespace ShoppingList.Controllers
                 return BadRequest(ex);
             }
         }
+
+        [HttpPost]
+        [Route("Api/DeleteProduct/{id}")]
+        public IActionResult DeleteProduct(int id)
+        {
+            try
+            {
+                productData.DeleteProductByID(id);
+                return Ok(" Delete Product successfully");
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(": Did not Get Products by ListId DB");
+                return BadRequest(ex);
+            }
+        }
+
+
     }
 }
