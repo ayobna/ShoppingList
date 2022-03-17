@@ -6,12 +6,13 @@ import ShoppingListMainStack from "./ShoppingListMainStack";
 import AccountScreen from "../screens/AccountScreen";
 import LoginScreen from "../screens/LoginScreen";
 import RequestsStack from "./RequestsStack";
+import MyDrawerContent from "./MyDrawerContent";
 
 const Drawer = createDrawerNavigator();
 
 function MyDrawer() {
   return (
-    <Drawer.Navigator>
+    <Drawer.Navigator drawerContent={props => <MyDrawerContent {...props} />}>
       <Drawer.Screen
         name="login"
         component={LoginScreen}
