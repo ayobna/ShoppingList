@@ -7,6 +7,7 @@ import paperTheme from './utils/PaperTheme';
 import MyDrawer from './navigation/MyDrawer';
 import AppLoading from 'expo-app-loading';
 import * as Font from 'expo-font';
+import GeneralContext from './utils/GeneralContext';
 
 // עושה שהאפליקציה תהיה מותאמת לכיוון עברית RTL
 I18nManager.forceRTL(true);
@@ -26,6 +27,9 @@ const fetchFonts = () => {
 export default function App(props) {
   const [dataLoaded, setDataLoaded] = useState(false); //משתנה שבודק האם הפונטים כבר נטענו
 
+  //  General global states
+  const [currentDrawerScreen, setCurrentDrawerScreen] = useState("homeStack");
+
   // אם הפונטים עוד לא נטענו אז דואג לטעון אותם
   if (!dataLoaded) {
     return (
@@ -38,10 +42,12 @@ export default function App(props) {
   }
 
   return (
-    <PaperProvider theme={paperTheme}>
-      <NavigationContainer>
-        <MyDrawer />
-      </NavigationContainer>
-    </PaperProvider>
+    <GeneralContext.Provider value={{ currentDrawerScreen, setCurrentDrawerScreen }}>
+      <PaperProvider theme={paperTheme}>
+        <NavigationContainer>
+          <MyDrawer />
+        </NavigationContainer>
+      </PaperProvider>
+    </GeneralContext.Provider>
   );
 }
