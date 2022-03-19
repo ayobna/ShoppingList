@@ -7,6 +7,7 @@ import AccountScreen from "../screens/AccountScreen";
 import LoginScreen from "../screens/LoginScreen";
 import RequestsStack from "./RequestsStack";
 import MyDrawerContent from "./MyDrawerContent";
+import LoginStack from "./LoginStack";
 
 const Drawer = createDrawerNavigator();
 
@@ -15,7 +16,7 @@ function MyDrawer() {
     <Drawer.Navigator drawerContent={props => <MyDrawerContent {...props} />}>
       <Drawer.Screen
         name="login"
-        component={LoginScreen}
+        component={LoginStack}
         options={{ headerShown: false , title:"התחברות"}}
       />
       <Drawer.Screen
@@ -35,6 +36,7 @@ function MyDrawer() {
 
 
       />
+           
     </Drawer.Navigator>
   );
 }
