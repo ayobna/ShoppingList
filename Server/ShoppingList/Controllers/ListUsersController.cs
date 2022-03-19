@@ -20,12 +20,12 @@ namespace ShoppingList.Controllers
             logger = logger_;
         }
         [HttpGet]
-        [Route("Api/GetTheApprovedListUsers/{id}")]
-        public IActionResult GetTheApprovedListUsers(int id)
+        [Route("Api/GetParticipantsInTheShoppingListByListId/{id}")]
+        public IActionResult GetParticipantsInTheShoppingListByListId(int id)
         {
             try
             {
-                List<ShoppingListUser> shoppingListUser = listUsers.GetTheApprovedListUsers(id);
+                List<ShoppingListUser> shoppingListUser = listUsers.GetParticipantsInTheShoppingListByListId(id);
                 if (shoppingListUser == null)
                 {
                     logger.LogWarning(" Id not exists");
@@ -62,23 +62,6 @@ namespace ShoppingList.Controllers
             }
         }
 
-        [HttpPost]
-        [Route("api/shoppingList/ApproveOrDeletUserFromList")]
-        public IActionResult ApproveOrDeletUserFromList([FromBody] ShoppingListUser listusers)
-        {
-            try
-            {
-                listusers.JoinedDate = DateTime.Now;
-                int res = listUsers.ApproveOrDeletUserFromList(listusers);
-                logger.LogInformation($"Function name ApproveOrDeletUserFromList - approvin or deleting the user id {listusers.UserID} in list id {listusers.ListID}, success");
-                return Ok(res);
-            }
-            catch (Exception e)
-            {
-                logger.LogError($"Function name ApproveOrDeletUserFromList - {e.Message}");
-
-                throw;
-            }
-        }
+      
     }
 }

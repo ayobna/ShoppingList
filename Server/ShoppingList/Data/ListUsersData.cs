@@ -19,7 +19,7 @@ namespace ShoppingList.Data
             db = db_;
         }
        
-        public List<ShoppingListUser> GetTheApprovedListUsers(int listId)
+        public List<ShoppingListUser> GetParticipantsInTheShoppingListByListId(int listId)
         {
             SqlCommand cmd = db.CreateCommand("Proc_Get_List_Users", db.Connect(), "proc");
             cmd.Parameters.Add("@ListID", SqlDbType.Int).Value = listId;
@@ -43,21 +43,7 @@ namespace ShoppingList.Data
             return Convert.ToInt32(cmd.Parameters["@UserID"].Value);
         }
 
-        public int ApproveOrDeletUserFromList(ShoppingListUser shoppingListUser)
-        {
-            SqlCommand cmd = db.CreateCommand("Proc_User_Confirmation_Ofֹ_Joining ", db.Connect(), "proc");
-            cmd.Parameters.Add("@ListID", SqlDbType.Int).Value = shoppingListUser.ListID;
-            cmd.Parameters.Add("@UserID", SqlDbType.Int).Value = shoppingListUser.UserID;
-            cmd.Parameters.Add("@JoinedDate", SqlDbType.DateTime).Value = shoppingListUser.JoinedDate;
-            cmd.Parameters.Add("@IsApproved", SqlDbType.Bit).Value = shoppingListUser.IsApproved;
-            int res = db.ExecuteAndClose(cmd);
-
-            if (res < 1)
-            {
-                throw new Exception("Somthing went wrong while approvin or removing a user from the list in sql");
-            }
-            return Convert.ToInt32(cmd.Parameters["@ListID"].Value);
-        }
+     
 
     }
 }
