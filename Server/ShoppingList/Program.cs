@@ -15,6 +15,7 @@ namespace ShoppingList
         {
           
             CreateHostBuilder(args).Build().Run();
+            
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
