@@ -1,5 +1,6 @@
 {
   "expo": {
+    "scheme":"client",
     "name": "client",
     "slug": "client",
     "version": "1.0.0",

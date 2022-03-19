@@ -15,9 +15,10 @@ import {
   HelperText,
   Avatar,
 } from "react-native-paper";
+import * as WebBrowser from 'expo-web-browser';
+import { makeRedirectUri, useAuthRequest, useAutoDiscovery } from 'expo-auth-session';
 
-
-
+WebBrowser.maybeCompleteAuthSession();
 const LoginScreen = (props) => {
   const { navigation } = props;
   const [ErrorMsg, setErrorMsg] = useState("");
@@ -27,19 +28,28 @@ const LoginScreen = (props) => {
 
     _storeData('User', User);
     navigation.navigate('homeStack')
+
   };
 
+  const Register =  () => {
 
 
+    navigation.navigate('RegisterScreen')
+    
+  };
+  // const discovery = useAutoDiscovery('https://login.microsoftonline.com/0ff03880-4d75-4d76-889a-26760370fcd3/v2.0');
+  // const [request, response, promptAsync] = useAuthRequest(
+  //   {
+  //     clientId: '6d6f2820-78ec-4918-a473-56f6b691fb56',
+  //     scopes: ['openid', 'profile', 'email', 'offline_access'],
+  //     redirectUri: makeRedirectUri({
+  //       scheme: 'client'
+  //       }),
+  //   },
+  //   discovery
+  // );
 
-
-
-
-
-
-
-
-
+//
   return (
     <View style={styles.container}>
       <Image style={styles.bgImage} source={null} />
@@ -114,9 +124,16 @@ const LoginScreen = (props) => {
         <Text style={styles.label}>זכור אותי</Text>
       </View>
 
-      <TouchableOpacity style={styles.buttonContainer} onPress={() => null}>
+      <TouchableOpacity style={styles.buttonContainer} onPress={Register}>
         <Text style={styles.btnText}>הרשמה</Text>
       </TouchableOpacity>
+      {/* <Button
+      disabled={!request}
+      title="Login"
+      onPress={() => {
+        promptAsync();
+        }}
+    /> */}
     </View>
   );
 };
