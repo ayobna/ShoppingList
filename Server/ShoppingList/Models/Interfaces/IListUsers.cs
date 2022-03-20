@@ -7,7 +7,7 @@ namespace ShoppingList.Models.Interfaces
 {
     public interface IListUsers
     {
-        public List<ShoppingListUser> GetParticipantsInTheShoppingListByListId(int listId);
+        public List<User> GetParticipantsInTheShoppingListByListId(int listId);
         public int AddUserForTheList(ShoppingListUser shoppingListUser);
     }
 }
