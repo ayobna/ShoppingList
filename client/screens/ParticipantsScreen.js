@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableHighlight, StyleSheet} from 'react-native';
 import { listUsersApi } from '../api/api';
-import PraticipantsCard from '../components/PraticipantsCard'
+import ParticipantsCard from '../components/ParticipantsCard';
 import {TextInput, IconButton, Button, Avatar} from "react-native-paper";
 import { _getData } from "../utils/Functions";
 
@@ -48,11 +48,10 @@ const handleListEmptyComponent = () => {
   );
 };
 
-const renderListItem = (itemData) => (
-  <PraticipantsCard
-   data={itemData.item}
-
-  />
+const renderListItem = (itemData) => ( 
+<ParticipantsCard
+data={itemData.item}
+/>
 );
 
 
@@ -63,20 +62,12 @@ return (
       showsVerticalScrollIndicator={false}
       data={participants}
       renderItem={(item) => renderListItem(item)}
-      keyExtractor={(item,index) => index}
+      keyExtractor={(item) =>  String(item.userID)}
       contentContainerStyle={{ flexGrow: 1 }}
       ListEmptyComponent={handleListEmptyComponent}
 
     />
-    <View
-        style={{
-          paddingVertical: 5,
-          paddingHorizontal: 5,
-          borderTopWidth: 2,
-          borderColor: "black",
-          backgroundColor: "#b1b1b1",
-        }}
-     ></View>
+
   </View>
 )
       }
