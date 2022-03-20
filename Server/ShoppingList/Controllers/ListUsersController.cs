@@ -25,7 +25,7 @@ namespace ShoppingList.Controllers
         {
             try
             {
-                List<ShoppingListUser> shoppingListUser = listUsers.GetParticipantsInTheShoppingListByListId(id);
+                List<User> shoppingListUser = listUsers.GetParticipantsInTheShoppingListByListId(id);
                 if (shoppingListUser == null)
                 {
                     logger.LogWarning(" Id not exists");

@@ -19,12 +19,12 @@ namespace ShoppingList.Data
             db = db_;
         }
        
-        public List<ShoppingListUser> GetParticipantsInTheShoppingListByListId(int listId)
+        public List<User> GetParticipantsInTheShoppingListByListId(int listId)
         {
             SqlCommand cmd = db.CreateCommand("Proc_Get_List_Users", db.Connect(), "proc");
             cmd.Parameters.Add("@ListID", SqlDbType.Int).Value = listId;
             DataTable tb = db.ReadAndClose(cmd);
-            List<ShoppingListUser> shoppingListUser = db.ConvertDataTable<ShoppingListUser>(tb);
+            List<User> shoppingListUser = db.ConvertDataTable<User>(tb);
             return shoppingListUser;
         }
 
