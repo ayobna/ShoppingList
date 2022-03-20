@@ -16,116 +16,219 @@ import {
 
 const RegisterScreen = (props) => {
   const { navigation, route } = props;
-  const [user, SetUser] = useState({ First: '', Last: '', Phone: '', fileName: '', base64: '' })
-  useEffect(() => {
-  
-  },[]);
 
+  const [user, SetUser] = useState({
+    FirstName: "",
+    LastName: "",
+    PhoneNumber: "",
+    Email: "",
+    Password: "",
+  });
 
+  const [validateUser, SetValidateUser] = useState({
+    FirstName: false,
+    LastName: false,
+    PhoneNumber: false,
+    Email: false,
+    Password: false,
+    confirmPassword:false
+  });
+  const [confirmPassword, setConfirmPassword] = useState("");
 
+  const phoneValidator = /^((\+|00)?972\-?|0)(([23489]|[57]\d)\-?\d{7})$/;
+  const emailValidator =
+    /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  const passwordValidator = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/;
+
+  useEffect(() => {}, []);
+
+  const Register = () => {
+    ValidateUser();
+
+  };
+
+  const ValidateUser=()=>{
+    SetValidateUser(
+        (prevState) => ({
+            ...prevState,
+            FirstName: validateFirstName(),
+            LastName: validateLastName(),
+            PhoneNumber: validatePhone(),
+            Email: validatorEmail(),
+            Password: validatePassword(),
+            confirmPassword:validateConfirmPassword()
+  })
+    )}
+
+  const validatorEmail = () => {
+    return !emailValidator.test(user.Email);
+  };
+
+  const validatePassword = () => {
+    return !passwordValidator.test(user.Password);
+  };
+  const validateConfirmPassword = () => {
+    if (confirmPassword === user.Password &&confirmPassword!=='') {
+      return false;
+    }
+    else return true;
+  };
+
+  const validateFirstName = () => {
+    return user.FirstName === "";
+  };
+
+  const validateLastName = () => {
+    return user.LastName === "";
+  };
+  const validatePhone = () => {
+    return !phoneValidator.test(user.PhoneNumber);
+  };
   return (
     <View style={styles.container}>
-   <View style={styles.TextInputViews}>
-   <View style={styles.TextInputView}>
-                    <TextInput
-                        theme={{ colors: { primary: `green` } }}
-                        label="שם פרטי"
-                        mode="outlined"
-                        dense={true}
-                        selectionColor="green"
-                        onChangeText={(text) =>
-                            SetUser(prevState => ({
-                                ...prevState,
-                                FirstName: text
-                            }))
-                                                }
-                    />
-                </View>
+      <View style={styles.TextInputViews}>
+        <View style={styles.TextInputView}>
+          <TextInput
+            theme={{ colors: { primary: `green` } }}
+            label="שם פרטי"
+            mode="outlined"
+            dense={true}
+            selectionColor="black"
+            onChangeText={(text) =>
+              SetUser((prevState) => ({
+                ...prevState,
+                FirstName: text,
+              }))
+            }
+            error={validateUser.FirstName}
+        //    left={<TextInput.Icon name="van-passenger" color={validateUser.FirstName ? "red" : "green"} size={20} onPress={null} />}
+          />
+        </View>
 
-                <View style={styles.TextInputView}>
-                    <TextInput
-                        theme={{ colors: { primary: `green` } }}
-                        label="שם משפחה"
-                        mode="outlined"
-                        dense={true}
-                        selectionColor="green"
-                        onChangeText={(text) =>
-                            SetUser(prevState => ({
-                                ...prevState,
-                                LastName: text
-                            }))
-                        }   />
-                </View>
-                <View style={styles.TextInputView}>
-                    <TextInput
-                        theme={{ colors: { primary: `green` } }}
-                        label="מייל"
-                        mode="outlined"
-                        dense={true}
-                        selectionColor="green"
-                        onChangeText={(text) =>
-                            SetUser(prevState => ({
-                                ...prevState,
-                                Email: text
-                            }))
-                        } />
-                </View>
-                <View style={styles.TextInputView}>
-                    <TextInput
-                        theme={{ colors: { primary: `green` } }}
-                        label="סיסמה"
-                        mode="outlined"
-                        secureTextEntry={true}
-                        dense={true}
-                        selectionColor="green"
-                        onChangeText={(text) =>
-                            SetUser(prevState => ({
-                                ...prevState,
-                                First: text
-                            }))
-                        }
-                    />
-                </View>
-                <View style={styles.TextInputView}>
-                    <TextInput
-                        theme={{ colors: { primary: `green` } }}
-                        label="אימות סיסמה"
-                        mode="outlined"                
-                        dense={true}
-                        secureTextEntry={true}
-                        selectionColor="green"
-                        onChangeText={(text) =>
-                            SetUser(prevState => ({
-                                ...prevState,
-                                ConfirmPassword: text
-                            }))
-                        }                
-                    />
-                </View>
+        <View style={styles.TextInputView}>
+          <TextInput
+            theme={{ colors: { primary: `green` } }}
+            label="שם משפחה"
+            mode="outlined"
+            dense={true}
+            selectionColor="black"
+            onChangeText={(text) =>
+              SetUser((prevState) => ({
+                ...prevState,
+                LastName: text,
+              }))
+            }
+            error={validateUser.LastName}
+          //  left={<TextInput.Icon name="van-passenger" color={validateUser.LastName ? "red" : "green"} size={20} onPress={null} />}
+         
+          />
+        </View>
+        <View style={styles.TextInputView}>
+          <TextInput
+            theme={{ colors: { primary: `green` } }}
+            label="מייל"
+            mode="outlined"
+            dense={true}
+            selectionColor="black"
+            onChangeText={(text) =>
+              SetUser((prevState) => ({
+                ...prevState,
+                Email: text,
+              }))
+            }
+            error={validateUser.Email}
+          //  left={<TextInput.Icon name="van-passenger" color={validateUser.Email ? "red" : "green"} size={20} onPress={null} />}
+    
+          />
+        </View>
+        <View style={styles.TextInputView}>
+          <TextInput
+            theme={{ colors: { primary: `green` } }}
+            keyboardType="numeric"
+            label="מספר טלפון"
+            mode="outlined"
+            dense={true}
+            selectionColor="black"
+            onChangeText={(text) =>
+              SetUser((prevState) => ({
+                ...prevState,
+                PhoneNumber: text,
+              }))
+            }
+            error={validateUser.PhoneNumber}
+         //   left={<TextInput.Icon name="van-passenger" color={validateUser.PhoneNumber ? "red" : "green"} size={20} onPress={null} />}
+    
+      
+          />
+        </View>
+        <View style={styles.TextInputView}>
+          <TextInput
+            theme={{ colors: { primary: `green` } }}
+            label="סיסמה"
+            mode="outlined"
+            secureTextEntry={true}
+            dense={true}
+            selectionColor="black"
+            onChangeText={(text) =>
+              SetUser((prevState) => ({
+                ...prevState,
+                Password: text,
+              }))
+            }
 
-            </View>
+            error={validateUser.Password}
+           // left={<TextInput.Icon name="van-passenger" color={validateUser.Password ? "red" : "green"} size={20} onPress={null} />}
+    
+          />
+        </View>
+        <View style={styles.TextInputView}>
+          <TextInput
+            theme={{ colors: { primary: `green` } }}
+            label="אימות סיסמה"
+            mode="outlined"
+            dense={true}
+            secureTextEntry={true}
+            selectionColor="black"
+            onChangeText={(text) => setConfirmPassword(text)}
+            error={validateUser.confirmPassword}
+          //  left={<TextInput.Icon name="van-passenger" color={validateUser.confirmPassword() ? "red" : "green"} size={20} onPress={null} />}
+    
+          />
+        </View>
+        <Button
+          mode="outlined"
+          icon="van-passenger"
+          theme={{ colors: { primary: `white` } }}
+          labelStyle={{ color: "black" }}
+          contentStyle={{ backgroundColor: "#bfbfbf" }}
+          style={{ width: "70%" }}
+          //
+          onPress={Register}
+        >
+          הרשמה
+        </Button>
+      </View>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      alignItems:'center',
-      backgroundColor:'white',
-     //justifyContent:'center'
-    
-    },
-    TextInputViews:{
-        top:"20%",
-        width:"100%",
-       
-        alignItems:'center',
-  
-    },
-    TextInputView:{    
-        width: "70%",  
-    }
-  });
+  container: {
+    flex: 1,
+    // alignItems:'center',
+    backgroundColor: "white",
+  },
+  TextInputViews: {
+    top: "15%",
+    width: "100%",
+
+    alignItems: "center",
+    height: "70%",
+    justifyContent: "space-between",
+  },
+  TextInputView: {
+    width: "70%",
+  },
+});
 
 export default RegisterScreen;
