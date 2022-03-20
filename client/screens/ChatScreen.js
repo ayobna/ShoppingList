@@ -169,13 +169,6 @@ const ChatScreen = (props) => {
           style={{ transform: [{ rotateY: '180deg' }] }}
           disabled={message.length === 0}
         />
-
-        <IconButton
-          icon="home"
-          size={20}
-          onPress={() => closeConnection()}
-          style={{ transform: [{ rotateY: '180deg' }] }}
-        />
       </View>
 
 
