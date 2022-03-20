@@ -50,7 +50,7 @@ const handleListEmptyComponent = () => {
 
 const renderListItem = (itemData) => (
   <PraticipantsCard
-    data={itemData.item}
+   data={itemData.item}
 
   />
 );
@@ -58,7 +58,7 @@ const renderListItem = (itemData) => (
 
 
 return (
-  <View>
+  <View style={styles.container }>   
     <FlatList
       showsVerticalScrollIndicator={false}
       data={participants}
@@ -80,4 +80,14 @@ return (
   </View>
 )
       }
+
+
+      const styles = StyleSheet.create({
+        container: {
+          flex: 1,
+          marginHorizontal: 10,
+          marginTop: 10,
+        },
+
+      });
 export default ParticipantsScreen;

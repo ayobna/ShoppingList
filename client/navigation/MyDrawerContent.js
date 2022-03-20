@@ -54,7 +54,9 @@ const MyDrawerContent = (props) => {
             console.log("Sign out")
             // await AsyncStorage.removeItem('user');
             // await AsyncStorage.removeItem('expoNotificationTokenDate');
-            // navigation.replace("Login");
+            
+             navigation.navigate("login");
+             console.log("first")
         } catch (e) {
             // remove error
         }
