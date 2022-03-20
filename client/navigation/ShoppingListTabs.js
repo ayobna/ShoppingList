@@ -25,14 +25,7 @@ function ShoppingListTabs(props) {
           ),
         }}
       />
-      <Tab.Screen name="Chat" component={ChatScreen}
-        initialParams={data}
-        options={{
-          tabBarLabel: "צ'אט",
-          tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="home" color={color} size={24} />
-          ),
-        }} />
+
       <Tab.Screen name="ParticipantsScreen" component={ParticipantsScreen} initialParams={data}
         options={{
           tabBarLabel: "משתתפים",
@@ -40,7 +33,24 @@ function ShoppingListTabs(props) {
             <MaterialCommunityIcons name="home" color={color} size={24} />
           ),
         }} />
+      <Tab.Screen name="Chat" component={ChatScreen}
+
+        initialParams={data}
+        listeners={{
+          tabPress: e => {
+            e.preventDefault();
+            navigation.navigate("ChatListScreen", data);
+          }
+        }}
+
+        options={{
+          tabBarLabel: "צ'אט",
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="home" color={color} size={24} />
+          ),
+        }} />
     </Tab.Navigator>
+
   );
 }
 
