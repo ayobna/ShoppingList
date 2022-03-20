@@ -35,7 +35,7 @@ const HomeTabs = () => {
         options={{
           tabBarLabel: "רשימות משותפות",
           tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="clipboard-list-outline" color={color} size={24} />
+            <MaterialCommunityIcons name="share-variant" color={color} size={24} />
           ),
         }}
       />

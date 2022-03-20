@@ -21,7 +21,7 @@ function ShoppingListTabs(props) {
         options={{
           tabBarLabel: "הרשימה",
           tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="home" color={color} size={24} />
+            <MaterialCommunityIcons name="clipboard-list-outline" color={color} size={24} />
           ),
         }}
       />
@@ -30,7 +30,7 @@ function ShoppingListTabs(props) {
         options={{
           tabBarLabel: "משתתפים",
           tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="home" color={color} size={24} />
+            <MaterialCommunityIcons name="account-multiple-outline" color={color} size={24} />
           ),
         }} />
       <Tab.Screen name="Chat" component={ChatScreen}
@@ -46,7 +46,7 @@ function ShoppingListTabs(props) {
         options={{
           tabBarLabel: "צ'אט",
           tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="home" color={color} size={24} />
+            <MaterialCommunityIcons name="chat-outline" color={color} size={24} />
           ),
         }} />
     </Tab.Navigator>
