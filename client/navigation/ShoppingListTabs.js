@@ -35,7 +35,7 @@ function ShoppingListTabs(props) {
         }} />
       <Tab.Screen name="Chat" component={ChatScreen}
 
-        initialParams={data}
+        initialParams={data}  
         listeners={{
           tabPress: e => {
             e.preventDefault();
