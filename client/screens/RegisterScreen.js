@@ -36,45 +36,46 @@ const RegisterScreen = (props) => {
                         onChangeText={(text) =>
                             SetUser(prevState => ({
                                 ...prevState,
-                                First: text
+                                FirstName: text
                             }))
-                        }
+                                                }
                     />
                 </View>
 
                 <View style={styles.TextInputView}>
                     <TextInput
                         theme={{ colors: { primary: `green` } }}
-                        label="שם פרטי"
+                        label="שם משפחה"
                         mode="outlined"
                         dense={true}
                         selectionColor="green"
                         onChangeText={(text) =>
                             SetUser(prevState => ({
                                 ...prevState,
-                                First: text
+                                LastName: text
                             }))
                         }   />
                 </View>
                 <View style={styles.TextInputView}>
                     <TextInput
                         theme={{ colors: { primary: `green` } }}
-                        label="שם פרטי"
+                        label="מייל"
                         mode="outlined"
                         dense={true}
                         selectionColor="green"
                         onChangeText={(text) =>
                             SetUser(prevState => ({
                                 ...prevState,
-                                First: text
+                                Email: text
                             }))
                         } />
                 </View>
                 <View style={styles.TextInputView}>
                     <TextInput
                         theme={{ colors: { primary: `green` } }}
-                        label="שם פרטי"
+                        label="סיסמה"
                         mode="outlined"
+                        secureTextEntry={true}
                         dense={true}
                         selectionColor="green"
                         onChangeText={(text) =>
@@ -88,14 +89,15 @@ const RegisterScreen = (props) => {
                 <View style={styles.TextInputView}>
                     <TextInput
                         theme={{ colors: { primary: `green` } }}
-                        label="שם פרטי"
+                        label="אימות סיסמה"
                         mode="outlined"                
                         dense={true}
+                        secureTextEntry={true}
                         selectionColor="green"
                         onChangeText={(text) =>
                             SetUser(prevState => ({
                                 ...prevState,
-                                First: text
+                                ConfirmPassword: text
                             }))
                         }                
                     />
