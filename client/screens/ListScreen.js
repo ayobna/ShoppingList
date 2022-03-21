@@ -13,7 +13,7 @@ import * as ImagePicker from "expo-image-picker";
 import PopupDialog from "../components/PopupDialog";
 import { productApi, shoppingListApi, API } from "../api/api";
 import { _getData } from "../utils/Functions";
-
+import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 const ListScreen = (props) => {
   const { navigation, route } = props;
 
@@ -22,7 +22,7 @@ const ListScreen = (props) => {
 
   const [listCreatorId, setListCreatorId] = useState();
   const [products, setProducts] = useState();
-  const [user, setUser] = useState();
+  const [user, setUser] = useState({});
   const [productName, setProductName] = useState("");
   const [amount, setAmount] = useState("1");
   const [imageBase64, setImageBase64] = useState();
@@ -35,11 +35,15 @@ const ListScreen = (props) => {
   const [editNameError, setEditNameError] = useState(false);
 
   const [fromDB, setFromDB] = useState(true);
+  const [connection, setConnection] = useState();
 
   useEffect(() => {
-    LoadUser();
-    const unsubscribe = navigation.addListener("focus", async () => {
-      GetProducts();
+  
+    const unsubscribe = navigation.addListener("focus",  async() => {
+  await   LoadUser(); 
+  //  await  GetProducts();
+  await GetListCreatorByListID();    
+   await   joinChat()
     });
     return unsubscribe;
   }, [route]);
@@ -67,10 +71,44 @@ const ListScreen = (props) => {
     let u = await _getData("User");
     if (u != null) {
       setUser(u);
+      console.log(u)
     }
+
   };
 
-  
+
+
+  const joinChat = async () => {
+     
+    console.log("HHHHHHHHHHHHHHHH")
+ //   console.log("user Id =",//)
+    try {
+      const connection = new HubConnectionBuilder()
+        .withUrl(API + "/Products")
+        .withAutomaticReconnect()
+        .build();
+
+      connection.on("ReceiveMessage", (chatMessageCard,products) => {
+        console.log(chatMessageCard);
+      //  console.log(products)
+        setProducts(products);
+      });
+      connection.onclose((e) => {
+        setConnection();
+        setMessages([]);
+      });
+
+      await connection.start();
+      let listID = shoppingListID;
+     
+      let userID =user.UserID;
+      await connection.invoke("JoinRoom", { listID, userID });
+
+      setConnection(connection);
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   useEffect(() => {
     if (productEditDetails) {

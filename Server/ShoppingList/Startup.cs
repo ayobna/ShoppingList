@@ -129,6 +129,10 @@ namespace ShoppingList
             {
                 endpoints.MapHub<ChatHub>("/chat");
             });
+            app.UseAzureSignalR(endpoints =>
+            {
+                endpoints.MapHub<ListProductsHub>("/Products");
+            });
 
         }
     }
