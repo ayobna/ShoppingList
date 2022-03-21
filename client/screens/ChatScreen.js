@@ -30,9 +30,9 @@ const ChatScreen = (props) => {
 
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
+    const unsubscribe = navigation.addListener("focus", async () => {
       console.log("enter chat")
-      joinChat();
+      await joinChat();
       getMessages();
     });
     return unsubscribe;
@@ -42,10 +42,23 @@ const ChatScreen = (props) => {
   useEffect(() => {
     const unsubscribe = navigation.addListener("blur", async () => {
       console.log("leave chat")
-      closeConnection();
+      setMessages([]);
     });
     return unsubscribe;
   }, [navigation, route]);
+
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("beforeRemove", (e) => {
+      e.preventDefault();
+      if (connection) {
+        closeConnection(e);
+      }
+    });
+    return unsubscribe;
+  }, [navigation, connection]);
+
+
 
 
 
@@ -72,7 +85,6 @@ const ChatScreen = (props) => {
 
       });
       connection.onclose((e) => {
-        setConnection();
         setMessages([]);
       });
 
@@ -105,11 +117,11 @@ const ChatScreen = (props) => {
     }
   };
 
-  const closeConnection = async () => {
+  const closeConnection = async (e) => {
     try {
-      if (connection)
-        await connection.stop();
+      await connection.stop();
       console.log("closeConnection");
+      navigation.dispatch(e.data.action);
     } catch (e) {
       console.log(e);
     }
@@ -169,6 +181,12 @@ const ChatScreen = (props) => {
           style={{ transform: [{ rotateY: '180deg' }] }}
           disabled={message.length === 0}
         />
+        {/* <IconButton
+          icon="home"
+          size={20}
+          onPress={() => closeConnection()}
+          style={{ transform: [{ rotateY: '180deg' }] }}
+        /> */}
       </View>
 
 
