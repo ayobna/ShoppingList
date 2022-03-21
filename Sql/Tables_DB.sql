@@ -37,7 +37,8 @@ CREATE TABLE products
 	 Amount int not null,
 	 Img nvarchar(max) default 'default/default_img.jpg',
 	 CreatedOn DateTime not null,
-	 IsActive bit default 1,
+	 IsChacked bit default 0,
+	 IsActive bit default 1
 )
 GO
 
