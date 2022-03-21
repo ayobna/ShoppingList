@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableHighlight, StyleSheet} from 'react-native';
-import { listUsersApi } from '../api/api';
+import { listUsersApi ,shoppingListApi} from '../api/api';
 import ParticipantsCard from '../components/ParticipantsCard';
 import {TextInput, IconButton, Button, Avatar} from "react-native-paper";
 import { _getData } from "../utils/Functions";
@@ -10,10 +10,14 @@ import { _getData } from "../utils/Functions";
 const ParticipantsScreen = (props) => {
   const { navigation, route } = props;
   const [participants, setParticipants] = useState([]);
+  const shoppingListID = route.params.shoppingListID;
+
+  const [listCreatorId, setListCreatorId] = useState();
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus",  () => {
       GetParticipantsInTheShoppingList();
+      GetListCreatorByListID();
     });
     return unsubscribe;
   }, [route]);
@@ -28,8 +32,16 @@ const ParticipantsScreen = (props) => {
   let res= await listUsersApi.apiGetParticipantsInTheShoppingListByListIdIdGet(route.params.shoppingListID)
   let data = res.data;
   setParticipants(data)
-}
 
+}
+  const GetListCreatorByListID = async () => {
+    let res = await shoppingListApi.apiShoppingListGetListCreatorByListIDIdGet(
+      shoppingListID
+    );
+    console.log("res.data.creatorID", res.data.creatorID);
+    setListCreatorId(res.data.creatorID);
+    // console.log(res.data);
+  };
   
 const LoadUser = async () => {
   let u = await _getData("User");
@@ -51,6 +63,7 @@ const handleListEmptyComponent = () => {
 const renderListItem = (itemData) => ( 
 <ParticipantsCard
 data={itemData.item}
+listCreatorId={listCreatorId}
 />
 );
 

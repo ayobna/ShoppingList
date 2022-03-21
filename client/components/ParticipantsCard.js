@@ -5,7 +5,7 @@ import { API } from '../api/api';
 
 const ParticipantsCard = (props) => {
   // props
-  const { data } = props;
+  const { data, listCreatorId } = props;
 
   const leftContent = (props) => (
     <Avatar.Image size={60} source={{ uri:API+'/uploads/users/'+data.img }} />
@@ -19,9 +19,9 @@ const ParticipantsCard = (props) => {
         <Card.Title
             titleNumberOfLines={3}
             title={`שם:${data.firstName+' '+data.lastName}`}
-        //    subtitle={`כמות: ${data.firstName+' '+data.lastName}`}
+           subtitle={ data.userID===listCreatorId? 'יוצר':''}
+           subtitleStyle={{color:'green'}}
           left={leftContent}
-            // right={rightContent}
           />
 </Card>
 
