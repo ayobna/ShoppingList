@@ -44,7 +44,10 @@ const RegisterScreen = (props) => {
 
   const Register = () => {
     ValidateUser();
-
+if(!validateUser.FirstName&&!validateUser.PhoneNumber&&!validateUser.Password&&
+  !validateUser.LastName&&!validateUser.Email&&!validateUser.confirmPassword){
+  console.log("sdsdf")
+}
   };
 
   const ValidateUser=()=>{
