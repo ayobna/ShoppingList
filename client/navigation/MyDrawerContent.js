@@ -82,10 +82,10 @@ const MyDrawerContent = (props) => {
                                     size={50}
                                     // theme={{ colors: { primary: Colors.avatarBackground } }}
                                     source={{
-                                        uri: `${API}/uploads/users/${currentUser.Img}`
+                                        uri: `${API}/uploads/users/${currentUser.img}`
                                     }} />
                                 <View style={styles.userNameWrapper}>
-                                    <Title style={styles.title}>{currentUser.FirstName} {currentUser.LastName}</Title>
+                                    <Title style={styles.title}>{currentUser.firstName} {currentUser.lastName}</Title>
                                 </View>
                             </View>
                         </View>

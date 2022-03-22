@@ -4,6 +4,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 
 import RegisterScreen from "../screens/RegisterScreen";
 import LoginScreen from "../screens/LoginScreen";
+import MyDrawer from "./MyDrawer";
 
 const Stack = createStackNavigator();
 
@@ -11,19 +12,23 @@ function LoginStack(props) {
     const { navigation, route } = props;
     return (
         <Stack.Navigator>
-                <Stack.Screen
+            <Stack.Screen
                 name="LoginScreen"
-                component={LoginScreen}     
-                options={{ headerShown: false , title:"התחברות"}}        
+                component={LoginScreen}
+                options={{ headerShown: false, title: "התחברות" }}
             />
             <Stack.Screen
                 name="RegisterScreen"
-                component={RegisterScreen}     
-                options={{  title:"הרשמה"}}  
+                component={RegisterScreen}
+                options={{ title: "הרשמה" }}
+            />
+            <Stack.Screen
+                name="myDrawer"
+                component={MyDrawer}
+                options={{ headerShown: false }}
             />
         </Stack.Navigator>
     );
 }
 
 export default LoginStack;
-             

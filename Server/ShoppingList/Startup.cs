@@ -38,6 +38,7 @@ namespace ShoppingList
             services.AddSingleton<IProductData, ProductData>();
             services.AddSingleton<IUser, UserData>();
             services.AddSingleton<IRequestsData, RequestsData>();
+            services.AddSingleton<ILoginData, LoginData>();
             services.AddSingleton<IListUsers, ListUsersData>();
             services.AddCors(options =>
        {

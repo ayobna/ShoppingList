@@ -4,21 +4,14 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 
 import ShoppingListMainStack from "./ShoppingListMainStack";
 import AccountScreen from "../screens/AccountScreen";
-import LoginScreen from "../screens/LoginScreen";
 import RequestsStack from "./RequestsStack";
 import MyDrawerContent from "./MyDrawerContent";
-import LoginStack from "./LoginStack";
 
 const Drawer = createDrawerNavigator();
 
-function MyDrawer() {
+function MyDrawer(props) {
   return (
     <Drawer.Navigator drawerContent={props => <MyDrawerContent {...props} />}>
-      <Drawer.Screen
-        name="login"
-        component={LoginStack}
-        options={{ headerShown: false , title:"התחברות"}}
-      />
       <Drawer.Screen
         name="homeStack"
         component={ShoppingListMainStack}
@@ -35,8 +28,7 @@ function MyDrawer() {
         options={{ title:"חשבון"}}
 
 
-      />
-           
+      />      
     </Drawer.Navigator>
   );
 }
