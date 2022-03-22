@@ -37,10 +37,12 @@ CREATE TABLE products
 	 Amount int not null,
 	 Img nvarchar(max) default 'default/default_img.jpg',
 	 CreatedOn DateTime not null,
-	 IsChacked bit default 0,
+	 IsChecked bit default 0,
 	 IsActive bit default 1
 )
 GO
+
+
 
 -- Drop Table shopping_lists_users
 CREATE TABLE shopping_lists_users

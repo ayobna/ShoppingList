@@ -1,4 +1,4 @@
-import React, { useState ,useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -14,46 +14,62 @@ import {
   Menu,
   Divider,
   IconButton,
-  Checkbox
+  Checkbox,
 } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { API ,shoppingListApi } from "../api/api";
+import { API, shoppingListApi } from "../api/api";
 const ProductCard = (props) => {
-  const { data, handleDeleteProduct, handleEditProduct, ScreenName, user,listCreatorId } =
-    props;
+  const {
+    data,
+    handleDeleteProduct,
+    handleEditProduct,
+    ScreenName,
+    user,
+    listCreatorId,
+  } = props;
   //states
   const [visibleMenu, setVisibleMenu] = useState(false);
   const openMenu = () => setVisibleMenu(true);
   const closeMenu = () => setVisibleMenu(false);
-  const [checked, setChecked] = useState(false);
+  const [checked, setChecked] = useState(data.isChecked);
 
   const ImgName = () => {
     const imgArray = data.img.split(":/");
     let img = data.img;
 
-
     useEffect(() => {
-console.log("listCreatorId in ProductCard comp=>",listCreatorId)
-      
-    }, [])
-    
+      console.log("product: ", data);
+    }, []);
 
-  
     if (ScreenName !== "CreateList") {
-
-      if (data.productID!==0) {   img =
-        imgArray[0] === "file"
-          ? data.img
-          : API + `/uploads/shoppingLists/` + data.img;     
-        }
+      if (data.productID !== 0) {
+        img =
+          imgArray[0] === "file"
+            ? data.img
+            : API + `/uploads/shoppingLists/` + data.img;
+      }
     }
 
     return img;
   };
   // מרנדר תמונה של מוצר
-  const leftContent = (props) => (
-    <Avatar.Image size={60} source={{ uri: ImgName() }} />
-  );
+  const leftContent = (props) => {
+    if (ScreenName === "CreateList")
+      return <Avatar.Image size={60} source={{ uri: ImgName() }} />;
+    else {
+      return (
+        <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
+          <Checkbox
+            status={checked ? "checked" : "unchecked"}
+            onPress={() => {
+              setChecked(!checked);
+            }}
+          />
+          <Avatar.Image size={60} source={{ uri: ImgName() }} />
+        </View>
+      );
+    }
+  };
 
   // מרנדר אייקון שלוש נקודות לאופציות שניתן לבצע בכרטיס מוצר
   const rightContent = (props) => {
@@ -78,7 +94,7 @@ console.log("listCreatorId in ProductCard comp=>",listCreatorId)
         </Menu>
       );
     } else {
-      if (data.creatorID === user.UserID||listCreatorId===user.UserID)
+      if (data.creatorID === user.UserID || listCreatorId === user.UserID)
         return (
           <Menu
             visible={visibleMenu}
@@ -135,6 +151,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginHorizontal: 10,
     marginTop: 10,
+    left:10
   },
 });
 

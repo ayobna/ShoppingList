@@ -14,6 +14,8 @@ namespace ShoppingList.Models
         public int Amount { get; set; }
         public string Img { get; set; }
         public DateTime CreatedOn { get; set; }
+        //IsChacked
+        public bool IsChecked { get; set; }
         public bool IsActive { get; set; }
     }
 }

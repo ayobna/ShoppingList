@@ -37,28 +37,48 @@ const ListScreen = (props) => {
   const [fromDB, setFromDB] = useState(true);
   const [connection, setConnection] = useState();
 
-  useEffect(() => {
-  
+  useEffect(() => {    
     const unsubscribe = navigation.addListener("focus",  async() => {
+      setConnection()
   await   LoadUser(); 
   //  await  GetProducts();
   await GetListCreatorByListID();    
-   await   joinChat()
+   //await   joinChat()
     });
     return unsubscribe;
-  }, [route]);
+  },[navigation, route]);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("blur", async () => {});
     return unsubscribe;
   }, [route]);
 
-  const GetProducts = async () => {
-    let res = await productApi.apiGetProductsByListIdIdGet(shoppingListID);
-    let data = res.data;
-    await GetListCreatorByListID();    
-    setProducts(data);
+  // useEffect(() => {
+  //   const unsubscribe = navigation.addListener("beforeRemove", (e) => {
+  //   //  e.preventDefault();
+  //     if (connection) {
+  //       closeConnection(e);
+  //     }
+  //   });
+  //   return unsubscribe;
+ // }, [navigation, connection]);
+
+ const closeConnection = async (e) => {
+    try {
+      await connection.stop();
+      console.log("closeConnection");
+      setConnection()
+     navigation.dispatch(e.data.action);
+    } catch (e) {
+      console.log(e);
+    }
   };
+  // const GetProducts = async () => {
+  //   let res = await productApi.apiGetProductsByListIdIdGet(shoppingListID);
+  //   let data = res.data;
+  //   await GetListCreatorByListID();    
+  //   setProducts(data);
+  // };
   const GetListCreatorByListID = async () => {
     let res = await shoppingListApi.apiShoppingListGetListCreatorByListIDIdGet(
       shoppingListID
@@ -79,18 +99,14 @@ const ListScreen = (props) => {
 
 
   const joinChat = async () => {
-     
-    console.log("HHHHHHHHHHHHHHHH")
- //   console.log("user Id =",//)
+
     try {
       const connection = new HubConnectionBuilder()
         .withUrl(API + "/Products")
         .withAutomaticReconnect()
         .build();
 
-      connection.on("ReceiveMessage", (chatMessageCard,products) => {
-        console.log(chatMessageCard);
-      //  console.log(products)
+      connection.on("ReceiveMessage", (products) => {
         setProducts(products);
       });
       connection.onclose((e) => {
@@ -117,7 +133,7 @@ const ListScreen = (props) => {
     }
   }, [productEditDetails]);
 
-  // פעולה אשר אחראית על החסרה/הוספה של כמות
+
   const handlePlusMinusAmount = (operation, edit) => {
     if (
       amount === "" ||
@@ -146,7 +162,7 @@ const ListScreen = (props) => {
       : setAmount(value.toString());
   };
 
-  // פעולה האחראית על שינוי הכמות דרך המקלדת
+
   const handleOnChangeAmount = (txt, edit) => {
     if (parseInt(txt) !== 0) {
       const amountRgx = /^[1-9]*([0-9]*)$/;
@@ -162,7 +178,6 @@ const ListScreen = (props) => {
     }
   };
 
-  // בחירת תמונה מהגלריה
   const pickFromGallery = async (edit) => {
     const permissionResult =
       await ImagePicker.requestMediaLibraryPermissionsAsync(); // בקשת הרשאה לגלריה
@@ -191,7 +206,6 @@ const ListScreen = (props) => {
     }
   };
 
-  // הוספת מוצר למערך
   const handleAddProduct = () => {
     if (regexValidationProduct(false) < 2) {
       return;
@@ -231,7 +245,17 @@ const ListScreen = (props) => {
   };
 const  addANewProductToTheList =async(newProductToList)=>{
 let res =await productApi.apiProductAddProductToShoppingListPost(newProductToList)
-console.log("Add new product to server is ", res.data);
+ console.log("Add new product to server is ", res.data);
+  await invokeNewProduct();
+};
+
+ const invokeNewProduct=async()=> {
+  try {
+    await connection.invoke("NewProduct");
+
+  } catch (e) {
+    console.log(e);
+  }
 }
   const regexValidationProduct = (edit) => {
     let counter = 0;
@@ -255,7 +279,6 @@ console.log("Add new product to server is ", res.data);
     return counter;
   };
 
-  // ניקוי שדות לאחר הוספת מוצר חדש
   const handleClearStates = () => {
     setProductName("");
     setAmount("1");
@@ -303,13 +326,13 @@ console.log("Add new product to server is ", res.data);
     let res = await productApi.apiUpdateProductPost(Product)
     let data= res.data
     console.log( "apiUpdateProductPost data",data)
-    GetProducts()
+  await  invokeNewProduct()
   }
    const updateProductNewImg=async(Product)=>{
     let res = await productApi.apiUpdateProductNewImgPost(Product)
     let data= res.data
     console.log( "updateProductNewImg data",data)
-    GetProducts()
+    await  invokeNewProduct()
   }
 
 
@@ -560,3 +583,5 @@ const styles = StyleSheet.create({
 });
 
 export default ListScreen;
+
+
