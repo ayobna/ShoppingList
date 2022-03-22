@@ -90,7 +90,7 @@ const ParticipantsScreen = (props) => {
         contentContainerStyle={{ flexGrow: 1 }}
         ListEmptyComponent={handleListEmptyComponent}
       />
-      {currentUser && listCreatorId && currentUser.UserID === listCreatorId && (<FAB
+      {currentUser && listCreatorId && currentUser.userID === listCreatorId && (<FAB
         style={styles.fab}
         color="white"
         icon="plus"
