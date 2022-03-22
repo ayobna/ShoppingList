@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import { StyleSheet, Text, View, TouchableOpacity, Image, ScrollView } from "react-native";
-import { User } from "../User";
 import { _storeData, _getData } from "../utils/Functions";
 import { Button, TextInput, HelperText, Avatar, Caption } from "react-native-paper";
 import * as WebBrowser from 'expo-web-browser';

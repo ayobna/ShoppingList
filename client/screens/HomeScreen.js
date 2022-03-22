@@ -4,9 +4,8 @@ import { FAB, TextInput, Searchbar } from "react-native-paper";
 import { shoppingListApi, userApi } from "../api/api";
 import ShoppingListCard from "../components/ShoppingListCard";
 import PopupDialog from "../components/PopupDialog";
-import { User } from "../User";
- 
-//"Test ayoub"
+import { _getData } from "../utils/Functions";
+
 const HomeScreen = (props) => {
   // props
   const { navigation, route } = props;
@@ -18,18 +17,21 @@ const HomeScreen = (props) => {
   const [popupDialogVisible, setPopupDialogVisible] = useState(false);
   const [titleError, setTitleError] = useState(false);
   const [chosenMethod, setChosenMethod] = useState();
-  const [currentUser, setCurrentUser] = useState(User);
+  const [currentUser, setCurrentUser] = useState();
   const [searchQuery, setSearchQuery] = useState("");
 
   const extraDataForTabs = route.params.extraData;
 
-  // console.log("HomeScreen route.params.extraData  ",route.params.extraData)
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", async () => {
-      ShoppingListsGetFromAPI();
+        const user = await LoadUser();     
+        if (user!=null) {
+          const lists= await ShoppingListsGetFromAPI(user.userID);
+        }
+
     });
     return unsubscribe;
-  }, [route]);
+  }, [navigation, route]);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("blur", async () => {
@@ -45,7 +47,6 @@ const HomeScreen = (props) => {
     }
   }, [chosenListDetails]);
 
-  // ??? ????? ??????, ???? ??? ?? ????
   useEffect(() => {
     let newData = shoppingLists.filter((item) => {
       const itemData = `${item.title.toUpperCase()}`;
@@ -58,21 +59,27 @@ const HomeScreen = (props) => {
     navigation.navigate("CreateList");
   };
 
-  // useEffect(() => {
-  //   ShoppingListCreatedByUserIdGet()
-  // }, [])
+  const LoadUser = async () => {
+    let u = await _getData("User");  
+      setCurrentUser(u);
+      return u;   
+  };
 
-  const ShoppingListsGetFromAPI = async () => {
+  const ShoppingListsGetFromAPI = async (userID) => {
     let res = null;
-    console.log(currentUser.UserID)
     try {
       if (extraDataForTabs == 1)
-        res = await shoppingListApi.apiShoppingListCreatedByUserIdGet(currentUser.UserID);
+        res = await shoppingListApi.apiShoppingListCreatedByUserIdGet(
+          userID
+        );
       else
-        res = await shoppingListApi.apiShoppingListUserIsAParticipantIdGet(currentUser.UserID);
-
-      setShoppingLists(res.data);
-      setRenderedShoppingLists(res.data);
+        res = await shoppingListApi.apiShoppingListUserIsAParticipantIdGet(
+          userID
+        );
+      //console.log("ShoppingListsGetFromAPI",res.data)
+      let data= res.data
+      setShoppingLists(data);
+      setRenderedShoppingLists(data);
     } catch (error) {
       console.warn(error);
     }
@@ -87,8 +94,6 @@ const HomeScreen = (props) => {
       handleChoice={handleChoice}
     />
   );
-
-
 
   const handleChoice = (productDetails, choice) => {
     setChosenMethod(choice);
@@ -124,7 +129,7 @@ const HomeScreen = (props) => {
   const regexValidationShoppingList = () => {
     let counter = 0;
     const titleRgx =
-    /^[\u05D0-\u05EAa-zA-Z0-9']+([ |\-|.|/]*[\u05D0-\u05EAa-zA-Z0-9'\s]+)*$/;
+      /^[\u05D0-\u05EAa-zA-Z0-9']+([ |\-|.|/]*[\u05D0-\u05EAa-zA-Z0-9'\s]+)*$/;
 
     if (!titleRgx.test(chosenListDetails.title)) {
       setTitleError(true);
@@ -145,7 +150,7 @@ const HomeScreen = (props) => {
   const copyShoppingList = async () => {
     const data = {
       ListID: chosenListDetails.listID,
-      CreatorID: currentUser.UserID,
+      CreatorID: currentUser.userID,
       Title: chosenListDetails.title.trim(),
     };
     try {
@@ -170,7 +175,10 @@ const HomeScreen = (props) => {
   };
   const exitShoppingList = async () => {
     try {
-      let res = await shoppingListApi.apiShoppingListExitShoppingListPost(chosenListDetails.listID, currentUser.UserID);
+      let res = await shoppingListApi.apiShoppingListExitShoppingListPost(
+        chosenListDetails.listID,
+        currentUser.userID
+      );
       handleCancelPopupDialog();
       ShoppingListsGetFromAPI();
     } catch (error) {
@@ -179,9 +187,8 @@ const HomeScreen = (props) => {
   };
 
   const handelChosenMethod = () => {
-    console.log(chosenMethod)
+    console.log(chosenMethod);
     if (chosenMethod === "edit") {
-
       handleConfirmEdit();
     } else if (chosenMethod === "copy") {
       handleConfirmCopyList();
@@ -191,7 +198,6 @@ const HomeScreen = (props) => {
       exitShoppingList();
     }
   };
-
 
   const handleListEmptyComponent = () => {
     return (
@@ -230,8 +236,8 @@ const HomeScreen = (props) => {
         contentContainerStyle={{ flexGrow: 1 }}
         ListEmptyComponent={handleListEmptyComponent}
         ListFooterComponent={renderFooter}
-      // refreshing={isFetching}
-      // onRefresh={() => handleRefresh()}
+        // refreshing={isFetching}
+        // onRefresh={() => handleRefresh()}
       />
       {extraDataForTabs === 1 && (
         <FAB
@@ -250,28 +256,23 @@ const HomeScreen = (props) => {
         >
           {chosenMethod === "delete" ? (
             <Text>ברצונך למחוק את הרשימה?</Text>
-          ) :
-            chosenMethod === "exit" ?
-              <Text>ברצונך לצת מהרשימה?</Text>
-              :
-
-              (
-                <TextInput
-                  label="שם מוצר"
-                  value={chosenListDetails.title}
-                  onChangeText={(txt) =>
-                    setChosenListDetails((oldstate) => ({
-                      ...oldstate,
-                      title: txt,
-                    }))
-                  }
-                  dense={true}
-                  error={titleError}
-                  mode="outlined"
-                />
-              )
-
-          }
+          ) : chosenMethod === "exit" ? (
+            <Text>ברצונך לצת מהרשימה?</Text>
+          ) : (
+            <TextInput
+              label="שם מוצר"
+              value={chosenListDetails.title}
+              onChangeText={(txt) =>
+                setChosenListDetails((oldstate) => ({
+                  ...oldstate,
+                  title: txt,
+                }))
+              }
+              dense={true}
+              error={titleError}
+              mode="outlined"
+            />
+          )}
         </PopupDialog>
       )}
     </View>
