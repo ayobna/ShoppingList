@@ -165,7 +165,7 @@ const ScreenName = props.route.name;
     }
     let product = {
      productID: 1,
-      creatorID:user.UserID,
+      creatorID:user.userID,
       name: productName.trim(),
       amount: amount,
       imgUri : imageBase64,
@@ -272,8 +272,9 @@ const ScreenName = props.route.name;
   };
 
   const handleCreateShoppingListApi = async () => {
-    let newShoppingList = { creatorID: user.UserID, Title: title.trim() };
-
+   
+    let newShoppingList = { creatorID: user.userID, Title: title.trim() };
+console.log("newShoppingList create screen",newShoppingList)
     try {
       const res = await shoppingListApi.apiShoppingListCreateShoppingListPost(newShoppingList)
       console.log("Id for Shopping list after created", res.data)
@@ -291,7 +292,7 @@ const ScreenName = props.route.name;
     for (let index = 0; index < ProductsFromList.length; index++) {
       productsToServer.push({
         listID: id,
-        creatorID: user.UserID,
+        creatorID: user.userID,
         name: ProductsFromList[index].name,
         amount: ProductsFromList[index].amount,
         img: ProductsFromList[index].imgUri,
@@ -301,6 +302,7 @@ const ScreenName = props.route.name;
   };
 
   const addProductsToShoppingList = async (productsToServer) => {
+    console.log("productsToServer",productsToServer)
     try {
       const res = await productApi.apiProductAddProductsToShoppingListPost(productsToServer)
       console.log(res.data)

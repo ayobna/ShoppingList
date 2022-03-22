@@ -26,33 +26,47 @@ const ProductCard = (props) => {
     ScreenName,
     user,
     listCreatorId,
+    checkProduct
   } = props;
+
+
   //states
   const [visibleMenu, setVisibleMenu] = useState(false);
   const openMenu = () => setVisibleMenu(true);
   const closeMenu = () => setVisibleMenu(false);
-  const [checked, setChecked] = useState(data.isChecked);
+  const [checked, setChecked] = useState();
+
+
+
+  useEffect(() => {
+    console.log("product: ", data);
+    setChecked(data.isChecked)
+  }, []);
 
   const ImgName = () => {
-    const imgArray = data.img.split(":/");
+    let imgArray=['0'] ;
+    if (ScreenName === "CreateList") {
+    imgArray = data.img.split(":/");
+    }
     let img = data.img;
-
-    useEffect(() => {
-      console.log("product: ", data);
-    }, []);
-
     if (ScreenName !== "CreateList") {
       if (data.productID !== 0) {
-        img =
-          imgArray[0] === "file"
+        img = imgArray[0] === "file"
             ? data.img
             : API + `/uploads/shoppingLists/` + data.img;
       }
     }
-
     return img;
   };
-  // מרנדר תמונה של מוצר
+
+  const onChecked=async()=>{
+    console.log("onChecked", data.isChecked)
+    await checkProduct(data.productID,!data.isChecked)
+    console.log("after checkProduct " ,data.isChecked)
+ //setChecked(!checked)
+
+  }
+
   const leftContent = (props) => {
     if (ScreenName === "CreateList")
       return <Avatar.Image size={60} source={{ uri: ImgName() }} />;
@@ -61,9 +75,7 @@ const ProductCard = (props) => {
         <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
           <Checkbox
             status={checked ? "checked" : "unchecked"}
-            onPress={() => {
-              setChecked(!checked);
-            }}
+            onPress={ onChecked}
           />
           <Avatar.Image size={60} source={{ uri: ImgName() }} />
         </View>
@@ -71,7 +83,7 @@ const ProductCard = (props) => {
     }
   };
 
-  // מרנדר אייקון שלוש נקודות לאופציות שניתן לבצע בכרטיס מוצר
+
   const rightContent = (props) => {
     if (ScreenName === "CreateList") {
       return (
@@ -94,7 +106,7 @@ const ProductCard = (props) => {
         </Menu>
       );
     } else {
-      if (data.creatorID === user.UserID || listCreatorId === user.UserID)
+      if (data.creatorID === user.userID || listCreatorId === user.userID)
         return (
           <Menu
             visible={visibleMenu}
@@ -149,7 +161,7 @@ const ProductCard = (props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginHorizontal: 10,
+    marginHorizontal: 20,
     marginTop: 10,
     left:10
   },

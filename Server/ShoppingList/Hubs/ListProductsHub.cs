@@ -50,21 +50,25 @@ namespace ShoppingList.Hubs
             if (_connections.TryGetValue(Context.ConnectionId, out UserConnection userConnection))
             {
                 
-                GetProducts(userConnection);
+           await  GetProducts(userConnection);
             }
         }
-        public async Task CheackProduct()
+        public async Task CheckedProduct(int ProductID)
         {
             if (_connections.TryGetValue(Context.ConnectionId, out UserConnection userConnection))
             {
-                GetProducts(userConnection);
+                int CheackProduct = productData.CheckedProductByID(ProductID);
+                if(CheackProduct==1)
+              await  GetProducts(userConnection);
             }
         }
-        public async Task UnCheackProduct( )
+        public async Task UnCheckedProduct(int ProductID)
         {
             if (_connections.TryGetValue(Context.ConnectionId, out UserConnection userConnection))
             {
-                GetProducts(userConnection);
+                var UnCheackProduct = productData.UnCheckedProductByID(ProductID);
+                if (UnCheackProduct == 1)
+                    await   GetProducts(userConnection);
             }
         }
     }

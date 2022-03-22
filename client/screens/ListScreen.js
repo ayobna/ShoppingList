@@ -37,48 +37,38 @@ const ListScreen = (props) => {
   const [fromDB, setFromDB] = useState(true);
   const [connection, setConnection] = useState();
 
-  useEffect(() => {    
-    const unsubscribe = navigation.addListener("focus",  async() => {
-      setConnection()
-  await   LoadUser(); 
-  //  await  GetProducts();
-  await GetListCreatorByListID();    
-   //await   joinChat()
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", async () => {
+    
+      await LoadUser();
+      //  await  GetProducts();
+      await GetListCreatorByListID();
+      await joinChat();
     });
     return unsubscribe;
-  },[navigation, route]);
+  }, [navigation, route]);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("blur", async () => {});
     return unsubscribe;
   }, [route]);
 
-  // useEffect(() => {
-  //   const unsubscribe = navigation.addListener("beforeRemove", (e) => {
-  //   //  e.preventDefault();
-  //     if (connection) {
-  //       closeConnection(e);
-  //     }
-  //   });
-  //   return unsubscribe;
- // }, [navigation, connection]);
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("beforeRemove", (e) => {
+    //  e.preventDefault();
+      if (connection) {
+        closeConnection(e);
+      }
+    });
+    return unsubscribe;
+  }, [navigation, connection]);
 
- const closeConnection = async (e) => {
-    try {
-      await connection.stop();
-      console.log("closeConnection");
-      setConnection()
-     navigation.dispatch(e.data.action);
-    } catch (e) {
-      console.log(e);
+  useEffect(() => {
+    if (productEditDetails) {
+      setPopupDialogVisible(true);
     }
-  };
-  // const GetProducts = async () => {
-  //   let res = await productApi.apiGetProductsByListIdIdGet(shoppingListID);
-  //   let data = res.data;
-  //   await GetListCreatorByListID();    
-  //   setProducts(data);
-  // };
+  }, [productEditDetails]);
+
   const GetListCreatorByListID = async () => {
     let res = await shoppingListApi.apiShoppingListGetListCreatorByListIDIdGet(
       shoppingListID
@@ -91,15 +81,11 @@ const ListScreen = (props) => {
     let u = await _getData("User");
     if (u != null) {
       setUser(u);
-      console.log(u)
+      console.log(u);
     }
-
   };
 
-
-
   const joinChat = async () => {
-
     try {
       const connection = new HubConnectionBuilder()
         .withUrl(API + "/Products")
@@ -107,17 +93,20 @@ const ListScreen = (props) => {
         .build();
 
       connection.on("ReceiveMessage", (products) => {
+       console.log("first")
         setProducts(products);
+        console.log(products)
+        console.log("ReceiveMessage",products)
       });
       connection.onclose((e) => {
         setConnection();
-        setMessages([]);
+        setProducts([]);
       });
 
       await connection.start();
       let listID = shoppingListID;
-     
-      let userID =user.UserID;
+
+      let userID = user.userID;
       await connection.invoke("JoinRoom", { listID, userID });
 
       setConnection(connection);
@@ -125,14 +114,47 @@ const ListScreen = (props) => {
       console.log(e);
     }
   };
-
-  useEffect(() => {
-    if (productEditDetails) {
-     
-      setPopupDialogVisible(true);
+  const invokeNewProduct = async () => {
+    try {
+      console.log("here")
+      await connection.invoke("NewProduct");
+    } catch (e) {
+      console.log(e);
     }
-  }, [productEditDetails]);
+  };
 
+  const invokeCheckedProduct = async (productID) => {
+
+    try {
+      console.log("Checked")
+   //   setProducts()
+      await connection.invoke("CheckedProduct", productID);
+
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  const invokeUnCheckedProduct = async (productID) => {
+ 
+    try {
+      console.log("UnChecked")
+    //  setProducts()
+      await connection.invoke("UnCheckedProduct", productID);
+  
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  const closeConnection = async (e) => {
+    try {
+      await connection.stop();
+      console.log("closeConnection");
+      setConnection();
+     // navigation.dispatch(e.data.action);
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   const handlePlusMinusAmount = (operation, edit) => {
     if (
@@ -161,7 +183,6 @@ const ListScreen = (props) => {
         }))
       : setAmount(value.toString());
   };
-
 
   const handleOnChangeAmount = (txt, edit) => {
     if (parseInt(txt) !== 0) {
@@ -210,53 +231,56 @@ const ListScreen = (props) => {
     if (regexValidationProduct(false) < 2) {
       return;
     }
+   
     let product = {
-      listId:shoppingListID,
+      listId: shoppingListID,
       productID: 0,
-      creatorID: user.UserID,
+      creatorID: user.userID,
       name: productName.trim(),
       amount: amount,
       imgUri: imageBase64,
-      img: imageUri ? imageUri : `default/default_img.jpg`,
+      img: imageUri ? imageUri : null,
     };
+    console.log( "product====== > :",product)
     NewProductToTheList(product);
-    setFromDB(false);
-    let tempProducts = [...products];
-    if (tempProducts.length !== 0) {
-      product.productID = (
-        parseInt(tempProducts[tempProducts.length - 1].productID) + 1
-      ).toString();
-    }
-    tempProducts = [...tempProducts, product];
-    setProducts(tempProducts);
-    handleClearStates();
-  };
-  const NewProductToTheList = (product) => {
-    console.log( "NewProductToTheList ===>");
-    let newProductToList={
-      listID: product.listId,
-      creatorID: product.creatorID,
-      name:product.name,
-      amount:product.amount,
-      img:product.imgUri===undefined?product.img :product.imgUri,
-    }
-    addANewProductToTheList(newProductToList)
+  //  setFromDB(false);
+    // let tempProducts = [...products];
+    // if (tempProducts.length !== 0) {
+    //   product.productID = (
+    //     parseInt(tempProducts[tempProducts.length - 1].productID) + 1
+    //   ).toString();
+    // }
+    // tempProducts = [...tempProducts, product];
+    // setProducts(tempProducts);
   
   };
-const  addANewProductToTheList =async(newProductToList)=>{
-let res =await productApi.apiProductAddProductToShoppingListPost(newProductToList)
- console.log("Add new product to server is ", res.data);
-  await invokeNewProduct();
-};
+  const NewProductToTheList = async (product) => {
+  
+    let newProductToList = {
+      listID: product.listId,
+      creatorID: product.creatorID,
+      name: product.name,
+      amount: product.amount,
+      img: product.imgUri === undefined ? product.img : product.imgUri,
+    };
+    console.log("NewProductToTheList ===>",newProductToList);
+    addANewProductToTheList(newProductToList);
+  };
+  const addANewProductToTheList = async (newProductToList) => {
+    try{
+    let res = await productApi.apiProductAddProductToShoppingListPost(
+      newProductToList
+    );
+    console.log("Add new product to server is ", res.data);
+    } catch (e) {
+      console.log(e);
+    }
+  
+    await invokeNewProduct();
+    handleClearStates();
+ 
+  };
 
- const invokeNewProduct=async()=> {
-  try {
-    await connection.invoke("NewProduct");
-
-  } catch (e) {
-    console.log(e);
-  }
-}
   const regexValidationProduct = (edit) => {
     let counter = 0;
     const amountRgx = /^[1-9]+$/;
@@ -293,7 +317,6 @@ let res =await productApi.apiProductAddProductToShoppingListPost(newProductToLis
   };
 
   const handleCancelPopupDialog = () => {
-
     setPopupDialogVisible(false);
     setProductEditDetails();
   };
@@ -302,49 +325,47 @@ let res =await productApi.apiProductAddProductToShoppingListPost(newProductToLis
     if (regexValidationProduct(true) < 2) {
       return;
     }
-    let  tempProduct = productEditDetails;
+    let tempProduct = productEditDetails;
     tempProduct.name = tempProduct.name.trim();
-    if(tempProduct.ImageBase64===undefined){
-      updateProduct(tempProduct)
-   
-    }else{
-      tempProduct.img=tempProduct.ImageBase64
-      updateProductNewImg(tempProduct)
+    if (tempProduct.ImageBase64 === undefined) {
+      updateProduct(tempProduct);
+    } else {
+      tempProduct.img = tempProduct.ImageBase64;
+      updateProductNewImg(tempProduct);
     }
- 
-
-
 
     handleClearStates();
   };
 
   const handleEditProduct = (shoppingList) => {
-    setProductEditDetails(shoppingList)
- };
+    setProductEditDetails(shoppingList);
+  };
 
-  const updateProduct=async(Product)=>{
-    let res = await productApi.apiUpdateProductPost(Product)
-    let data= res.data
-    console.log( "apiUpdateProductPost data",data)
-  await  invokeNewProduct()
-  }
-   const updateProductNewImg=async(Product)=>{
-    let res = await productApi.apiUpdateProductNewImgPost(Product)
-    let data= res.data
-    console.log( "updateProductNewImg data",data)
-    await  invokeNewProduct()
-  }
+  const updateProduct = async (Product) => {
+    let res = await productApi.apiUpdateProductPost(Product);
+    let data = res.data;
+    console.log("apiUpdateProductPost data", data);
+    await invokeNewProduct();
+  };
+  const updateProductNewImg = async (Product) => {
+    let res = await productApi.apiUpdateProductNewImgPost(Product);
+    let data = res.data;
+    console.log("updateProductNewImg data", data);
+    await invokeNewProduct();
+  };
+  const checkProduct = async (productID, checked) => {
+    if (checked) {
+    let res=  await invokeCheckedProduct(productID);
+    } else {
+    let res=  await invokeUnCheckedProduct(productID);
+    }
+  };
 
-
-
-
-  
-
-  const handleDeleteProduct =async (productID) => {   
-    let res = await productApi.apiDeleteProductIdPost(productID)
-    let data=res.data
-    console.log("handleDeleteProduct ",data)
-    GetProducts()
+  const handleDeleteProduct = async (productID) => {
+    let res = await productApi.apiDeleteProductIdPost(productID);
+    let data = res.data;
+    console.log("handleDeleteProduct ", data);
+    await invokeNewProduct();
   };
 
   const handleListEmptyComponent = () => {
@@ -366,6 +387,7 @@ let res =await productApi.apiProductAddProductToShoppingListPost(newProductToLis
       user={user}
       FromDB={fromDB}
       listCreatorId={listCreatorId}
+      checkProduct={checkProduct}
     />
   );
 
@@ -378,7 +400,6 @@ let res =await productApi.apiProductAddProductToShoppingListPost(newProductToLis
         keyExtractor={(item) => String(item.productID)}
         contentContainerStyle={{ flexGrow: 1 }}
         ListEmptyComponent={handleListEmptyComponent}
-
       />
       <View
         style={{
@@ -498,7 +519,10 @@ let res =await productApi.apiProductAddProductToShoppingListPost(newProductToLis
                 size={100}
                 // theme={{ colors: { primary: Colors.avatarBackground } }}
                 source={{
-                  uri: productEditDetails.ImageBase64===undefined?  API + `/uploads/shoppingLists/`+  productEditDetails.img:productEditDetails.img,
+                  uri:
+                    productEditDetails.ImageBase64 === undefined
+                      ? API + `/uploads/shoppingLists/` + productEditDetails.img
+                      : productEditDetails.img,
                 }}
               />
             </View>
@@ -583,5 +607,3 @@ const styles = StyleSheet.create({
 });
 
 export default ListScreen;
-
-
