@@ -93,9 +93,9 @@ const ListScreen = (props) => {
         .build();
 
       connection.on("ReceiveMessage", (products) => {
-       console.log("first")
+        setProducts()
         setProducts(products);
-        console.log(products)
+      // console.log(products)
         console.log("ReceiveMessage",products)
       });
       connection.onclose((e) => {

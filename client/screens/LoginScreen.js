@@ -15,8 +15,8 @@ const LoginScreen = (props) => {
   const { navigation } = props;
 
   // states
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("test@g.com");
+  const [password, setPassword] = useState("test1234");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [loginUserDetails, setLoginUserDetails] = useState();
   const [loginErrorMessage, setLoginErrorMessage] = useState("");
