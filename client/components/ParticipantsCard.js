@@ -5,7 +5,16 @@ import { API } from '../api/api';
 
 const ParticipantsCard = (props) => {
   // props
-  const { data, listCreatorId } = props;
+  const { data, listCreatorId, deletePraticipant, currentUser } = props;
+
+  const rightContent = props => <View style={styles.buttonContainer}>
+  <IconButton
+      icon="delete"
+      color='red'
+      size={20}
+      onPress={() => deletePraticipant(data.userID)}
+  />
+</View>
 
   const leftContent = (props) => (
     <Avatar.Image size={60} source={{ uri:API+'/uploads/users/'+data.img }} />
@@ -14,7 +23,17 @@ const ParticipantsCard = (props) => {
 
   return (
     <View style={{ ...styles.container, ...props.style }}>
-
+{currentUser===listCreatorId?        
+<Card>
+        <Card.Title
+            titleNumberOfLines={3}
+            title={`שם:${data.firstName+' '+data.lastName}`}
+           subtitle={ data.userID===listCreatorId? 'יוצר':''}
+           subtitleStyle={{color:'green'}}
+           right={rightContent}
+          left={leftContent}
+          />
+</Card>:
         <Card>
         <Card.Title
             titleNumberOfLines={3}
@@ -23,7 +42,7 @@ const ParticipantsCard = (props) => {
            subtitleStyle={{color:'green'}}
           left={leftContent}
           />
-</Card>
+</Card>}
 
     </View>
   );
