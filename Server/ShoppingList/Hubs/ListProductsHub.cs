@@ -34,33 +34,37 @@ namespace ShoppingList.Hubs
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, userConnection.ListID.ToString());
 
+            await GetProducts(userConnection);
+
+        }
+
+        private async Task GetProducts(UserConnection userConnection)
+        {
             _connections[Context.ConnectionId] = userConnection;
             var products = productData.GetProductsByListId(userConnection.ListID);
-            await Clients.Group(userConnection.ListID.ToString()).SendAsync("ReceiveMessage", "Test hub", products);
-
-
+            await Clients.Group(userConnection.ListID.ToString()).SendAsync("ReceiveMessage", products);
         }
 
-        public async Task SendProducts(ChatMessageCard chatMessageCard)
+        public async Task NewProduct()
         {
             if (_connections.TryGetValue(Context.ConnectionId, out UserConnection userConnection))
             {
-            
+                
+                GetProducts(userConnection);
             }
         }
-        public async Task CheackProduct(ChatMessageCard chatMessageCard)
+        public async Task CheackProduct()
         {
             if (_connections.TryGetValue(Context.ConnectionId, out UserConnection userConnection))
             {
+                GetProducts(userConnection);
             }
         }
-        public async Task UnCheackProduct(ChatMessageCard chatMessageCard)
+        public async Task UnCheackProduct( )
         {
             if (_connections.TryGetValue(Context.ConnectionId, out UserConnection userConnection))
             {
-                //chatMessageCard.CreatedOn = DateTime.Now;
-                //chatData.CreateChatMessage(chatMessageCard);
-                //await Clients.Group(userConnection.ListID.ToString()).SendAsync("ReceiveMessage", chatMessageCard);
+                GetProducts(userConnection);
             }
         }
     }
