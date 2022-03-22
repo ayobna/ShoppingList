@@ -64,7 +64,7 @@ const LoginScreen = (props) => {
       console.log("something wrong with the token update")
       return;
     }
-    console.log(userDetails)
+    console.log( 'login screen userDetails',userDetails)
 
     const resOfDataStore = await _storeData("User", userDetails);
     // צריך פה לשמור תאריך התחברות אחרון

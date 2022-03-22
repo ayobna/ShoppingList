@@ -80,5 +80,34 @@ namespace ShoppingList.Data
             }
             return res;
         }
+
+        public int CheckedProductByID(int ProductID)
+        {
+            SqlCommand cmd = db.CreateCommand("Proc_Checked_Product_By_ID", db.Connect(), "proc");
+            cmd.Parameters.Add("@ProductID", SqlDbType.Int).Value = ProductID;
+
+
+            int res = db.ExecuteAndClose(cmd);
+
+            if (res != 1)
+            {
+                throw new Exception("Somthing went wrong whilDelete product in sql");
+            }
+            return res;
+        }
+        public int UnCheckedProductByID(int ProductID)
+        {
+            SqlCommand cmd = db.CreateCommand("Proc_Un_Checked_Product_By_ID", db.Connect(), "proc");
+            cmd.Parameters.Add("@ProductID", SqlDbType.Int).Value = ProductID;
+
+
+            int res = db.ExecuteAndClose(cmd);
+
+            if (res != 1)
+            {
+                throw new Exception("Somthing went wrong whilDelete product in sql");
+            }
+            return res;
+        }
     }
 }

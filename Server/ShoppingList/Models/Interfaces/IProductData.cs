@@ -8,5 +8,7 @@ namespace ShoppingList.Models.Interfaces
         public int UpdateProduct(Product product);
         public List<Product> GetProductsByListId(int id);
         public int DeleteProductByID(int ProductID);
+        public int CheckedProductByID(int ProductID);
+        public int UnCheckedProductByID(int ProductID);
     }
 }

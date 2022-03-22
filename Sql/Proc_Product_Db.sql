@@ -2,7 +2,7 @@ Alter Proc Proc_Get_Products_By_ListId
 @ListID int
 AS
 select *from [products]
-where [ListID] = @ListID 
+where [ListID] = @ListID  and IsActive =1 
 Go
 exec Proc_Get_Products_By_ListId 59
 --create Proc Proc_Get_Products_By_ListId
@@ -47,26 +47,27 @@ go
 alter Proc Proc_Delete_Product_By_ID
 @ProductID int
 AS
-	delete [products]
-	WHERE [ProductID] =@ProductID  
-go
-
-
-alter Proc Proc_Cheack_Product_By_ID
-@ProductID int
-AS
-	UPDATE [products]
+		UPDATE [products]
 	SET [IsActive]=0
 	WHERE [ProductID] =@ProductID  
 go
 
 
-Create Proc Proc_UnCheack_Product_By_ID
+
+alter Proc Proc_Checked_Product_By_ID
 @ProductID int
 AS
 	UPDATE [products]
-	SET [IsActive]=1
+	SET [IsChecked]=1
 	WHERE [ProductID] =@ProductID  
 go
 
-select *from [products]
+
+alter Proc Proc_Un_Checked_Product_By_ID
+@ProductID int
+AS
+	UPDATE [products]
+	SET [IsChecked]=0
+	WHERE [ProductID] =@ProductID  
+go
+
