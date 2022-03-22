@@ -1,14 +1,8 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableHighlight,
-  StyleSheet,
-} from "react-native";
-import { API, listUsersApi, shoppingListApi } from "../api/api";
+import { View, Text, FlatList, TouchableHighlight, StyleSheet } from "react-native";
+import { API, listUsersApi, shoppingListApi, requestApi } from "../api/api";
 import ParticipantsCard from "../components/ParticipantsCard";
-import { TextInput, IconButton, Button, Avatar } from "react-native-paper";
+import { FAB, TextInput, IconButton, Button, Avatar } from "react-native-paper";
 import { _getData } from "../utils/Functions";
 import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 
@@ -21,17 +15,23 @@ const ParticipantsScreen = (props) => {
   const [currentUser, setCurrentUser] = useState();
 
 
-  useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
-      GetParticipantsInTheShoppingList();
-      GetListCreatorByListID();
-      LoadDUser();
-    });
-    return unsubscribe;
-  }, [route]);
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener("blur", async () => {});
+    const unsubscribe = navigation.addListener("focus", async () => {
+      console.log("Participant screen")
+      const creatorID = await GetListCreatorByListID();
+      const loginUser = await LoadUser();
+      const data = await GetParticipantsInTheShoppingList();
+      setListCreatorId(creatorID);
+      setCurrentUser(loginUser);
+      setParticipants(data);
+
+    });
+    return unsubscribe;
+  }, [navigation, route]);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("blur", async () => { });
     return unsubscribe;
   }, [route]);
 
@@ -41,25 +41,19 @@ const ParticipantsScreen = (props) => {
         route.params.shoppingListID
       );
     let data = res.data;
-    setParticipants(data);
+    return data;
   };
   const GetListCreatorByListID = async () => {
-    let res = await shoppingListApi.apiShoppingListGetListCreatorByListIDIdGet(
-      shoppingListID
-    );
-    console.log("res.data.creatorID", res.data.creatorID);
-    setListCreatorId(res.data.creatorID);
-    // console.log(res.data);
+    let res = await shoppingListApi.apiShoppingListGetListCreatorByListIDIdGet(shoppingListID);
+    return res.data.creatorID;
   };
 
-  const LoadDUser = async () => {
+  const LoadUser = async () => {
     let u = await _getData("User");
-    if (u != null) {
-      setCurrentUser(u);
-    }
+    return u;
   };
 
-  
+
 
   const handleListEmptyComponent = () => {
     return (
@@ -71,10 +65,21 @@ const ParticipantsScreen = (props) => {
     );
   };
 
+  const addUser = async () => {
+    console.log("in addUser")
+  };
+  // delete a praticipant from the list users by the list creator
+  const deletePraticipant = async (userId) => {
+    await requestApi.apiRequestsApiRequestsDeclineRequestPost({ listID: shoppingListID, userID: userId });
+    GetParticipantsInTheShoppingList();
+  };
+
   const renderListItem = (itemData) => (
-    <ParticipantsCard data={itemData.item} listCreatorId={listCreatorId} />
+    <ParticipantsCard data={itemData.item} listCreatorId={listCreatorId} deletePraticipant={deletePraticipant} currentUser={currentUser} />
   );
 
+
+  console.log("current user: ",currentUser)
   return (
     <View style={styles.container}>
       <FlatList
@@ -85,6 +90,14 @@ const ParticipantsScreen = (props) => {
         contentContainerStyle={{ flexGrow: 1 }}
         ListEmptyComponent={handleListEmptyComponent}
       />
+      {currentUser && listCreatorId && currentUser.UserID === listCreatorId && (<FAB
+        style={styles.fab}
+        color="white"
+        icon="plus"
+        onPress={addUser}
+      />)}
+
+
     </View>
   );
 };
@@ -95,5 +108,12 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     marginTop: 10,
   },
+  fab: {
+    backgroundColor: "black",
+    position: "absolute",
+    margin: 16,
+    right: 0,
+    bottom: 0,
+  }
 });
 export default ParticipantsScreen;
