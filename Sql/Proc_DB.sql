@@ -300,4 +300,24 @@ Go
 		Delete From [shopping_lists_users] WHERE ListID = @ListID And UserID= @UserID
  GO
 
+ ---------------------------- Login -------------------------------------------------------+
+ -- its for now until we will decide how we doing the page in the best way
+
+ Create Proc Proc_Check_Login_Details
+ @Email nvarchar(150), 
+ @Password nvarchar(max)
+ As
+	Select [UserID],[Email],[FirstName],[LastName],[PhoneNumber],[Img],[IsActive],[NotificationToken] from [users] Where UPPER([Email]) = UPPER(@Email) AND [Password] = @Password AND [IsActive] = 1
+ GO
+
+ --Exec Proc_Check_Login_Details 'Test@g.com','test1234'
+
+ Create Proc Proc_Update_User_Notification_Token
+ @UserID int, 
+ @NotificationToken nvarchar(max)
+ As
+ 		UPDATE [users]
+		SET  [NotificationToken] = @NotificationToken
+		WHERE [UserID] = @UserID
+ GO
 

@@ -8,6 +8,7 @@ import MyDrawer from './navigation/MyDrawer';
 import AppLoading from 'expo-app-loading';
 import * as Font from 'expo-font';
 import GeneralContext from './utils/GeneralContext';
+import LoginStack from './navigation/LoginStack';
 
 // עושה שהאפליקציה תהיה מותאמת לכיוון עברית RTL
 I18nManager.forceRTL(true);
@@ -45,7 +46,7 @@ export default function App(props) {
     <GeneralContext.Provider value={{ currentDrawerScreen, setCurrentDrawerScreen }}>
       <PaperProvider theme={paperTheme}>
         <NavigationContainer>
-          <MyDrawer />
+          <LoginStack />
         </NavigationContainer>
       </PaperProvider>
     </GeneralContext.Provider>
