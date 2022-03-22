@@ -12,7 +12,6 @@ import {
   Avatar,
   Divider,
 } from "react-native-paper";
-import { User } from "../User";
 import { API, chatApi } from "../api/api";
 import Spinner from "../components/Spinner";
 
