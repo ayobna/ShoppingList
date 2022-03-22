@@ -14,6 +14,7 @@ import {
 } from "react-native-paper";
 import { User } from "../User";
 import { API, chatApi } from "../api/api";
+import Spinner from "../components/Spinner";
 
 const ChatScreen = (props) => {
   // props
@@ -25,6 +26,7 @@ const ChatScreen = (props) => {
   const [users, setUsers] = useState([]);
   const [message, setMessage] = useState("");
   const [user, setUser] = useState(User);
+  const [isPageLoaded, setIsPageLoaded] = useState(false);
 
   const flatListRef = useRef();
 
@@ -33,7 +35,8 @@ const ChatScreen = (props) => {
     const unsubscribe = navigation.addListener("focus", async () => {
       console.log("enter chat")
       await joinChat();
-      getMessages();
+      await getMessages();
+      setIsPageLoaded(true);
     });
     return unsubscribe;
   }, [navigation, route]);
@@ -43,6 +46,7 @@ const ChatScreen = (props) => {
     const unsubscribe = navigation.addListener("blur", async () => {
       console.log("leave chat")
       setMessages([]);
+      setIsPageLoaded(false);
     });
     return unsubscribe;
   }, [navigation, route]);
@@ -151,47 +155,47 @@ const ChatScreen = (props) => {
   };
 
   return (
-    <View style={styles.container}>
-      <FlatList
-        ref={flatListRef}
-        // onContentSizeChange={() => flatListRef.current.scrollToEnd()}
-        showsVerticalScrollIndicator={false}
-        inverted
+    isPageLoaded ?
+      <View style={styles.container}>
+        <FlatList
+          ref={flatListRef}
+          // onContentSizeChange={() => flatListRef.current.scrollToEnd()}
+          showsVerticalScrollIndicator={false}
+          inverted
 
-        data={messages}
-        renderItem={(item) => renderListItem(item)}
-        keyExtractor={(item, index) => String(index)}
-        contentContainerStyle={{ flexGrow: 1 }}
-        // ListEmptyComponent={handleListEmptyComponent}
-        ListFooterComponent={renderFooter}
+          data={messages}
+          renderItem={(item) => renderListItem(item)}
+          keyExtractor={(item, index) => String(index)}
+          contentContainerStyle={{ flexGrow: 1 }}
+          // ListEmptyComponent={handleListEmptyComponent}
+          ListFooterComponent={renderFooter}
 
-        ItemSeparatorComponent={handleSeparatorComponent}
-      // refreshing={isFetching}
-      // onRefresh={() => handleRefresh()}
+          ItemSeparatorComponent={handleSeparatorComponent}
+        // refreshing={isFetching}
+        // onRefresh={() => handleRefresh()}
 
-      />
-      <View style={{ flexDirection: "row", backgroundColor: "#f1f1f1", justifyContent: "center", alignItems: "flex-end", paddingVertical: 10, paddingLeft: 10, borderTopColor: "#e1e1e1", borderTopWidth: 1, maxHeight: 150 }}>
-        <View style={{ flex: 1, backgroundColor: "white", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 2 }}>
-          <TextInput value={message} onChangeText={(txt) => setMessage(txt)} selectionColor="black" placeholder="תרשום תרשום.." style={{ fontFamily: "our-font-regular" }} numberOfLines={2} multiline />
-        </View>
-        <IconButton
-          icon="send"
-          size={20}
-          onPress={() => sendMessage()}
-          style={{ transform: [{ rotateY: '180deg' }] }}
-          disabled={message.length === 0}
         />
-        {/* <IconButton
+        <View style={{ flexDirection: "row", backgroundColor: "#f1f1f1", justifyContent: "center", alignItems: "flex-end", paddingVertical: 10, paddingLeft: 10, borderTopColor: "#e1e1e1", borderTopWidth: 1, maxHeight: 150 }}>
+          <View style={{ flex: 1, backgroundColor: "white", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 2 }}>
+            <TextInput value={message} onChangeText={(txt) => setMessage(txt)} selectionColor="black" placeholder="תרשום תרשום.." style={{ fontFamily: "our-font-regular" }} numberOfLines={2} multiline />
+          </View>
+          <IconButton
+            icon="send"
+            size={20}
+            onPress={() => sendMessage()}
+            style={{ transform: [{ rotateY: '180deg' }] }}
+            disabled={message.length === 0}
+          />
+          {/* <IconButton
           icon="home"
           size={20}
           onPress={() => closeConnection()}
           style={{ transform: [{ rotateY: '180deg' }] }}
         /> */}
+        </View>
       </View>
-
-
-
-    </View>
+      :
+      <Spinner />
   );
 };
 
