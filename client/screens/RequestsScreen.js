@@ -23,7 +23,7 @@ const RequestsScreen = (props) => {
       const user = await _getData("User");
       if (user !== null) {
         setCurrentUser(user);
-        getRequests(user.UserID);
+        getRequests(user.userID);
       }
     });
     return unsubscribe;
@@ -64,8 +64,8 @@ const RequestsScreen = (props) => {
 
   const handleConfirmRequest = async (listID) => {
     try {
-      await requestApi.apiRequestsApiRequestsConfirmRequestPost({ listID: listID, userID: currentUser.UserID });
-      getRequests(currentUser.UserID);
+      await requestApi.apiRequestsApiRequestsConfirmRequestPost({ listID: listID, userID: currentUser.userID });
+      getRequests(currentUser.userID);
 
     } catch (e) {
       console.log(e);
@@ -83,8 +83,8 @@ const RequestsScreen = (props) => {
 
   const declineRequest = async () => {
     try {
-      await requestApi.apiRequestsApiRequestsDeclineRequestPost({ listID: requestData, userID: currentUser.UserID });
-      getRequests(currentUser.UserID);
+      await requestApi.apiRequestsApiRequestsDeclineRequestPost({ listID: requestData, userID: currentUser.userID });
+      getRequests(currentUser.userID);
       handleCancelPopupDialog();
 
     } catch (e) {
