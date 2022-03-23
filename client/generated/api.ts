@@ -391,6 +391,39 @@ export const ListUsersApiAxiosParamCreator = function (configuration?: Configura
         },
         /**
          * 
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiGetUsersToAddToListUsersIdGet: async (id: number, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('apiGetUsersToAddToListUsersIdGet', 'id', id)
+            const localVarPath = `/Api/GetUsersToAddToListUsers/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @param {ShoppingListUser} [shoppingListUser] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -444,6 +477,16 @@ export const ListUsersApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiGetUsersToAddToListUsersIdGet(id: number, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiGetUsersToAddToListUsersIdGet(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
          * @param {ShoppingListUser} [shoppingListUser] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -473,6 +516,15 @@ export const ListUsersApiFactory = function (configuration?: Configuration, base
         },
         /**
          * 
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiGetUsersToAddToListUsersIdGet(id: number, options?: any): AxiosPromise<void> {
+            return localVarFp.apiGetUsersToAddToListUsersIdGet(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @param {ShoppingListUser} [shoppingListUser] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -499,6 +551,17 @@ export class ListUsersApi extends BaseAPI {
      */
     public apiGetParticipantsInTheShoppingListByListIdIdGet(id: number, options?: any) {
         return ListUsersApiFp(this.configuration).apiGetParticipantsInTheShoppingListByListIdIdGet(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ListUsersApi
+     */
+    public apiGetUsersToAddToListUsersIdGet(id: number, options?: any) {
+        return ListUsersApiFp(this.configuration).apiGetUsersToAddToListUsersIdGet(id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
