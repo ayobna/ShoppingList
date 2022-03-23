@@ -28,19 +28,21 @@ const ProductCard = (props) => {
     listCreatorId,
     checkProduct
   } = props;
-
-
+  
   //states
   const [visibleMenu, setVisibleMenu] = useState(false);
   const openMenu = () => setVisibleMenu(true);
   const closeMenu = () => setVisibleMenu(false);
   const [checked, setChecked] = useState();
 
-
+const [leftStyleMarginRight, setLeftStyleMarginRight] = useState("15%")
 
   useEffect(() => {
     console.log("product: ", data);
     setChecked(data.isChecked)
+    if (ScreenName === "CreateList") {
+      setLeftStyleMarginRight("5%")
+    }
   }, []);
 
   const ImgName = () => {
@@ -72,10 +74,11 @@ const ProductCard = (props) => {
       return <Avatar.Image size={60} source={{ uri: ImgName() }} />;
     else {
       return (
-        <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
+        <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center' }}>
           <Checkbox
             status={checked ? "checked" : "unchecked"}
             onPress={ onChecked}
+          
           />
           <Avatar.Image size={60} source={{ uri: ImgName() }} />
         </View>
@@ -116,9 +119,7 @@ const ProductCard = (props) => {
             }
           >
             <Menu.Item icon="redo" onPress={editProduct} title="ערוך" />
-
             <Divider style={styles.menuDivider} />
-
             <Menu.Item
               icon="delete"
               onPress={() => handleDeleteProduct(data.productID)}
@@ -133,7 +134,6 @@ const ProductCard = (props) => {
     closeMenu();
     handleEditProduct(data);
   };
-
   return (
     <View style={{ ...styles.container, ...props.style }}>
       <TouchableHighlight
@@ -141,13 +141,14 @@ const ProductCard = (props) => {
         underlayColor="red"
         onPress={null}
       >
-        <Card>
+        <Card style={{flex:1}}>
           <Card.Title
             titleNumberOfLines={3}
             title={data.name}
             subtitle={`כמות: ${data.amount}`}
             left={leftContent}
             right={rightContent}
+            leftStyle={{marginRight:leftStyleMarginRight}}
           />
           {/* <Card.Content>
                         <Paragraph>מספר מזהה: {data.ProductID}</Paragraph>
@@ -161,7 +162,7 @@ const ProductCard = (props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginHorizontal: 20,
+    marginHorizontal: 10,
     marginTop: 10,
     left:10
   },
