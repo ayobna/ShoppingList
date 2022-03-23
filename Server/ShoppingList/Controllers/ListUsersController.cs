@@ -61,7 +61,30 @@ namespace ShoppingList.Controllers
                 throw;
             }
         }
+        [HttpGet]
+        [Route("Api/GetUsersToAddToListUsers/{id}")]
+        public IActionResult GetUsersToAddToListUsers(int id)
+        {
+            try
+            {
+                List<User> searchListUsers = listUsers.GetUsersToAddToListUsers(id);
+                if (searchListUsers == null)
+                {
+                    logger.LogWarning(" Id not exists");
+                    return NotFound();
+                }
+                else
+                {
+                    logger.LogInformation("List of user without the creator " + " " + id);
+                    return Ok(searchListUsers);
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(": Did not Get The Users Of the list by ListId DB");
+                return BadRequest(ex);
+            }
+        }
 
-      
     }
 }

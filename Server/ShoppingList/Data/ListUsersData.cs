@@ -43,7 +43,16 @@ namespace ShoppingList.Data
             return Convert.ToInt32(cmd.Parameters["@UserID"].Value);
         }
 
-     
+        public List<User> GetUsersToAddToListUsers(int creatorID)
+        {
+            SqlCommand cmd = db.CreateCommand("Proc_Get_Users_For_Search", db.Connect(), "proc");
+            cmd.Parameters.Add("@CreatorID", SqlDbType.Int).Value = creatorID;
+            DataTable tb = db.ReadAndClose(cmd);
+            List<User> usersList = db.ConvertDataTable<User>(tb);
+            return usersList;
+        }
+
+
 
     }
 }
