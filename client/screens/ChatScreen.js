@@ -93,7 +93,7 @@ const ChatScreen = (props) => {
 
       await connection.start();
       let listID = route.params.shoppingListID;
-      let userID = user.UserID;
+      let userID = user.userID;
       await connection.invoke("JoinRoom", { listID, userID });
 
       setConnection(connection);
@@ -106,7 +106,7 @@ const ChatScreen = (props) => {
     console.log("sendMessage");
     let chatMessageCard = {
       ListID: route.params.shoppingListID,
-      UserID: user.UserID,
+      UserID: user.userID,
       Message: message,
       FirstName: user.FirstName,
       LastName: user.LastName,
