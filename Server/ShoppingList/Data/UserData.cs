@@ -21,18 +21,14 @@ namespace ShoppingList.Data
       
         public User CreateUser(User user)
         {
-            SqlCommand cmd = db.CreateCommand("Proc_Create_User", db.Connect(), "proc");
+            SqlCommand cmd = db.CreateCommand("Proc_Insert_User", db.Connect(), "proc");
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.Add("@UserID", SqlDbType.Int).Direction = ParameterDirection.Output;
             cmd.Parameters.Add("@FirstName", SqlDbType.NVarChar).Value = user.FirstName;
             cmd.Parameters.Add("@LastName", SqlDbType.NVarChar).Value = user.LastName;
             cmd.Parameters.Add("@Email", SqlDbType.NVarChar).Value = user.Email;
-          //  string passwordHash = BCrypt.Net.BCrypt.HashPassword(user.User_Password);
-            cmd.Parameters.Add("@Password", SqlDbType.NVarChar).Value = user.Password;
+            cmd.Parameters.Add("@Password", SqlDbType.NVarChar).Value = user.@Password;
             cmd.Parameters.Add("@PhoneNumber", SqlDbType.NVarChar).Value = user.PhoneNumber;
-            cmd.Parameters.Add("@IsActive", SqlDbType.Bit).Value = user.IsActive;
-            cmd.Parameters.Add("@Img", SqlDbType.NVarChar).Value = user.Img;
-            cmd.Parameters.Add("@NotificationToken", SqlDbType.NVarChar).Value = user.NotificationToken;
             int res = db.ExecuteAndClose(cmd);
             if (res == 1)
             {
@@ -64,5 +60,8 @@ namespace ShoppingList.Data
             }
             return users[0];
         }
+
+    
+  
     }
 }
