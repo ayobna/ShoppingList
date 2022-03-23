@@ -10,5 +10,6 @@ namespace ShoppingList.Models.Interfaces
         public User CreateUser(User user);
         public List<User> GetAllUsers();
         public User GetUserById(int id);
+
     }
 }

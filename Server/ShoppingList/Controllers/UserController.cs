@@ -34,7 +34,7 @@ namespace ShoppingList.Controllers
                 if (u == null)
                 {
                     logger.LogWarning("User not created ");
-                    return NotFound();
+                    return Ok("User not created");
                 }
                 else
                 {

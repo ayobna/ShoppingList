@@ -13,7 +13,7 @@ import {
   Text,
   Avatar,
 } from "react-native-paper";
-
+import { userApi } from "../api/api";
 const RegisterScreen = (props) => {
   const { navigation, route } = props;
 
@@ -31,7 +31,7 @@ const RegisterScreen = (props) => {
     PhoneNumber: false,
     Email: false,
     Password: false,
-    confirmPassword:false
+    confirmPassword: false,
   });
   const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -42,26 +42,38 @@ const RegisterScreen = (props) => {
 
   useEffect(() => {}, []);
 
-  const Register = () => {
+  const Register = async () => {
     ValidateUser();
-if(!validateUser.FirstName&&!validateUser.PhoneNumber&&!validateUser.Password&&
-  !validateUser.LastName&&!validateUser.Email&&!validateUser.confirmPassword){
-  console.log("sdsdf")
-}
+    if (
+      !validateUser.FirstName &&
+      !validateUser.PhoneNumber &&
+      !validateUser.Password &&
+      !validateUser.LastName &&
+      !validateUser.Email &&
+      !validateUser.confirmPassword
+    ) {
+      try {
+        console.log(user)
+        let res = await userApi.apiUsersCreateUserPost(user);
+        let data = res.data;
+        console.log("new use with id:", data);          
+        navigation.navigate("LoginScreen");
+      } catch (e) {
+        console.log(e);
+      }
+    }
   };
-
-  const ValidateUser=()=>{
-    SetValidateUser(
-        (prevState) => ({
-            ...prevState,
-            FirstName: validateFirstName(),
-            LastName: validateLastName(),
-            PhoneNumber: validatePhone(),
-            Email: validatorEmail(),
-            Password: validatePassword(),
-            confirmPassword:validateConfirmPassword()
-  })
-    )}
+  const ValidateUser = () => {
+    SetValidateUser((prevState) => ({
+      ...prevState,
+      FirstName: validateFirstName(),
+      LastName: validateLastName(),
+      PhoneNumber: validatePhone(),
+      Email: validatorEmail(),
+      Password: validatePassword(),
+      confirmPassword: validateConfirmPassword(),
+    }));
+  };
 
   const validatorEmail = () => {
     return !emailValidator.test(user.Email);
@@ -71,10 +83,9 @@ if(!validateUser.FirstName&&!validateUser.PhoneNumber&&!validateUser.Password&&
     return !passwordValidator.test(user.Password);
   };
   const validateConfirmPassword = () => {
-    if (confirmPassword === user.Password &&confirmPassword!=='') {
+    if (confirmPassword === user.Password && confirmPassword !== "") {
       return false;
-    }
-    else return true;
+    } else return true;
   };
 
   const validateFirstName = () => {
@@ -104,7 +115,7 @@ if(!validateUser.FirstName&&!validateUser.PhoneNumber&&!validateUser.Password&&
               }))
             }
             error={validateUser.FirstName}
-        //    left={<TextInput.Icon name="van-passenger" color={validateUser.FirstName ? "red" : "green"} size={20} onPress={null} />}
+            //    left={<TextInput.Icon name="van-passenger" color={validateUser.FirstName ? "red" : "green"} size={20} onPress={null} />}
           />
         </View>
 
@@ -122,8 +133,7 @@ if(!validateUser.FirstName&&!validateUser.PhoneNumber&&!validateUser.Password&&
               }))
             }
             error={validateUser.LastName}
-          //  left={<TextInput.Icon name="van-passenger" color={validateUser.LastName ? "red" : "green"} size={20} onPress={null} />}
-         
+            //  left={<TextInput.Icon name="van-passenger" color={validateUser.LastName ? "red" : "green"} size={20} onPress={null} />}
           />
         </View>
         <View style={styles.TextInputView}>
@@ -140,8 +150,7 @@ if(!validateUser.FirstName&&!validateUser.PhoneNumber&&!validateUser.Password&&
               }))
             }
             error={validateUser.Email}
-          //  left={<TextInput.Icon name="van-passenger" color={validateUser.Email ? "red" : "green"} size={20} onPress={null} />}
-    
+            //  left={<TextInput.Icon name="van-passenger" color={validateUser.Email ? "red" : "green"} size={20} onPress={null} />}
           />
         </View>
         <View style={styles.TextInputView}>
@@ -159,9 +168,7 @@ if(!validateUser.FirstName&&!validateUser.PhoneNumber&&!validateUser.Password&&
               }))
             }
             error={validateUser.PhoneNumber}
-         //   left={<TextInput.Icon name="van-passenger" color={validateUser.PhoneNumber ? "red" : "green"} size={20} onPress={null} />}
-    
-      
+            //   left={<TextInput.Icon name="van-passenger" color={validateUser.PhoneNumber ? "red" : "green"} size={20} onPress={null} />}
           />
         </View>
         <View style={styles.TextInputView}>
@@ -178,10 +185,8 @@ if(!validateUser.FirstName&&!validateUser.PhoneNumber&&!validateUser.Password&&
                 Password: text,
               }))
             }
-
             error={validateUser.Password}
-           // left={<TextInput.Icon name="van-passenger" color={validateUser.Password ? "red" : "green"} size={20} onPress={null} />}
-    
+            // left={<TextInput.Icon name="van-passenger" color={validateUser.Password ? "red" : "green"} size={20} onPress={null} />}
           />
         </View>
         <View style={styles.TextInputView}>
@@ -194,8 +199,7 @@ if(!validateUser.FirstName&&!validateUser.PhoneNumber&&!validateUser.Password&&
             selectionColor="black"
             onChangeText={(text) => setConfirmPassword(text)}
             error={validateUser.confirmPassword}
-          //  left={<TextInput.Icon name="van-passenger" color={validateUser.confirmPassword() ? "red" : "green"} size={20} onPress={null} />}
-    
+            //  left={<TextInput.Icon name="van-passenger" color={validateUser.confirmPassword() ? "red" : "green"} size={20} onPress={null} />}
           />
         </View>
         <Button
