@@ -225,7 +225,7 @@ Go
  Alter Proc Proc_Get_List_Users
  @ListID int
  As
- SELECT shopping_lists_users.UserID, users.FirstName, users.LastName, users.Img, dbo.Func_Return_True_If_Creator_Of_List(@ListID,shopping_lists_users.UserID) As IsCreator
+ SELECT shopping_lists_users.UserID, users.FirstName, users.LastName, users.Img,  users.Email, users.PhoneNumber, dbo.Func_Return_True_If_Creator_Of_List(@ListID,shopping_lists_users.UserID) As IsCreator
 FROM     shopping_lists_users INNER JOIN
                   users ON dbo.shopping_lists_users.UserID = dbo.users.UserID
 Where (shopping_lists_users.ListID = @ListID) And (shopping_lists_users.IsApproved = 1)
@@ -244,6 +244,14 @@ INSERT INTO [shopping_lists_users] ([ListID],[UserID],[JoinedDate])
 						    VALUES (@ListID, @UserID,@JoinedDate);
 Go
 --exec Proc_Add_User_To_List 6,5
+
+Create Proc Proc_Get_Users_For_Search
+@CreatorID int
+As
+Select UserID, FirstName, LastName, Email, PhoneNumber From users
+Where Not (UserID = @CreatorID) 
+Go
+--exec Proc_Get_Users_For_Search 1
 
 -- Alter Proc Proc_User_Confirmation_Of…_Joining 
 -- @ListID int,
@@ -273,7 +281,7 @@ Go
  @UserID int
  As
 	SELECT         shopping_lists_users.ListID, shopping_lists.Title, users.NotificationToken, users.FirstName, users.LastName
-	FROM            shopping_lists INNER JOIN shopping_lists_users 
+	FROM           shopping_lists INNER JOIN shopping_lists_users 
 	ON shopping_lists.ListID = shopping_lists_users.ListID INNER JOIN users 
 	ON shopping_lists.CreatorID = users.UserID
 	WHERE        (shopping_lists_users.IsApproved = 0) AND (shopping_lists.IsActive = 1) AND (users.IsActive = 1) AND (shopping_lists_users.UserID = @UserID)

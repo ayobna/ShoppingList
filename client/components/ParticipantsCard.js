@@ -7,14 +7,16 @@ const ParticipantsCard = (props) => {
   // props
   const { data, listCreatorId, deletePraticipant, currentUser } = props;
 
-  const rightContent = props => <View style={styles.buttonContainer}>
-  <IconButton
+  const rightContent = props => (
+  <View style={styles.buttonContainer}>
+    {listCreatorId !== data.userID &&  <IconButton
       icon="delete"
       color='red'
       size={20}
       onPress={() => deletePraticipant(data.userID)}
-  />
+  />}
 </View>
+)
 
   const leftContent = (props) => (
     <Avatar.Image size={60} source={{ uri:API+'/uploads/users/'+data.img }} />
@@ -23,7 +25,7 @@ const ParticipantsCard = (props) => {
 
   return (
     <View style={{ ...styles.container, ...props.style }}>
-{currentUser===listCreatorId?        
+{currentUser.userID===listCreatorId?        
 <Card>
         <Card.Title
             titleNumberOfLines={3}
