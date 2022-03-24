@@ -24,10 +24,9 @@ const HomeScreen = (props) => {
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", async () => {
-        const user = await LoadUser();     
-        if (user!=null) {
-          const lists= await ShoppingListsGetFromAPI(user.userID);
-        }
+        const user = await LoadUser();  
+       const lists= await ShoppingListsGetFromAPI(user.userID);
+       setCurrentUser(user);
 
     });
     return unsubscribe;
@@ -61,7 +60,8 @@ const HomeScreen = (props) => {
 
   const LoadUser = async () => {
     let u = await _getData("User");  
-      setCurrentUser(u);
+    console.log("LoadUser",u)
+    //  setCurrentUser(u);
       return u;   
   };
 
@@ -120,7 +120,7 @@ const HomeScreen = (props) => {
         chosenListDetails
       );
       handleCancelPopupDialog();
-      ShoppingListsGetFromAPI();
+      ShoppingListsGetFromAPI(currentUser.userID);
     } catch (error) {
       console.warn(error);
     }
@@ -154,9 +154,11 @@ const HomeScreen = (props) => {
       Title: chosenListDetails.title.trim(),
     };
     try {
+      console.log(data)
       let res = await shoppingListApi.apiShoppingListCopyShoppingListPost(data);
+      console.log(res.data)
       handleCancelPopupDialog();
-      ShoppingListsGetFromAPI();
+      ShoppingListsGetFromAPI(currentUser.userID);
     } catch (error) {
       console.warn(error);
     }
@@ -168,7 +170,7 @@ const HomeScreen = (props) => {
         chosenListDetails.listID
       );
       handleCancelPopupDialog();
-      ShoppingListsGetFromAPI();
+      ShoppingListsGetFromAPI(currentUser.userID);
     } catch (error) {
       console.warn(error);
     }
@@ -180,7 +182,7 @@ const HomeScreen = (props) => {
         currentUser.userID
       );
       handleCancelPopupDialog();
-      ShoppingListsGetFromAPI();
+      ShoppingListsGetFromAPI(currentUser.userID);
     } catch (error) {
       console.warn(error);
     }
