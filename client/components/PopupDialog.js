@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { Button, Dialog, Portal } from 'react-native-paper';
 
 const PopupDialog = (props) => {
-    const { children, title, visible, cancel, confirm, buttonConfirmTitle, buttonCancelTitle } = props;
+    const { children, title, visible, cancel, confirm, resend, buttonConfirmTitle, buttonCancelTitle } = props;
 
     return (
         <Portal>
@@ -17,6 +17,10 @@ const PopupDialog = (props) => {
                 }
                 <Dialog.Actions>
                     <Button onPress={cancel}>{buttonCancelTitle ? buttonCancelTitle : "ביטול"}</Button>
+                    {
+                        resend &&
+                        <Button onPress={() => resend(true)}>שלח קוד חדש</Button>
+                    }
                     <Button onPress={() => confirm(true)}>{buttonConfirmTitle ? buttonConfirmTitle : "אישור"}</Button>
                 </Dialog.Actions>
             </Dialog>
