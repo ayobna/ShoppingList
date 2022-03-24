@@ -14,7 +14,7 @@ import {
 } from "react-native-paper";
 import { API, chatApi } from "../api/api";
 import Spinner from "../components/Spinner";
-
+import { _getData } from "../utils/Functions";
 const ChatScreen = (props) => {
   // props
   const { navigation, route } = props;
@@ -24,7 +24,7 @@ const ChatScreen = (props) => {
   const [messages, setMessages] = useState([]);
   const [users, setUsers] = useState([]);
   const [message, setMessage] = useState("");
-  const [user, setUser] = useState(User);
+  const [user, setUser] = useState();
   const [isPageLoaded, setIsPageLoaded] = useState(false);
 
   const flatListRef = useRef();
@@ -33,9 +33,14 @@ const ChatScreen = (props) => {
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", async () => {
       console.log("enter chat")
-      await joinChat();
       await getMessages();
-      setIsPageLoaded(true);
+      const u = await LoadUser();     
+      if (u!=null) {
+        await joinChat( u.userID);
+    
+        setIsPageLoaded(true);
+      }
+ 
     });
     return unsubscribe;
   }, [navigation, route]);
@@ -63,7 +68,12 @@ const ChatScreen = (props) => {
 
 
 
-
+  const LoadUser = async () => {
+    let u = await _getData("User");
+    setUser(u)
+    console.log(u)
+ return u
+  };
 
   const getMessages = async () => {
     let res = await chatApi.apiShoppingListChatMessagesIdGet(
@@ -74,7 +84,7 @@ const ChatScreen = (props) => {
     setMessages(data);
   };
 
-  const joinChat = async () => {
+  const joinChat = async (userID) => {
     try {
       const connection = new HubConnectionBuilder()
         .withUrl(API + "/chat")
@@ -93,7 +103,7 @@ const ChatScreen = (props) => {
 
       await connection.start();
       let listID = route.params.shoppingListID;
-      let userID = user.userID;
+      let userID = userID;
       await connection.invoke("JoinRoom", { listID, userID });
 
       setConnection(connection);
@@ -108,9 +118,9 @@ const ChatScreen = (props) => {
       ListID: route.params.shoppingListID,
       UserID: user.userID,
       Message: message,
-      FirstName: user.FirstName,
-      LastName: user.LastName,
-      Img: user.Img,
+      FirstName: user.firstName,
+      LastName: user.lastName,
+      Img: user.img,
     };
     try {
       await connection.invoke("SendMessage", chatMessageCard);
