@@ -395,10 +395,10 @@ export const ListUsersApiAxiosParamCreator = function (configuration?: Configura
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiGetUsersToAddToListUsersEmailGet: async (email: string, options: any = {}): Promise<RequestArgs> => {
+        apiGetUserByEmailToAddToListUsersEmailGet: async (email: string, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'email' is not null or undefined
-            assertParamExists('apiGetUsersToAddToListUsersEmailGet', 'email', email)
-            const localVarPath = `/Api/GetUsersToAddToListUsers/{email}`
+            assertParamExists('apiGetUserByEmailToAddToListUsersEmailGet', 'email', email)
+            const localVarPath = `/Api/GetUserByEmailToAddToListUsers/{email}`
                 .replace(`{${"email"}}`, encodeURIComponent(String(email)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -481,8 +481,8 @@ export const ListUsersApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiGetUsersToAddToListUsersEmailGet(email: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.apiGetUsersToAddToListUsersEmailGet(email, options);
+        async apiGetUserByEmailToAddToListUsersEmailGet(email: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiGetUserByEmailToAddToListUsersEmailGet(email, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -520,8 +520,8 @@ export const ListUsersApiFactory = function (configuration?: Configuration, base
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiGetUsersToAddToListUsersEmailGet(email: string, options?: any): AxiosPromise<void> {
-            return localVarFp.apiGetUsersToAddToListUsersEmailGet(email, options).then((request) => request(axios, basePath));
+        apiGetUserByEmailToAddToListUsersEmailGet(email: string, options?: any): AxiosPromise<void> {
+            return localVarFp.apiGetUserByEmailToAddToListUsersEmailGet(email, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -560,8 +560,8 @@ export class ListUsersApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ListUsersApi
      */
-    public apiGetUsersToAddToListUsersEmailGet(email: string, options?: any) {
-        return ListUsersApiFp(this.configuration).apiGetUsersToAddToListUsersEmailGet(email, options).then((request) => request(this.axios, this.basePath));
+    public apiGetUserByEmailToAddToListUsersEmailGet(email: string, options?: any) {
+        return ListUsersApiFp(this.configuration).apiGetUserByEmailToAddToListUsersEmailGet(email, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -591,6 +591,39 @@ export const LoginApiAxiosParamCreator = function (configuration?: Configuration
          */
         apiLoginCheckLoginDetailsPost: async (user?: User, options: any = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/Login/CheckLoginDetails`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(user, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {User} [user] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiLoginResetPasswordCheckEmailAndSendCodePost: async (user?: User, options: any = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/Login/ResetPasswordCheckEmailAndSendCode`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -675,6 +708,16 @@ export const LoginApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
+        async apiLoginResetPasswordCheckEmailAndSendCodePost(user?: User, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiLoginResetPasswordCheckEmailAndSendCodePost(user, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {User} [user] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
         async apiLoginUpdateUserNotificationTokenPost(user?: User, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.apiLoginUpdateUserNotificationTokenPost(user, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
@@ -704,6 +747,15 @@ export const LoginApiFactory = function (configuration?: Configuration, basePath
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
+        apiLoginResetPasswordCheckEmailAndSendCodePost(user?: User, options?: any): AxiosPromise<void> {
+            return localVarFp.apiLoginResetPasswordCheckEmailAndSendCodePost(user, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {User} [user] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
         apiLoginUpdateUserNotificationTokenPost(user?: User, options?: any): AxiosPromise<void> {
             return localVarFp.apiLoginUpdateUserNotificationTokenPost(user, options).then((request) => request(axios, basePath));
         },
@@ -726,6 +778,17 @@ export class LoginApi extends BaseAPI {
      */
     public apiLoginCheckLoginDetailsPost(user?: User, options?: any) {
         return LoginApiFp(this.configuration).apiLoginCheckLoginDetailsPost(user, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {User} [user] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof LoginApi
+     */
+    public apiLoginResetPasswordCheckEmailAndSendCodePost(user?: User, options?: any) {
+        return LoginApiFp(this.configuration).apiLoginResetPasswordCheckEmailAndSendCodePost(user, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
