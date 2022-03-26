@@ -62,14 +62,14 @@ namespace ShoppingList.Controllers
             }
             catch (Exception ex)
             {
-                logger.LogError($"Login to email {user.Email} Failed!\n=> {ex.Message}");
+                logger.LogError($"UpdateUserNotificationToken - Update notification token to userID {user.UserID} failled \n=> {ex.Message}");
                 return BadRequest(ex);
             }
         }
 
         [HttpPost]
         [Route("api/Login/ResetPasswordCheckEmailAndSendCode")]
-        public IActionResult Check([FromBody] User user)
+        public IActionResult ResetPasswordCheckEmailAndSendCode([FromBody] User user)
         {
             try
             {
@@ -77,19 +77,36 @@ namespace ShoppingList.Controllers
                 if (userList.Count == 0)
                 {
                     logger.LogInformation($"ResetPasswordCheckEmailAndSendCode - The User doesnt find or doesnt active!");
-                    return Ok("");
+                    return Ok(-1);
                 }
 
                 int code = mailVerification.GenerateVeraficationCode();
                 mailVerification.SendEmail("איפוס סיסמה - MyShoppingList app", user.Email, userList[0].FirstName, "קוד זמני:", code);
-                VerificationCode verificationCode = new VerificationCode(code, DateTime.Now);
                 logger.LogInformation($"ResetPasswordCheckEmailAndSendCode - VerificationCode create succesfully!");
-                return Ok(verificationCode);
+                return Ok(code);
 
             }
             catch (Exception ex)
             {
-                logger.LogError($"ResetPasswordCheckEmailAndSendCode - somehting went wrong while getting code - {ex.Message}");
+                logger.LogError($"ResetPasswordCheckEmailAndSendCode - somehting went wrong while getting code \n=> {ex.Message}");
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpPost]
+        [Route("api/Login/UpdatePassword")]
+        public IActionResult UpdatePassword([FromBody] User user)
+        {
+            try
+            {
+                int res = loginData.UpdatePassword(user);
+                logger.LogInformation($"Update password to email {user.Email} succeed!");
+                return Ok(res);
+
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"UpdatePassword - Something went wrong while update password \n=> {ex.Message}");
                 return BadRequest(ex);
             }
         }

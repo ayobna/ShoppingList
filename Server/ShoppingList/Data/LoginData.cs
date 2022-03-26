@@ -50,5 +50,19 @@ namespace ShoppingList.Data
             List<User> userLIst = db.ConvertDataTable<User>(tb);
             return userLIst;
         }
+
+        public int UpdatePassword(User user)
+        {
+            SqlCommand cmd = db.CreateCommand("Proc_Update_Password", db.Connect(), "proc");
+            cmd.Parameters.Add("@Email", SqlDbType.NVarChar).Value = user.Email;
+            cmd.Parameters.Add("@Password", SqlDbType.NVarChar).Value = user.Password;
+            int res = db.ExecuteAndClose(cmd);
+
+            if (res != 1)
+            {
+                throw new Exception($"Somthing went wrong while update password to email {user.Email} in sql");
+            }
+            return res;
+        }
     }
 }
