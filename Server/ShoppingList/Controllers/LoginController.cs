@@ -14,12 +14,14 @@ namespace ShoppingList.Controllers
     {
         private readonly ILoginData loginData;
 
+        private readonly IMailVerification mailVerification;
+
         private readonly ILogger<ShoppinglistController> logger;
 
-        public LoginController(ILoginData loginData_, ILogger<ShoppinglistController> logger_)
+        public LoginController(ILoginData loginData_,IMailVerification mailVerification_, ILogger<ShoppinglistController> logger_)
         {
-
             loginData = loginData_;
+            mailVerification = mailVerification_;
             logger = logger_;
         }
 
@@ -61,6 +63,33 @@ namespace ShoppingList.Controllers
             catch (Exception ex)
             {
                 logger.LogError($"Login to email {user.Email} Failed!\n=> {ex.Message}");
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpPost]
+        [Route("api/Login/ResetPasswordCheckEmailAndSendCode")]
+        public IActionResult Check([FromBody] User user)
+        {
+            try
+            {
+                List<User> userList = loginData.CheckIfUserExistsByEmail(user);
+                if (userList.Count == 0)
+                {
+                    logger.LogInformation($"ResetPasswordCheckEmailAndSendCode - The User doesnt find or doesnt active!");
+                    return Ok("");
+                }
+
+                int code = mailVerification.GenerateVeraficationCode();
+                mailVerification.SendEmail("איפוס סיסמה - MyShoppingList app", user.Email, userList[0].FirstName, "קוד זמני:", code);
+                VerificationCode verificationCode = new VerificationCode(code, DateTime.Now);
+                logger.LogInformation($"ResetPasswordCheckEmailAndSendCode - VerificationCode create succesfully!");
+                return Ok(verificationCode);
+
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"ResetPasswordCheckEmailAndSendCode - somehting went wrong while getting code - {ex.Message}");
                 return BadRequest(ex);
             }
         }
