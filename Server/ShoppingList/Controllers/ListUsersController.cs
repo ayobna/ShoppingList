@@ -67,7 +67,7 @@ namespace ShoppingList.Controllers
         {
             try
             {
-                List<User> searchListUsers = listUsers.GetUserByEmailToAddToListUsers(email);
+                List<ShoppingListUser> searchListUsers = listUsers.GetUserByEmailToAddToListUsers(email);
                 if (searchListUsers == null)
                 {
                     logger.LogWarning(" email not exists");
