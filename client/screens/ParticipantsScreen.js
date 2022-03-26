@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, Text, FlatList, TouchableHighlight, StyleSheet, Alert } from "react-native";
 import { API, listUsersApi, shoppingListApi, requestApi } from "../api/api";
 import ParticipantsCard from "../components/ParticipantsCard";
-import { FAB, TextInput, IconButton, Button, Avatar } from "react-native-paper";
+import { FAB, TextInput, IconButton, Button, Avatar, Searchbar } from "react-native-paper";
 import { _getData } from "../utils/Functions";
 import PopupDialog from "../components/PopupDialog";
 import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
@@ -14,8 +14,11 @@ const ParticipantsScreen = (props) => {
   const [popupDialogVisible, setPopupDialogVisible] = useState(false);
   const [listCreatorId, setListCreatorId] = useState();
   const [currentUser, setCurrentUser] = useState();
-  const [searchListUsers, setSearchListUsers] = useState();
+  const [searchListUser, setSearchListUser] = useState();
   const [searchEmail, setSearchEmail] = useState();
+  const [isSearch, setIsSearch] = useState(false);
+
+  const [searchResult, setSearchResult] = useState([]);
 
 
 
@@ -25,11 +28,11 @@ const ParticipantsScreen = (props) => {
       const creatorID = await GetListCreatorByListID();
       const loginUser = await LoadUser();
       const data = await GetParticipantsInTheShoppingList();
-      const searchUsers = await GetUsersToAddToListUsers(creatorID);
+     
       setListCreatorId(creatorID);
       setCurrentUser(loginUser);
       setParticipants(data);
-      setSearchListUsers(searchUsers);
+   
       console.log(route.params.shoppingListID)
 
     });
@@ -37,7 +40,10 @@ const ParticipantsScreen = (props) => {
   }, [navigation, route]);
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener("blur", async () => { });
+    const unsubscribe = navigation.addListener("blur", async () => {
+      setSearchEmail("");
+    });
+
     return unsubscribe;
   }, [route]);
 
@@ -88,32 +94,71 @@ const ParticipantsScreen = (props) => {
     setPopupDialogVisible(false);
   };
 
-// send a request for the user to join, if the user exists and not a member
+  const searchPress = () => {
+    const searchUsers = await GetUsersToAddToListUsers(searchEmail);
+    setSearchResult([searchUsers]);
+  }
+  const showResolt = () => {
+    let participantsIndex = participants.findIndex((email) => email.email === searchEmail);
+    console.log(participantsIndex)
+    if (participantsIndex === -1) {
+      let searchIndex = searchListUsers.findIndex((email) => email.email === searchEmail);
+      console.log(searchIndex)
+      if (searchIndex === -1) {
+        //        Alert.alert("המשתמש לא קיים");
+        return (
+          <View>
+            <Text>המשתמש לא קיים</Text>
+          </View>
+        );
+      }
+      else {
+        let userS = searchListUsers[searchIndex]
+        //  sendRequestToJoin(userS.userID)
+        //   Alert.alert("הבקשה נשלחה");
+        return (
+          <View>
+            <ParticipantsCard data={userS} />
+          </View>
+        );
+      }
+    }
+    else {
+      //  Alert.alert("המשתמש כבר חבר ברשימה");
+      return (
+        <View>
+          <Text>המשתמש כבר חבר ברשימה</Text>
+        </View>
+      );
+    }
+  }
+
+  // send a request for the user to join, if the user exists and not a member
   const confirmSendAddRequest = () => {
     let participantsIndex = participants.findIndex((email) => email.email === searchEmail);
     console.log(participantsIndex)
-    if(participantsIndex === -1){
+    if (participantsIndex === -1) {
       let searchIndex = searchListUsers.findIndex((email) => email.email === searchEmail);
       console.log(searchIndex)
-      if(searchIndex === -1){
+      if (searchIndex === -1) {
         Alert.alert("המשתמש לא קיים");
         return;
       }
-      else{
+      else {
         let userS = searchListUsers[searchIndex]
         sendRequestToJoin(userS.userID)
         Alert.alert("הבקשה נשלחה");
         return;
       }
     }
-    else{
+    else {
       Alert.alert("המשתמש כבר חבר ברשימה");
       return;
     }
   };
 
   //send request to join
-  const sendRequestToJoin = async(userID) =>{
+  const sendRequestToJoin = async (userID) => {
     try {
       await listUsersApi.apiShoppingListAddUserForTheListPost({ listID: shoppingListID, userID: userID });
       console.log("sendRequestToJoin")
@@ -157,14 +202,23 @@ const ParticipantsScreen = (props) => {
           cancel={cancelPopupDialog}
           confirm={confirmSendAddRequest}
         >
-          <TextInput
-            label="מייל"
-            onChangeText={(txt) =>
-              setSearchEmail(txt)
-            }
-            dense={true}
-            mode="outlined"
+          <Searchbar
+            placeholder="חיפוש"
+            onChangeText={(txt) => setSearchEmail(txt)}
+            value={searchEmail}
+            theme={{ colors: { primary: "black" }, roundness: 0 }}
+            iconColor="black"
+            onIconPress={searchPress}
           />
+          {
+            searchResult.length === 0 ? 
+            <View><Text>אין תוצאות</Text></View>
+            :
+            <View><ParticipantsCard data={searchResult.item} /></View>
+          }
+
+          {/* {isSearch ? <Text>{showResolt()}</Text>:<Text>חיפוש לפי מייל</Text>}
+         */}
           {/* <FlatList
         showsVerticalScrollIndicator={true}
         data={participants}

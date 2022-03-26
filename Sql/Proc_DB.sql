@@ -245,11 +245,18 @@ INSERT INTO [shopping_lists_users] ([ListID],[UserID],[JoinedDate])
 Go
 --exec Proc_Add_User_To_List 6,5
 
-Create Proc Proc_Get_Users_For_Search
-@CreatorID int
+alter Proc Proc_Get_Users_For_Search
+@Email nvarchar (150)
 As
-Select UserID, FirstName, LastName, Email, PhoneNumber From users
-Where Not (UserID = @CreatorID) 
+Begin transaction
+Select UserID, FirstName, LastName, Email From users
+Where (Email = @Email)
+IF @@ERROR<>0
+		Begin
+			rollback transaction
+			return
+		End
+commit transaction
 Go
 --exec Proc_Get_Users_For_Search 1
 
