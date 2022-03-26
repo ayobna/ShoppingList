@@ -62,26 +62,26 @@ namespace ShoppingList.Controllers
             }
         }
         [HttpGet]
-        [Route("Api/GetUsersToAddToListUsers/{id}")]
-        public IActionResult GetUsersToAddToListUsers(int id)
+        [Route("Api/GetUserByEmailToAddToListUsers/{email}")]
+        public IActionResult GetUserByEmailToAddToListUsers(string email)
         {
             try
             {
-                List<User> searchListUsers = listUsers.GetUsersToAddToListUsers(id);
+                List<User> searchListUsers = listUsers.GetUserByEmailToAddToListUsers(email);
                 if (searchListUsers == null)
                 {
-                    logger.LogWarning(" Id not exists");
+                    logger.LogWarning(" email not exists");
                     return NotFound();
                 }
                 else
                 {
-                    logger.LogInformation("List of user without the creator " + " " + id);
+                    logger.LogInformation("get user with email " + " " + email);
                     return Ok(searchListUsers);
                 }
             }
             catch (Exception ex)
             {
-                logger.LogError(": Did not Get The Users Of the list by ListId DB");
+                logger.LogError(": Did not Get The User with the email");
                 return BadRequest(ex);
             }
         }
