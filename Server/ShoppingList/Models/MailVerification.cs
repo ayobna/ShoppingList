@@ -35,7 +35,7 @@ namespace ShoppingList.Models
             smtp.Host = "smtp.gmail.com"; // שרת של גוגל
             smtp.EnableSsl = true; // הגדרת אבטחה
             smtp.UseDefaultCredentials = false;
-            smtp.Credentials = new NetworkCredential("studenticoinfo@gmail.com", "Tal1234!"); // הגדרת הפרטים של המייל ממנו נשלחת ההודעה
+            smtp.Credentials = new NetworkCredential("myshoppinglistappspt@gmail.com", "Tal1234!"); // הגדרת הפרטים של המייל ממנו נשלחת ההודעה
             smtp.DeliveryMethod = SmtpDeliveryMethod.Network; // שיטת ההעברה - ברשת
             smtp.Send(message); // שליחת המייל
         }

@@ -337,9 +337,18 @@ Go
  GO
 
  Create Proc Proc_CheckIfUserExistsByEmail
- @Email int
+ @Email nvarchar(150)
  As
 	Select FirstName from users Where Upper(Email) = Upper(@Email) And IsActive = 1
+ GO
+
+ Create Proc Proc_Update_Password
+ @Email nvarchar(150),
+ @Password nvarchar(max)
+ As
+		UPDATE [users]
+		SET  [Password] = @Password
+		WHERE Email = @Email
  GO
 
 

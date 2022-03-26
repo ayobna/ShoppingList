@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { StyleSheet, Text, View, TouchableOpacity, Image, ScrollView } from "react-native";
-import { _storeData, _getData, _registerForPushNotificationsAsync } from "../utils/Functions";
+import { _storeData, _getData, _registerForPushNotificationsAsync, _diff_minutes } from "../utils/Functions";
 import { Button, TextInput, HelperText, Avatar, Caption } from "react-native-paper";
 import * as WebBrowser from 'expo-web-browser';
 import { makeRedirectUri, useAuthRequest, useAutoDiscovery } from 'expo-auth-session';
@@ -8,8 +8,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { API, loginApi } from "../api/api";
 import Spinner from "../components/Spinner";
 import PopupDialog from "../components/PopupDialog";
+import moment from "moment";
 
-
+const Time_For_Code = 10;
 // WebBrowser.maybeCompleteAuthSession();
 const LoginScreen = (props) => {
   // props
@@ -38,6 +39,8 @@ const LoginScreen = (props) => {
   const [resetPasswordErrorMessage, setResetPasswordErrorMessage] = useState("");
   const [isResetPasswordVisible, setIsResetPasswordVisible] = useState(false);
   const [isResetPasswordConfirmVisible, setIsResetPasswordConfirmVisible] = useState(false);
+
+  const [createResetCodeTime, setCreateResetCodeTime] = useState();
 
 
 
@@ -137,12 +140,79 @@ const LoginScreen = (props) => {
 
   };
 
-  const confirmInsertEmailDialog = () => {
+  const confirmInsertEmailDialog = async () => {
     if (resetEmail.length === 0) {
       setResetEmailErrorMessage("שדה האימייל חייב להכיל לפחות אות אחת!");
       return;
     }
-    setCode("1234");
+    await handleSetCode();
+  };
+
+  const resetPasswordCheckEmailAndSendCode = async () => {
+    try {
+      const userDetails = { Email: resetEmail };
+      let res = await loginApi.apiLoginResetPasswordCheckEmailAndSendCodePost(userDetails);
+      return res.data;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+
+  const confirmInsertCodeDialog = () => {
+    if (inputCode.length === 0) {
+      setCodeErrorMessage("השדה של הקוד חייב להכיל לפחות מספר אחד!");
+      return;
+    }
+    console.log(_diff_minutes(new Date(), createResetCodeTime));
+    if (_diff_minutes(new Date(), createResetCodeTime) >= Time_For_Code) {
+      setCodeErrorMessage("תוקף הקוד עבר אנא שלח קוד חדש!");
+      return;
+    }
+    if (parseInt(inputCode) !== code) {
+      setCodeErrorMessage("הקוד שגוי אנא בדוק/י את הקוד במייל שוב!");
+      return;
+    }
+    console.log(Date.now)
+    setIsInsertCodeDialogVisible(false);
+    setIsInsertPasswordDialogVisible(true);
+  };
+
+  const resendDialog = async () => {
+    await handleSetCode();
+  };
+
+  const handleSetCode = async () => {
+    const code = await resetPasswordCheckEmailAndSendCode();
+    console.log("code", code)
+    if (code) {
+      setCreateResetCodeTime(new Date())
+      setCode(code);
+    }
+  };
+
+  const confirmResetPassword = async () => {
+    const passwordRgx = /^(?=.*[A-Z])(?=.*\d)(?=.*[!#$%&*_=@])[A-Za-z0-9!#$%&*_=@]{5,}$/; // סיסמה חייבת להכיל אות גדולה, ספרה וסימן מיוחד. אורך סיסמה לפחות 5 תווים
+    if (!passwordRgx.test(resetPassword)) {
+      setResetPasswordErrorMessage("הסיסמה לא תקינה, חייבת להכיל אות גדולה, סימן מיוחד, וספרה!")
+      return;
+    }
+    if (resetPassword !== resetPasswordConfirm) {
+      setResetPasswordErrorMessage("הסימה לא זהה בשתי השדות!")
+      return;
+    }
+    await updatePassword();
+    cancelDialog();
+  };
+
+  const updatePassword = async () => {
+    try {
+      const userDetails = { Email: resetEmail, Password: resetPassword };
+      let res = await loginApi.apiLoginUpdatePasswordPost(userDetails);
+      return res.data;
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const cancelDialog = () => {
@@ -159,36 +229,7 @@ const LoginScreen = (props) => {
     setIsResetPasswordVisible(false);
     setIsResetPasswordConfirmVisible(false);
     setIsInsertPasswordDialogVisible(false);
-  };
-
-  const confirmInsertCodeDialog = () => {
-    if (inputCode.length === 0) {
-      setCodeErrorMessage("השדה של הקוד חייב להכיל לפחות מספר אחד!");
-      return;
-    }
-    if (inputCode !== code) {
-      setCodeErrorMessage("הקוד שגוי אנא בדוק/י את הקוד במייל שוב!");
-      return;
-    }
-    setIsInsertCodeDialogVisible(false);
-    setIsInsertPasswordDialogVisible(true);
-  };
-
-  const resendDialog = () => {
-    console.log("resend code")
-  };
-
-  const confirmResetPassword = () => {
-    const passwordRgx = /^(?=.*[A-Z])(?=.*\d)(?=.*[!#$%&*_=@])[A-Za-z0-9!#$%&*_=@]{5,}$/; // סיסמה חייבת להכיל אות גדולה, ספרה וסימן מיוחד. אורך סיסמה לפחות 5 תווים
-    if (!passwordRgx.test(resetPassword)) {
-      setResetPasswordErrorMessage("הסיסמה לא תקינה, חייבת להכיל אות גדולה, סימן מיוחד, וספרה!")
-      return;
-    }
-    if (resetPassword !== resetPasswordConfirm) {
-      setResetPasswordErrorMessage("הסימה לא זהה בשתי השדות!")
-      return;
-    }
-    cancelDialog();
+    setCreateResetCodeTime();
   };
 
 
@@ -225,6 +266,7 @@ const LoginScreen = (props) => {
                   onChangeText={text => setEmail(text)}
                   selectionColor="#919191"
                   activeOutlineColor="#919191"
+                  keyboardType="email-address"
                   dense
                   style={{ backgroundColor: "white" }}
                   left={<TextInput.Icon color={loginErrorMessage !== "" ? "#d0312d" : "#c1c1c1"} name="email-outline" />}
@@ -328,6 +370,9 @@ const LoginScreen = (props) => {
             confirm={confirmInsertCodeDialog}
             resend={resendDialog}
           >
+            <View>
+              <Caption>קוד נשלח אלייך למייל - בדוק/י את המייל</Caption>
+            </View>
             <TextInput
               label="קוד"
               mode="outlined"
