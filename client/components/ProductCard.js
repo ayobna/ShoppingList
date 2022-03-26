@@ -38,7 +38,7 @@ const ProductCard = (props) => {
 const [leftStyleMarginRight, setLeftStyleMarginRight] = useState("15%")
 
   useEffect(() => {
-    console.log("product: ", data);
+   // console.log("product: ", data);
     setChecked(data.isChecked)
     if (ScreenName === "CreateList") {
       setLeftStyleMarginRight("5%")
