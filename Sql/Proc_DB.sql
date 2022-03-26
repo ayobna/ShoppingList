@@ -249,8 +249,10 @@ alter Proc Proc_Get_Users_For_Search
 @Email nvarchar (150)
 As
 Begin transaction
-Select UserID, FirstName, LastName, Email From users
-Where (Email = @Email)
+SELECT users.Email, users.FirstName, users.LastName, users.UserID, shopping_lists_users.IsApproved
+FROM     users inner JOIN
+                  shopping_lists_users ON users.UserID = shopping_lists_users.UserID
+Where (users.Email = @Email)
 IF @@ERROR<>0
 		Begin
 			rollback transaction
@@ -258,7 +260,7 @@ IF @@ERROR<>0
 		End
 commit transaction
 Go
---exec Proc_Get_Users_For_Search 1
+--exec Proc_Get_Users_For_Search "test3@g.com"
 
 -- Alter Proc Proc_User_Confirmation_Of…_Joining 
 -- @ListID int,

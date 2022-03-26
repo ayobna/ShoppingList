@@ -43,12 +43,12 @@ namespace ShoppingList.Data
             return Convert.ToInt32(cmd.Parameters["@UserID"].Value);
         }
 
-        public List<User> GetUserByEmailToAddToListUsers(string userEmail)
+        public List<ShoppingListUser> GetUserByEmailToAddToListUsers(string userEmail)
         {
             SqlCommand cmd = db.CreateCommand("Proc_Get_Users_For_Search", db.Connect(), "proc");
             cmd.Parameters.Add("@Email", SqlDbType.NVarChar).Value = userEmail;
             DataTable tb = db.ReadAndClose(cmd);
-            List<User> usersList = db.ConvertDataTable<User>(tb);
+            List<ShoppingListUser> usersList = db.ConvertDataTable<ShoppingListUser>(tb);
             return usersList;
         }
 
