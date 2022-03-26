@@ -6,5 +6,6 @@ namespace ShoppingList.Models.Interfaces
     {
         public List<User> CheckLoginDetails(User user);
         public int UpdateUserNotificationToken(User user);
+        public List<User> CheckIfUserExistsByEmail(User user);
     }
 }

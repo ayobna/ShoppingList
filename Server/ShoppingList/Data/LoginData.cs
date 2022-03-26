@@ -40,5 +40,15 @@ namespace ShoppingList.Data
             }
             return res;
         }
+
+        public List<User> CheckIfUserExistsByEmail(User user)
+        {
+            SqlCommand cmd = db.CreateCommand("Proc_CheckIfUserExistsByEmail", db.Connect(), "proc");
+            cmd.Parameters.Add("@Email", SqlDbType.NVarChar).Value = user.Email;
+
+            DataTable tb = db.ReadAndClose(cmd);
+            List<User> userLIst = db.ConvertDataTable<User>(tb);
+            return userLIst;
+        }
     }
 }

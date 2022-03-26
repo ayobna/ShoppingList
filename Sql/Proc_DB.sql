@@ -336,3 +336,10 @@ Go
 		WHERE [UserID] = @UserID
  GO
 
+ Create Proc Proc_CheckIfUserExistsByEmail
+ @Email int
+ As
+	Select FirstName from users Where Upper(Email) = Upper(@Email) And IsActive = 1
+ GO
+
+
