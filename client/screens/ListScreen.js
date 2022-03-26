@@ -39,19 +39,19 @@ const ListScreen = (props) => {
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", async () => {
-    
+
       await LoadUser();
       //  await  GetProducts();
+
       await GetListCreatorByListID();
-      await joinChat();
+      if (route.params.OldConnection === undefined&& !route.params.OldConnection) {
+        await joinChat();
+      }
+
     });
     return unsubscribe;
   }, [navigation, route]);
 
-  useEffect(() => {
-    const unsubscribe = navigation.addListener("blur", async () => {});
-    return unsubscribe;
-  }, [route]);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("beforeRemove", (e) => {
@@ -63,6 +63,17 @@ const ListScreen = (props) => {
     return unsubscribe;
   }, [navigation, connection]);
 
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('tabPress', e => {
+      // Prevent default behavior
+      e.preventDefault();
+      //  closeConnection(e);
+      console.log("sadddddddddddd")
+      navigation.navigate("ListScreen", { shoppingListID: shoppingListID, OldConnection: true });
+    });
+
+    return unsubscribe;
+  }, [navigation]);
   useEffect(() => {
     if (productEditDetails) {
       setPopupDialogVisible(true);
@@ -95,8 +106,8 @@ const ListScreen = (props) => {
       connection.on("ReceiveMessage", (products) => {
         setProducts()
         setProducts(products);
-      // console.log(products)
-        console.log("ReceiveMessage",products)
+        // console.log(products)
+        console.log("ReceiveMessage", products)
       });
       connection.onclose((e) => {
         setConnection();
@@ -127,7 +138,7 @@ const ListScreen = (props) => {
 
     try {
       console.log("Checked")
-   //   setProducts()
+      //   setProducts()
       await connection.invoke("CheckedProduct", productID);
 
     } catch (e) {
@@ -135,12 +146,12 @@ const ListScreen = (props) => {
     }
   };
   const invokeUnCheckedProduct = async (productID) => {
- 
+
     try {
       console.log("UnChecked")
-    //  setProducts()
+      //  setProducts()
       await connection.invoke("UnCheckedProduct", productID);
-  
+
     } catch (e) {
       console.log(e);
     }
@@ -150,7 +161,7 @@ const ListScreen = (props) => {
       await connection.stop();
       console.log("closeConnection");
       setConnection();
-     // navigation.dispatch(e.data.action);
+
     } catch (e) {
       console.log(e);
     }
@@ -163,9 +174,9 @@ const ListScreen = (props) => {
     ) {
       edit
         ? setProductEditDetails((oldState) => ({
-            ...oldState,
-            amount: "1",
-          }))
+          ...oldState,
+          amount: "1",
+        }))
         : setAmount("1");
       return;
     }
@@ -178,9 +189,9 @@ const ListScreen = (props) => {
     }
     edit
       ? setProductEditDetails((oldState) => ({
-          ...oldState,
-          amount: value.toString(),
-        }))
+        ...oldState,
+        amount: value.toString(),
+      }))
       : setAmount(value.toString());
   };
 
@@ -192,9 +203,9 @@ const ListScreen = (props) => {
       }
       edit
         ? setProductEditDetails((oldState) => ({
-            ...oldState,
-            amount: txt,
-          }))
+          ...oldState,
+          amount: txt,
+        }))
         : setAmount(txt);
     }
   };
@@ -231,7 +242,7 @@ const ListScreen = (props) => {
     if (regexValidationProduct(false) < 2) {
       return;
     }
-   
+
     let product = {
       listId: shoppingListID,
       productID: 0,
@@ -241,21 +252,12 @@ const ListScreen = (props) => {
       imgUri: imageBase64,
       img: imageUri ? imageUri : null,
     };
-    console.log( "product====== > :",product)
     NewProductToTheList(product);
-  //  setFromDB(false);
-    // let tempProducts = [...products];
-    // if (tempProducts.length !== 0) {
-    //   product.productID = (
-    //     parseInt(tempProducts[tempProducts.length - 1].productID) + 1
-    //   ).toString();
-    // }
-    // tempProducts = [...tempProducts, product];
-    // setProducts(tempProducts);
-  
+
+
   };
   const NewProductToTheList = async (product) => {
-  
+
     let newProductToList = {
       listID: product.listId,
       creatorID: product.creatorID,
@@ -263,22 +265,22 @@ const ListScreen = (props) => {
       amount: product.amount,
       img: product.imgUri === undefined ? product.img : product.imgUri,
     };
-    console.log("NewProductToTheList ===>",newProductToList);
+    console.log("NewProductToTheList ===>", newProductToList);
     addANewProductToTheList(newProductToList);
   };
   const addANewProductToTheList = async (newProductToList) => {
-    try{
-    let res = await productApi.apiProductAddProductToShoppingListPost(
-      newProductToList
-    );
-    console.log("Add new product to server is ", res.data);
+    try {
+      let res = await productApi.apiProductAddProductToShoppingListPost(
+        newProductToList
+      );
+      console.log("Add new product to server is ", res.data);
     } catch (e) {
       console.log(e);
     }
-  
+
     await invokeNewProduct();
     handleClearStates();
- 
+
   };
 
   const regexValidationProduct = (edit) => {
@@ -355,9 +357,9 @@ const ListScreen = (props) => {
   };
   const checkProduct = async (productID, checked) => {
     if (checked) {
-    let res=  await invokeCheckedProduct(productID);
+      let res = await invokeCheckedProduct(productID);
     } else {
-    let res=  await invokeUnCheckedProduct(productID);
+      let res = await invokeUnCheckedProduct(productID);
     }
   };
 

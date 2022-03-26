@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, Text, FlatList, TouchableHighlight, StyleSheet, Alert } from "react-native";
 import { API, listUsersApi, shoppingListApi, requestApi } from "../api/api";
 import ParticipantsCard from "../components/ParticipantsCard";
+import SearchUserCard from "../components/SearchUserCard";
 import { FAB, TextInput, IconButton, Button, Avatar, Searchbar } from "react-native-paper";
 import { _getData } from "../utils/Functions";
 import PopupDialog from "../components/PopupDialog";
@@ -67,9 +68,11 @@ const ParticipantsScreen = (props) => {
   };
 
   // get all the users, except the list creator, for sending a join requests
-  const GetUsersToAddToListUsers = async (creatorID) => {
-    let res = await listUsersApi.apiGetUsersToAddToListUsersIdGet(creatorID);
+  const GetUsersToAddToListUsers = async () => {
+    console.log("in GetUsersToAddToListUsers" + searchEmail)
+    let res = await listUsersApi.apiGetUserByEmailToAddToListUsersEmailGet(searchEmail);
     let data = res.data;
+    console.log("out GetUsersToAddToListUsers")
     return data;
   };
 
@@ -94,37 +97,24 @@ const ParticipantsScreen = (props) => {
     setPopupDialogVisible(false);
   };
 
-  const searchPress = () => {
-    const searchUsers = await GetUsersToAddToListUsers(searchEmail);
-    setSearchResult([searchUsers]);
+  const searchPress = async () => {
+    console.log("in searchPress")
+    const searchUsers = await GetUsersToAddToListUsers();
+    setSearchResult(searchUsers);
+    console.log("searchPress out  " + searchUsers[0].firstName )
   }
+
   const showResolt = () => {
     let participantsIndex = participants.findIndex((email) => email.email === searchEmail);
-    console.log(participantsIndex)
+    console.log("showResolt"+ searchResult[0].firstName)
     if (participantsIndex === -1) {
-      let searchIndex = searchListUsers.findIndex((email) => email.email === searchEmail);
-      console.log(searchIndex)
-      if (searchIndex === -1) {
-        //        Alert.alert("המשתמש לא קיים");
         return (
           <View>
-            <Text>המשתמש לא קיים</Text>
+            <SearchUserCard data={searchResult[0]} />
           </View>
         );
-      }
-      else {
-        let userS = searchListUsers[searchIndex]
-        //  sendRequestToJoin(userS.userID)
-        //   Alert.alert("הבקשה נשלחה");
-        return (
-          <View>
-            <ParticipantsCard data={userS} />
-          </View>
-        );
-      }
     }
     else {
-      //  Alert.alert("המשתמש כבר חבר ברשימה");
       return (
         <View>
           <Text>המשתמש כבר חבר ברשימה</Text>
@@ -134,38 +124,17 @@ const ParticipantsScreen = (props) => {
   }
 
   // send a request for the user to join, if the user exists and not a member
-  const confirmSendAddRequest = () => {
-    let participantsIndex = participants.findIndex((email) => email.email === searchEmail);
-    console.log(participantsIndex)
-    if (participantsIndex === -1) {
-      let searchIndex = searchListUsers.findIndex((email) => email.email === searchEmail);
-      console.log(searchIndex)
-      if (searchIndex === -1) {
-        Alert.alert("המשתמש לא קיים");
-        return;
-      }
-      else {
-        let userS = searchListUsers[searchIndex]
-        sendRequestToJoin(userS.userID)
-        Alert.alert("הבקשה נשלחה");
-        return;
-      }
-    }
-    else {
-      Alert.alert("המשתמש כבר חבר ברשימה");
-      return;
-    }
-  };
-
-  //send request to join
-  const sendRequestToJoin = async (userID) => {
+  const confirmSendAddRequest = async () => {
+    console.log("in confirmSendAddRequest")
     try {
-      await listUsersApi.apiShoppingListAddUserForTheListPost({ listID: shoppingListID, userID: userID });
+      await listUsersApi.apiShoppingListAddUserForTheListPost({ listID: shoppingListID, userID: searchResult[0].userID });
       console.log("sendRequestToJoin")
+      Alert.alert("הבקשה נשלחה")
     } catch (e) {
       console.log(e);
     }
-  }
+  };
+
 
 
   // delete a participant from the list users by the list creator
@@ -214,7 +183,7 @@ const ParticipantsScreen = (props) => {
             searchResult.length === 0 ? 
             <View><Text>אין תוצאות</Text></View>
             :
-            <View><ParticipantsCard data={searchResult.item} /></View>
+            <View>{showResolt()}</View>
           }
 
           {/* {isSearch ? <Text>{showResolt()}</Text>:<Text>חיפוש לפי מייל</Text>}

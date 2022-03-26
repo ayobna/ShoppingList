@@ -395,7 +395,9 @@ export const ListUsersApiAxiosParamCreator = function (configuration?: Configura
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiGetUserByEmailToAddToListUsersEmailGet: async (email: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+
+        apiGetUserByEmailToAddToListUsersEmailGet: async (email: string, options: any = {}): Promise<RequestArgs> => {
+
             // verify required parameter 'email' is not null or undefined
             assertParamExists('apiGetUserByEmailToAddToListUsersEmailGet', 'email', email)
             const localVarPath = `/Api/GetUserByEmailToAddToListUsers/{email}`
@@ -481,7 +483,11 @@ export const ListUsersApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
+
         async apiGetUserByEmailToAddToListUsersEmailGet(email: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+
+        async apiGetUserByEmailToAddToListUsersEmailGet(email: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+
             const localVarAxiosArgs = await localVarAxiosParamCreator.apiGetUserByEmailToAddToListUsersEmailGet(email, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -560,7 +566,11 @@ export class ListUsersApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ListUsersApi
      */
+
     public apiGetUserByEmailToAddToListUsersEmailGet(email: string, options?: AxiosRequestConfig) {
+
+    public apiGetUserByEmailToAddToListUsersEmailGet(email: string, options?: any) {
+
         return ListUsersApiFp(this.configuration).apiGetUserByEmailToAddToListUsersEmailGet(email, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -622,7 +632,9 @@ export const LoginApiAxiosParamCreator = function (configuration?: Configuration
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiLoginResetPasswordCheckEmailAndSendCodePost: async (user?: User, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+
+        apiLoginResetPasswordCheckEmailAndSendCodePost: async (user?: User, options: any = {}): Promise<RequestArgs> => {
+
             const localVarPath = `/api/Login/ResetPasswordCheckEmailAndSendCode`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -639,7 +651,11 @@ export const LoginApiAxiosParamCreator = function (configuration?: Configuration
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(user, localVarRequestOptions, configuration)
@@ -689,6 +705,7 @@ export const LoginApiAxiosParamCreator = function (configuration?: Configuration
          * @throws {RequiredError}
          */
         apiLoginUpdateUserNotificationTokenPost: async (user?: User, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+
             const localVarPath = `/api/Login/UpdateUserNotificationToken`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -741,7 +758,11 @@ export const LoginApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
+
         async apiLoginResetPasswordCheckEmailAndSendCodePost(user?: User, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+
+        async apiLoginResetPasswordCheckEmailAndSendCodePost(user?: User, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+
             const localVarAxiosArgs = await localVarAxiosParamCreator.apiLoginResetPasswordCheckEmailAndSendCodePost(user, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -751,6 +772,7 @@ export const LoginApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
+
         async apiLoginUpdatePasswordPost(user?: User, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.apiLoginUpdatePasswordPost(user, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
@@ -762,6 +784,9 @@ export const LoginApiFp = function(configuration?: Configuration) {
          * @throws {RequiredError}
          */
         async apiLoginUpdateUserNotificationTokenPost(user?: User, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+          
+        async apiLoginUpdateUserNotificationTokenPost(user?: User, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+
             const localVarAxiosArgs = await localVarAxiosParamCreator.apiLoginUpdateUserNotificationTokenPost(user, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -799,6 +824,7 @@ export const LoginApiFactory = function (configuration?: Configuration, basePath
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
+
         apiLoginUpdatePasswordPost(user?: User, options?: any): AxiosPromise<void> {
             return localVarFp.apiLoginUpdatePasswordPost(user, options).then((request) => request(axios, basePath));
         },
@@ -808,6 +834,7 @@ export const LoginApiFactory = function (configuration?: Configuration, basePath
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
+
         apiLoginUpdateUserNotificationTokenPost(user?: User, options?: any): AxiosPromise<void> {
             return localVarFp.apiLoginUpdateUserNotificationTokenPost(user, options).then((request) => request(axios, basePath));
         },
@@ -839,7 +866,9 @@ export class LoginApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof LoginApi
      */
-    public apiLoginResetPasswordCheckEmailAndSendCodePost(user?: User, options?: AxiosRequestConfig) {
+
+    public apiLoginResetPasswordCheckEmailAndSendCodePost(user?: User, options?: any) {
+
         return LoginApiFp(this.configuration).apiLoginResetPasswordCheckEmailAndSendCodePost(user, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -850,6 +879,7 @@ export class LoginApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof LoginApi
      */
+
     public apiLoginUpdatePasswordPost(user?: User, options?: AxiosRequestConfig) {
         return LoginApiFp(this.configuration).apiLoginUpdatePasswordPost(user, options).then((request) => request(this.axios, this.basePath));
     }
@@ -861,7 +891,9 @@ export class LoginApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof LoginApi
      */
-    public apiLoginUpdateUserNotificationTokenPost(user?: User, options?: AxiosRequestConfig) {
+
+    public apiLoginUpdateUserNotificationTokenPost(user?: User, options?: any) {
+
         return LoginApiFp(this.configuration).apiLoginUpdateUserNotificationTokenPost(user, options).then((request) => request(this.axios, this.basePath));
     }
 }

@@ -9,6 +9,6 @@ namespace ShoppingList.Models.Interfaces
     {
         public List<User> GetParticipantsInTheShoppingListByListId(int listId);
         public int AddUserForTheList(ShoppingListUser shoppingListUser);
-        public List<User> GetUserByEmailToAddToListUsers(string userEmail);
+        public List<ShoppingListUser> GetUserByEmailToAddToListUsers(string userEmail);
     }
 }

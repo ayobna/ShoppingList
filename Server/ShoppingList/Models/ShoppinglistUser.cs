@@ -11,5 +11,8 @@ namespace ShoppingList.Models
         public int UserID { get; set; }
         public DateTime JoinedDate { get; set; }
         public bool IsApproved { get; set; }
+        public string Email { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
     }
 }
