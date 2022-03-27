@@ -26,8 +26,7 @@ function MyDrawer(props) {
       <Drawer.Screen
         name="AccountStack"
         component={AccountStack}
-        options={{ title:"חשבון"}}
-
+        options={{ headerShown: false, title:"חשבון" }}
 
       />      
     </Drawer.Navigator>
