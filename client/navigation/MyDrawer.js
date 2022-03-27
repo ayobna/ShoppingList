@@ -6,6 +6,7 @@ import ShoppingListMainStack from "./ShoppingListMainStack";
 import AccountScreen from "../screens/AccountScreen";
 import RequestsStack from "./RequestsStack";
 import MyDrawerContent from "./MyDrawerContent";
+import AccountStack from "./AccountStack";
 
 const Drawer = createDrawerNavigator();
 
@@ -23,8 +24,8 @@ function MyDrawer(props) {
         options={{ headerShown: false, title:"בקשות" }}
       />
       <Drawer.Screen
-        name="profileStack"
-        component={AccountScreen}
+        name="AccountStack"
+        component={AccountStack}
         options={{ title:"חשבון"}}
 
 

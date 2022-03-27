@@ -117,10 +117,10 @@ const MyDrawerContent = (props) => {
 
                             <Drawer.Item
                                 theme={{ colors: { primary: "black" } }}
-                                active={currentDrawerScreen === "profileStack"}
+                                active={currentDrawerScreen === "AccountStack"}
                                 icon="account"
                                 label="חשבון"
-                                onPress={() => handleSelectedScreen("profileStack")}
+                                onPress={() => handleSelectedScreen("AccountStack")}
                                 style={styles.drawerItem}
                             />
 
