@@ -250,7 +250,7 @@ alter Proc Proc_Get_User_For_Search
 @ListID int
 As
 Begin transaction
-SELECT Email, FirstName, LastName, UserID, dbo.Func_Chack_Statuse_Of_Request(@Email,@ListID) AS isApproved
+SELECT Email, FirstName, LastName, UserID, dbo.Func_Chack_Statuse_Of_Request(@Email,@ListID) AS IsApproved
 FROM     users 
 Where Email = @Email
 IF @@ERROR<>0
@@ -260,7 +260,7 @@ IF @@ERROR<>0
 		End
 commit transaction
 Go
---exec Proc_Get_User_For_Search 'test@g.com', 87
+--exec Proc_Get_User_For_Search 'test3@g.com', 87
 
 -- Alter Proc Proc_User_Confirmation_Of…_Joining 
 -- @ListID int,
