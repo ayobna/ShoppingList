@@ -62,12 +62,12 @@ namespace ShoppingList.Controllers
             }
         }
         [HttpGet]
-        [Route("Api/GetUserByEmailToAddToListUsers/{email}")]
-        public IActionResult GetUserByEmailToAddToListUsers(string email)
+        [Route("Api/GetUserByEmailToAddToListUsers")]
+        public IActionResult GetUserByEmailToAddToListUsers(string email, int listID)
         {
             try
             {
-                List<ShoppingListUser> searchListUsers = listUsers.GetUserByEmailToAddToListUsers(email);
+                List<ShoppingListUser> searchListUsers = listUsers.GetUserByEmailToAddToListUsers(email, listID);
                 if (searchListUsers == null)
                 {
                     logger.LogWarning(" email not exists");
