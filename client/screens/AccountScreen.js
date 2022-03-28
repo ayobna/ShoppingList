@@ -37,11 +37,11 @@ const AccountScreen = (props) => {
           </View>
           <View style={styles.ViewText}>
             <Text style={styles.Text}>
-              שם:{currentUser.firstName + " " + currentUser.lastName}
+              שם: {currentUser.firstName + " " + currentUser.lastName}
             </Text>
             <Text style={styles.Text}>מייל: {currentUser.email}</Text>
             <Text style={styles.Text}>
-              מספר טלפון: {currentUser.phoneNumber}
+               נייד: {currentUser.phoneNumber}
             </Text>
           </View>
           <View style={styles.ViewButton}>
@@ -74,7 +74,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   ViewText: {
-    alignItems: "center",
+   // alignItems: "center",
+   marginLeft: "20%",
   },
   Text: {
     marginTop: "8%",
