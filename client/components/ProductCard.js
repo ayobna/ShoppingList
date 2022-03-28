@@ -45,6 +45,12 @@ const [leftStyleMarginRight, setLeftStyleMarginRight] = useState("15%")
     }
   }, []);
 
+  useEffect(() => {
+    // console.log("product: ", data);
+     setChecked(data.isChecked)
+   }, [data]);
+ 
+
   const ImgName = () => {
     let imgArray=['0'] ;
     if (ScreenName === "CreateList") {

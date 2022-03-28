@@ -68,7 +68,7 @@ const ListScreen = (props) => {
       // Prevent default behavior
       e.preventDefault();
       //  closeConnection(e);
-      console.log("sadddddddddddd")
+
       navigation.navigate("ListScreen", { shoppingListID: shoppingListID, OldConnection: true });
     });
 
@@ -104,11 +104,9 @@ const ListScreen = (props) => {
         .build();
 
       connection.on("ReceiveMessage", (products) => {
-        setProducts()
         setProducts(products);
-        // console.log(products)
-        console.log("ReceiveMessage", products)
       });
+     
       connection.onclose((e) => {
         setConnection();
         setProducts([]);
