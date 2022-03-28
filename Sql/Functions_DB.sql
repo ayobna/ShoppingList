@@ -11,3 +11,26 @@ Begin
 	Return 0
 End
 Go
+
+--if a request was sent or not
+alter function Func_Chack_Statuse_Of_Request(@Email nvarchar (150), @listId int)
+Returns int
+As
+Begin
+	If Exists (SELECT * FROM users inner JOIN shopping_lists_users ON users.UserID = shopping_lists_users.UserID Where users.Email = @Email and shopping_lists_users.ListID = @ListID)
+		Begin
+			declare @isApproved bit 
+			set @isApproved = (SELECT shopping_lists_users.IsApproved FROM users inner JOIN shopping_lists_users ON users.UserID = shopping_lists_users.UserID Where users.Email = @Email and shopping_lists_users.ListID = @ListID)
+			If (@isApproved = 1)
+				Begin
+					Return 1
+				End
+			Else
+				Begin
+					Return 0
+				End
+		End
+	Return 2
+End
+Go
+

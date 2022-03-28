@@ -245,14 +245,14 @@ INSERT INTO [shopping_lists_users] ([ListID],[UserID],[JoinedDate])
 Go
 --exec Proc_Add_User_To_List 6,5
 
-alter Proc Proc_Get_Users_For_Search
-@Email nvarchar (150)
+alter Proc Proc_Get_User_For_Search
+@Email nvarchar (150),
+@ListID int
 As
 Begin transaction
-SELECT users.Email, users.FirstName, users.LastName, users.UserID, shopping_lists_users.IsApproved
-FROM     users inner JOIN
-                  shopping_lists_users ON users.UserID = shopping_lists_users.UserID
-Where (users.Email = @Email)
+SELECT Email, FirstName, LastName, UserID, dbo.Func_Chack_Statuse_Of_Request(@Email,@ListID) AS isApproved
+FROM     users 
+Where Email = @Email
 IF @@ERROR<>0
 		Begin
 			rollback transaction
@@ -260,7 +260,7 @@ IF @@ERROR<>0
 		End
 commit transaction
 Go
---exec Proc_Get_Users_For_Search "test3@g.com"
+--exec Proc_Get_User_For_Search 'test@g.com', 87
 
 -- Alter Proc Proc_User_Confirmation_Of…_Joining 
 -- @ListID int,
