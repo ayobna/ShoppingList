@@ -145,10 +145,10 @@ export interface ShoppingListUser {
     joinedDate?: string;
     /**
      * 
-     * @type {boolean}
+     * @type {number}
      * @memberof ShoppingListUser
      */
-    isApproved?: boolean;
+    isApproved?: number;
     /**
      * 
      * @type {string}
@@ -409,15 +409,13 @@ export const ListUsersApiAxiosParamCreator = function (configuration?: Configura
         },
         /**
          * 
-         * @param {string} email 
+         * @param {string} [email] 
+         * @param {number} [listID] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiGetUserByEmailToAddToListUsersEmailGet: async (email: string, options: any = {}): Promise<RequestArgs> => {
-            // verify required parameter 'email' is not null or undefined
-            assertParamExists('apiGetUserByEmailToAddToListUsersEmailGet', 'email', email)
-            const localVarPath = `/Api/GetUserByEmailToAddToListUsers/{email}`
-                .replace(`{${"email"}}`, encodeURIComponent(String(email)));
+        apiGetUserByEmailToAddToListUsersGet: async (email?: string, listID?: number, options: any = {}): Promise<RequestArgs> => {
+            const localVarPath = `/Api/GetUserByEmailToAddToListUsers`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -428,6 +426,14 @@ export const ListUsersApiAxiosParamCreator = function (configuration?: Configura
             const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            if (email !== undefined) {
+                localVarQueryParameter['email'] = email;
+            }
+
+            if (listID !== undefined) {
+                localVarQueryParameter['listID'] = listID;
+            }
 
 
     
@@ -495,12 +501,13 @@ export const ListUsersApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {string} email 
+         * @param {string} [email] 
+         * @param {number} [listID] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiGetUserByEmailToAddToListUsersEmailGet(email: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.apiGetUserByEmailToAddToListUsersEmailGet(email, options);
+        async apiGetUserByEmailToAddToListUsersGet(email?: string, listID?: number, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiGetUserByEmailToAddToListUsersGet(email, listID, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -534,12 +541,13 @@ export const ListUsersApiFactory = function (configuration?: Configuration, base
         },
         /**
          * 
-         * @param {string} email 
+         * @param {string} [email] 
+         * @param {number} [listID] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiGetUserByEmailToAddToListUsersEmailGet(email: string, options?: any): AxiosPromise<void> {
-            return localVarFp.apiGetUserByEmailToAddToListUsersEmailGet(email, options).then((request) => request(axios, basePath));
+        apiGetUserByEmailToAddToListUsersGet(email?: string, listID?: number, options?: any): AxiosPromise<void> {
+            return localVarFp.apiGetUserByEmailToAddToListUsersGet(email, listID, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -573,13 +581,14 @@ export class ListUsersApi extends BaseAPI {
 
     /**
      * 
-     * @param {string} email 
+     * @param {string} [email] 
+     * @param {number} [listID] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ListUsersApi
      */
-    public apiGetUserByEmailToAddToListUsersEmailGet(email: string, options?: any) {
-        return ListUsersApiFp(this.configuration).apiGetUserByEmailToAddToListUsersEmailGet(email, options).then((request) => request(this.axios, this.basePath));
+    public apiGetUserByEmailToAddToListUsersGet(email?: string, listID?: number, options?: any) {
+        return ListUsersApiFp(this.configuration).apiGetUserByEmailToAddToListUsersGet(email, listID, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
