@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableHighlight } from 'react-native';
-import { Avatar, List } from 'react-native-paper';
+import { Avatar, Card } from 'react-native-paper';
 import { API } from '../api/api';
 
 const SearchUserCard = (props) => {
@@ -10,19 +10,22 @@ const SearchUserCard = (props) => {
 
 
   const leftContent = (props) => (
-    <Avatar.Image size={50}  source={{ uri:API+'/uploads/users/'+data.img }} />
+    <Avatar.Image size={45}  source={{ uri:API+'/uploads/users/'+data.img }} />
   );
 
 
   return (
 <View style={{ ...styles.container, ...props.style }}>
-            <List.Item
+<Card style={{flex:1}}>
+          <Card.Title
                 title={data.firstName+' '+data.lastName}
-                description={data.email}
-                left={leftContent}
-                titleStyle={{ marginLeft: 10 }}
+                titleStyle={styles.titleStyle}
+                subtitle={data.email}
+                subtitleStyle={styles.titleStyle}
+                left={leftContent}         
                 descriptionStyle={{ marginLeft: 10 }}
             />
+            </Card>
         </View >
   );
 }
@@ -30,15 +33,14 @@ const SearchUserCard = (props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor:'blue'
+    marginBottom:20,
+    right:16
+
     
   },
-//   titleStyle:{
-//       color:'red',
-//       fontSize:14  ,
-//       backgroundColor:'blue'
-         
-//     }
+  titleStyle:{
+      fontSize:14,         
+    }
 
 });
 
