@@ -71,7 +71,7 @@ AS
 	WHERE [ProductID] =@ProductID  
 go
 
-Create Proc Proc_Insert_User
+Drop Proc Proc_Insert_User
 @FirstName  nvarchar(150),
 @LastName  nvarchar(150),
 @Email nvarchar(150),
