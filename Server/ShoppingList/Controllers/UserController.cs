@@ -99,18 +99,16 @@ namespace ShoppingList.Controllers
 
         [HttpPost]
         [Route("api/User/UpdateUser")]
-        public IActionResult UpdateUser([FromBody] User user ,string base64)
+        public IActionResult UpdateUser([FromBody] User user ,bool IshaveBase64Img)
         {
             try
             {
-                if (!String.IsNullOrEmpty(base64))
-                {
-                    string sqlPath, fileName;
-                    UploadFile(user, out sqlPath, out fileName);
-                    user.Img = sqlPath + "/" + fileName;
+                if (IshaveBase64Img)
+                {                
+                  user.Img=  UploadFile(user , user.Img);                
                 }
-                userData.UpdateUser(user);
-                return Ok(" Update User With Img successfully");
+             User userAfterUpdate=   userData.UpdateUser(user);
+                return Ok(userAfterUpdate);
             }
             catch (Exception ex)
             {
@@ -119,27 +117,28 @@ namespace ShoppingList.Controllers
             }
         }
 
-        private void UploadFile(User user, out string sqlPath, out string fileName)
+        private  string  UploadFile(User user ,string img)
         {
             try
             {
-                string path = env.WebRootPath + $"/uploads/shoppingLists/";
-                sqlPath = $"User_{user.UserID}";
-                path = path + sqlPath;
+                string sqlPath, fileName;
+                string path = env.WebRootPath + $"/uploads/users/";
+                sqlPath = $"user_{user.UserID}";
+                path +=sqlPath;
                 if (!Directory.Exists(path))
                 {
                     Directory.CreateDirectory(path);
                 }
                 fileName = $"img_{user.UserID}_{DateTime.Now.ToString("yyyyMMddHHmmssffff")}.jpg";
                 path = Path.Combine(path, fileName);
-                logger.LogInformation("path Information", path);
-                Models.UploadFile.Upload(path, user.Img);
+                logger.LogInformation("path Information", path);          
+                Models.UploadFile.Upload(path, img);
+                return sqlPath + "/" + fileName;
             }
             catch
             {
                 logger.LogError("While updating an image for the user: " + user.UserID);
-                sqlPath = "";
-                fileName = "";
+                return null;
             }
         }
     }

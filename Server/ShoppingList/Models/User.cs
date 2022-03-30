@@ -17,4 +17,11 @@ namespace ShoppingList.Models
         public bool IsActive { get; set; }
         public string NotificationToken { get; set; }
     }
+
+    public class Img
+    {
+   
+        public string base64 { get; set; }
+
+    }
 }
