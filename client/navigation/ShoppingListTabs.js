@@ -5,6 +5,8 @@ import ListScreen from "../screens/ListScreen";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import ChatScreen from "../screens/ChatScreen";
 import ParticipantsScreen from "../screens/ParticipantsScreen";
+import ListScreenStack from "./ListScreenStack";
+import ParticipantsScreenStack from "./ParticipantsScreenStack";
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -16,17 +18,17 @@ function ShoppingListTabs(props) {
     <Tab.Navigator>
       <Tab.Screen
         name="ListScreen"
-        component={ListScreen}
+        component={ListScreenStack}
         initialParams={data}
         options={{
-          tabBarLabel: "הרשימה",
+          tabBarLabel: "רשימת מוצרים",
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="clipboard-list-outline" color={color} size={24} />
           ),
         }}
       />
 
-      <Tab.Screen name="ParticipantsScreen" component={ParticipantsScreen} initialParams={data}
+      <Tab.Screen name="ParticipantsScreen" component={ParticipantsScreenStack} initialParams={data}
         options={{
           tabBarLabel: "משתתפים",
           tabBarIcon: ({ color }) => (

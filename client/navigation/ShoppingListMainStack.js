@@ -13,7 +13,7 @@ function ShoppingListMainStack() {
     <Stack.Navigator>
       <Stack.Screen name="HomeTabs" component={HomeTabs} options={{ headerShown: false }} />
       <Stack.Screen name="CreateList" component={CreateListScreen} options={{ title: "יצירת רשימה" }} />
-      <Stack.Screen name="ShoppingListTabs" component={ShoppingListTabs} options={{ title: "" }} />
+      <Stack.Screen name="ShoppingListTabs" component={ShoppingListTabs} options={{ headerShown: false }} />
       <Stack.Screen name="ChatListScreen" component={ChatScreen} options={{ title: "צ'אט" }} />
     </Stack.Navigator>
 
