@@ -41,34 +41,75 @@ export const _removeData = async (key) => {
 };
 
 export const _registerForPushNotificationsAsync = async () => {
-  let token;
-  if (Device.isDevice) {
-    const { status: existingStatus } = await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
-    if (existingStatus !== 'granted') {
-      const { status } = await Notifications.requestPermissionsAsync();
-      finalStatus = status;
+  try {
+    let token;
+    if (Device.isDevice) {
+      const { status: existingStatus } = await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      if (existingStatus !== 'granted') {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+      if (finalStatus !== 'granted') {
+        alert('Failed to get push token for push notification!');
+        return;
+      }
+      token = (await Notifications.getExpoPushTokenAsync()).data;
+      console.log(token);
+    } else {
+      alert('Must use physical device for Push Notifications');
     }
-    if (finalStatus !== 'granted') {
-      alert('Failed to get push token for push notification!');
-      return;
-    }
-    token = (await Notifications.getExpoPushTokenAsync()).data;
-    console.log(token);
-  } else {
-    alert('Must use physical device for Push Notifications');
-  }
 
-  if (Platform.OS === 'android') {
-    Notifications.setNotificationChannelAsync('default', {
-      name: 'default',
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: '#FF231F7C',
+    if (Platform.OS === 'android') {
+      Notifications.setNotificationChannelAsync('default', {
+        name: 'default',
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#FF231F7C',
+      });
+    }
+
+    return token;
+  } catch (error) {
+    console.log(error)
+  }
+};
+
+
+export const _sendPushNotification = async (notificationInfo, data) => {
+  try {
+    if (currentUser.ExpoNotificationToken === null) { // במקרה ואין פוש טוקן לא ניתן לשלוח התראת פוש
+      return false;
+    }
+    const message = {
+      to: notificationInfo.ExpoNotificationToken, // הטוקן של המשתמש אליו נשלח את ההתראה
+      sound: 'default',  // צליל ההתראה
+      title: notificationInfo.Title,  // כותרת ההתראה
+      body: notificationInfo.Body, // גוף ההודעה בהתראה
+      // הנתונים אותם נשלח בהתראה
+      data: data,
+      // {
+      //   courseID: route.params.courseData.ID,
+      //   navigate: "RequestsBottomTabNavigator",
+      //   screen: "CourseRequestsStackNavigator",
+      //   userID: notificationInfo.UserID
+      // },
+      categoryId: notificationInfo.CategoryIdentifier // קטגוריית ההתראה, מה שמאפשר ליצור התראות עם כפתורים
+    };
+    // יצירת הבקשה להתראת פוש באמצעות אקספו
+    await fetch('https://exp.host/--/api/v2/push/send', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Accept-encoding': 'gzip, deflate',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(message),
     });
+    return true;
+  } catch (error) {
+    console.log(error)
   }
-
-  return token;
 };
 
 export const _diff_minutes = (dt2, dt1) => {
