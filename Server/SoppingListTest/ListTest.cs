@@ -19,15 +19,15 @@ namespace SoppingListTest
         private readonly Mock<IUser> UserMock = new Mock<IUser>();
         private readonly Mock<ILogger<UserController>> ILogger= new Mock<ILogger<UserController>>();
    
-        public ListTest()
-        {
+        //public ListTest()
+        //{
             
-              _userController = new UserController(UserMock.Object, ILogger.Object);
-        }
-        [TestMethod]
-        public void TestMethod1()
-        {
-        }
+        //      _userController = new UserController(UserMock.Object, ILogger.Object);
+        //}
+        //[TestMethod]
+        //public void TestMethod1()s
+        //{
+        //}
 
         //public void UserController_whenRetrievingGetAllUsers_returnUsers()
         //{

@@ -56,9 +56,13 @@ const AccountEditScreen = (props) => {
       !validateUser.confirmPassword
     ) {
       try {
-        console.log(user);
-
-        //  navigation.navigate("LoginScreen");
+        if (imageBase64===null) {
+          console.log(user);
+        }
+        else{
+          console.log("imageBase64")
+        }
+   
       } catch (e) {
         console.log(e);
       }
@@ -77,15 +81,12 @@ const AccountEditScreen = (props) => {
     return;
   }
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Pi,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       base64: true,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
-
-
-
     if (!result.cancelled) {
       setImage(result.uri);
       setImageBase64(result.base64)
@@ -94,14 +95,13 @@ const AccountEditScreen = (props) => {
 
   const openCamera = async () => {
     // Ask the user for the permission to access the camera
-    const permissionResult = await ImagePicker.requestCameraPermissionsAsync({base64:true});
-
+    const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
     if (permissionResult.granted === false) {
       Alert.alert("יש צורך בהרשאת למצלצה");
       return;
     }
 
-    const result = await ImagePicker.launchCameraAsync();
+    const result = await ImagePicker.launchCameraAsync({base64:true});
 
     // Explore the result
  // console.log(result);
@@ -109,7 +109,6 @@ const AccountEditScreen = (props) => {
     if (!result.cancelled) {
       setImage(result.uri);
       setImageBase64(result.base64)
-      console.log(result.uri);
     }
   };
   const ValidateUser = () => {

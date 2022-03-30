@@ -38,6 +38,23 @@ namespace ShoppingList.Data
             return null;
         }
 
+        public int UpdateUser(User user)
+        {
+            SqlCommand cmd = db.CreateCommand("Proc_Update_User", db.Connect(), "proc");
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.Add("@UserID", SqlDbType.Int).Value =user.UserID;
+            cmd.Parameters.Add("@FirstName", SqlDbType.NVarChar).Value = user.FirstName;
+            cmd.Parameters.Add("@LastName", SqlDbType.NVarChar).Value = user.LastName;
+            cmd.Parameters.Add("@Email", SqlDbType.NVarChar).Value = user.Email;
+            cmd.Parameters.Add("@PhoneNumber", SqlDbType.NVarChar).Value = user.PhoneNumber;
+            cmd.Parameters.Add("@Img", SqlDbType.NVarChar).Value = user.PhoneNumber;
+            int res = db.ExecuteAndClose(cmd);
+            if (res != 1)
+            {
+                throw new Exception("Somthing went wrong while decline request in sql");
+            }
+            return res;
+        }
         public List<User> GetAllUsers()
         {
             SqlCommand cmd = db.CreateCommand("Proc_Get_Users", db.Connect(), "proc");

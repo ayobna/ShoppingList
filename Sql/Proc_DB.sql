@@ -31,6 +31,25 @@ Go
 --exec Proc_Create_User 'test5@g.com','test4','test4', '12345', '1268',null,1,null, @UserID OUTPUT
 --SELECT @UserID
 
+
+
+Create Proc Proc_Update_User
+@UserID int ,
+@Email nvarchar (150),
+@FirstName nvarchar (150),
+@LastName nvarchar (150),
+@PhoneNumber nvarchar (150),
+@Img nvarchar(max)
+AS 
+Begin
+  	UPDATE [users]
+	SET  [Email]=@Email,[FirstName]=@FirstName,[LastName]=@LastName,[PhoneNumber]=@PhoneNumber,[Img]=@Img
+	WHERE  [UserID]=@UserID ;
+End 
+Go
+
+
+
 Alter proc Proc_Get_User_By_Id
 	@UserID int
 as
