@@ -39,23 +39,26 @@ const ListScreen = (props) => {
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", async () => {
-
       await LoadUser();
       //  await  GetProducts();
 
       await GetListCreatorByListID();
-      if (route.params.OldConnection === undefined&& !route.params.OldConnection) {
-        await joinChat();
-      }
 
     });
     return unsubscribe;
   }, [navigation, route]);
 
+  useEffect(() => {
+    const openConnection = async () => {
+      await joinChat();
+    };
+    openConnection();
+  }, [])
+
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("beforeRemove", (e) => {
-    //  e.preventDefault();
+      e.preventDefault();
       if (connection) {
         closeConnection(e);
       }
@@ -63,17 +66,18 @@ const ListScreen = (props) => {
     return unsubscribe;
   }, [navigation, connection]);
 
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('tabPress', e => {
-      // Prevent default behavior
-      e.preventDefault();
-      //  closeConnection(e);
+  // useEffect(() => {
+  //   const unsubscribe = navigation.addListener('tabPress', e => {
+  //     // Prevent default behavior
+  //     e.preventDefault();
+  //     //  closeConnection(e);
 
-      navigation.navigate("ListScreen", { shoppingListID: shoppingListID, OldConnection: true });
-    });
+  //     navigation.navigate("ListScreen", { shoppingListID: shoppingListID, OldConnection: true });
+  //   });
 
-    return unsubscribe;
-  }, [navigation]);
+  //   return unsubscribe;
+  // }, [navigation]);
+
   useEffect(() => {
     if (productEditDetails) {
       setPopupDialogVisible(true);
@@ -84,7 +88,7 @@ const ListScreen = (props) => {
     let res = await shoppingListApi.apiShoppingListGetListCreatorByListIDIdGet(
       shoppingListID
     );
-    console.log("res.data.creatorID", res.data.creatorID);
+    // console.log("res.data.creatorID", res.data.creatorID);
     setListCreatorId(res.data.creatorID);
     // console.log(res.data);
   };
@@ -92,7 +96,7 @@ const ListScreen = (props) => {
     let u = await _getData("User");
     if (u != null) {
       setUser(u);
-      console.log(u);
+      // console.log(u);
     }
   };
 
@@ -106,9 +110,8 @@ const ListScreen = (props) => {
       connection.on("ReceiveMessage", (products) => {
         setProducts(products);
       });
-     
+
       connection.onclose((e) => {
-        setConnection();
         setProducts([]);
       });
 
@@ -158,8 +161,7 @@ const ListScreen = (props) => {
     try {
       await connection.stop();
       console.log("closeConnection");
-      setConnection();
-
+      navigation.dispatch(e.data.action);
     } catch (e) {
       console.log(e);
     }
@@ -263,7 +265,7 @@ const ListScreen = (props) => {
       amount: product.amount,
       img: product.imgUri === undefined ? product.img : product.imgUri,
     };
-    console.log("NewProductToTheList ===>", newProductToList);
+    // console.log("NewProductToTheList ===>", newProductToList);
     addANewProductToTheList(newProductToList);
   };
   const addANewProductToTheList = async (newProductToList) => {
@@ -271,7 +273,7 @@ const ListScreen = (props) => {
       let res = await productApi.apiProductAddProductToShoppingListPost(
         newProductToList
       );
-      console.log("Add new product to server is ", res.data);
+      // console.log("Add new product to server is ", res.data);
     } catch (e) {
       console.log(e);
     }
@@ -284,7 +286,7 @@ const ListScreen = (props) => {
   const regexValidationProduct = (edit) => {
     let counter = 0;
     const amountRgx = /^[1-9]+$/;
-    console.log("edit", edit);
+    // console.log("edit", edit);
     const nameRgx =
       /^[\u05D0-\u05EAa-zA-Z0-9']+([ |\-]*[\u05D0-\u05EAa-zA-Z0-9'\s]+){0,1}$/;
     if (!amountRgx.test(edit ? productEditDetails.amount : amount)) {
@@ -344,13 +346,13 @@ const ListScreen = (props) => {
   const updateProduct = async (Product) => {
     let res = await productApi.apiUpdateProductPost(Product);
     let data = res.data;
-    console.log("apiUpdateProductPost data", data);
+    // console.log("apiUpdateProductPost data", data);
     await invokeNewProduct();
   };
   const updateProductNewImg = async (Product) => {
     let res = await productApi.apiUpdateProductNewImgPost(Product);
     let data = res.data;
-    console.log("updateProductNewImg data", data);
+    // console.log("updateProductNewImg data", data);
     await invokeNewProduct();
   };
   const checkProduct = async (productID, checked) => {
@@ -364,7 +366,7 @@ const ListScreen = (props) => {
   const handleDeleteProduct = async (productID) => {
     let res = await productApi.apiDeleteProductIdPost(productID);
     let data = res.data;
-    console.log("handleDeleteProduct ", data);
+    // console.log("handleDeleteProduct ", data);
     await invokeNewProduct();
   };
 

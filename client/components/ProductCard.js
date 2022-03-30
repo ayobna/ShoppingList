@@ -169,9 +169,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginHorizontal: 10,
-    marginTop: 10,
-    left:10
-  },
+    marginTop: 10
+    },
 });
 
 export default ProductCard;
