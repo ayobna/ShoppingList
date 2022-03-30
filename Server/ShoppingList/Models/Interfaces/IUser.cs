@@ -10,7 +10,7 @@ namespace ShoppingList.Models.Interfaces
         public int CreateUser(User user);
         public List<User> GetAllUsers();
         public User GetUserById(int id);
-        public int UpdateUser(User user);
+        public User UpdateUser(User user);
 
     }
 }

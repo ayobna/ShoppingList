@@ -1,14 +1,13 @@
 import react, { useEffect, useState, useCallback } from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
 import { Avatar, Button, TextInput } from "react-native-paper";
-import { API } from "../api/api";
+import { API, userApi } from "../api/api";
 import * as ImagePicker from "expo-image-picker";
-import { _getData } from "../utils/Functions";
+import { _getData, _storeData } from "../utils/Functions";
 
 const AccountEditScreen = (props) => {
   const { navigation, route } = props;
 
-  
   const [user, setUser] = useState({
     firstName: "",
     lastName: "",
@@ -18,23 +17,12 @@ const AccountEditScreen = (props) => {
   });
   const [imageBase64, setImageBase64] = useState(null);
 
-  const [validateUser, SetValidateUser] = useState({
-    FirstName: false,
-    LastName: false,
-    PhoneNumber: false,
-    Email: false,
-  });
-
   const [image, setImage] = useState(null);
-
-  const phoneValidator = /^((\+|00)?972\-?|0)(([23489]|[57]\d)\-?\d{7})$/;
-  const emailValidator =
-    /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", async () => {
       const user = await LoadUser();
-    
+
       setUser(user);
       setImage(`${API}/uploads/users/${user.img}`);
     });
@@ -47,39 +35,31 @@ const AccountEditScreen = (props) => {
   };
 
   const Save = async () => {
-    ValidateUser();
-    if (
-      !validateUser.FirstName &&
-      !validateUser.PhoneNumber &&
-      !validateUser.LastName &&
-      !validateUser.Email &&
-      !validateUser.confirmPassword
-    ) {
-      try {
-        if (imageBase64===null) {
-          console.log(user);
-        }
-        else{
-          console.log("imageBase64")
-        }
-   
-      } catch (e) {
-        console.log(e);
+    try {
+      let isHaveBase64Img=false
+      let userToUpdate=user
+      if(imageBase64!==null){
+        isHaveBase64Img=true
+        userToUpdate.img=imageBase64
       }
-    } else {
-      console.log("not validate");
+      //console.log(imageBase64)
+      let res = await userApi.apiUserUpdateUserPost( isHaveBase64Img,userToUpdate,);
+      console.log(res.data);
+      const resOfDataStore = await _storeData("User", res.data);
+      setUser(res.data);
+    } catch (e) {
+      console.log(e);
     }
   };
 
   const pickImage = async () => {
-
     const permissionResult =
-    await ImagePicker.requestMediaLibraryPermissionsAsync(); // בקשת הרשאה לגלריה
+      await ImagePicker.requestMediaLibraryPermissionsAsync(); // בקשת הרשאה לגלריה
 
-  if (permissionResult.granted === false) {
-    Alert.alert("יש צורך בהרשאת גלריה");
-    return;
-  }
+    if (permissionResult.granted === false) {
+      Alert.alert("יש צורך בהרשאת גלריה");
+      return;
+    }
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       base64: true,
@@ -89,49 +69,25 @@ const AccountEditScreen = (props) => {
     });
     if (!result.cancelled) {
       setImage(result.uri);
-      setImageBase64(result.base64)
+      setImageBase64(result.base64);
     }
   };
 
   const openCamera = async () => {
-    // Ask the user for the permission to access the camera
     const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
     if (permissionResult.granted === false) {
       Alert.alert("יש צורך בהרשאת למצלצה");
       return;
     }
 
-    const result = await ImagePicker.launchCameraAsync({base64:true});
-
-    // Explore the result
- // console.log(result);
+    const result = await ImagePicker.launchCameraAsync({ base64: true });
 
     if (!result.cancelled) {
       setImage(result.uri);
-      setImageBase64(result.base64)
+      setImageBase64(result.base64);
     }
   };
-  const ValidateUser = () => {
-    SetValidateUser((prevState) => ({
-      ...prevState,
-      FirstName: validateFirstName(),
-      LastName: validateLastName(),
-      PhoneNumber: validatePhone(),
-      Email: validatorEmail(),
-    }));
-  };
-  const validatorEmail = () => {
-    return !emailValidator.test(user.email);
-  };
-  const validateFirstName = () => {
-    return user.firstName === "";
-  };
-  const validateLastName = () => {
-    return user.lastName === "";
-  };
-  const validatePhone = () => {
-    return !phoneValidator.test(user.phoneNumber);
-  };
+
   return (
     <View style={styles.container}>
       <View style={styles.Image}>
@@ -142,7 +98,7 @@ const AccountEditScreen = (props) => {
           }}
         />
         <View style={styles.ViewButtons}>
-          <View  style={styles.btnImg} >
+          <View style={styles.btnImg}>
             <Button
               mode="outlined"
               theme={{ colors: { primary: `white` } }}
@@ -153,7 +109,7 @@ const AccountEditScreen = (props) => {
               פחר תמונה
             </Button>
           </View>
-          <View  style={styles.btnImg} >
+          <View style={styles.btnImg}>
             <Button
               mode="outlined"
               theme={{ colors: { primary: `white` } }}
@@ -292,7 +248,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   btnImg: {
-   width:'30%',
+    width: "30%",
     flexDirection: "row",
   },
   ViewTextInput: {

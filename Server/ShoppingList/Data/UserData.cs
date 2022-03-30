@@ -33,7 +33,7 @@ namespace ShoppingList.Data
             return Convert.ToInt32(cmd.Parameters["@UserID"].Value);
         }
 
-        public int UpdateUser(User user)
+        public User UpdateUser(User user)
         {
             SqlCommand cmd = db.CreateCommand("Proc_Update_User", db.Connect(), "proc");
             cmd.CommandType = CommandType.StoredProcedure;
@@ -42,13 +42,10 @@ namespace ShoppingList.Data
             cmd.Parameters.Add("@LastName", SqlDbType.NVarChar).Value = user.LastName;
             cmd.Parameters.Add("@Email", SqlDbType.NVarChar).Value = user.Email;
             cmd.Parameters.Add("@PhoneNumber", SqlDbType.NVarChar).Value = user.PhoneNumber;
-            cmd.Parameters.Add("@Img", SqlDbType.NVarChar).Value = user.PhoneNumber;
-            int res = db.ExecuteAndClose(cmd);
-            if (res != 1)
-            {
-                throw new Exception("Somthing went wrong while decline request in sql");
-            }
-            return res;
+            cmd.Parameters.Add("@Img", SqlDbType.NVarChar).Value = user.Img;
+            DataTable tb = db.ReadAndClose(cmd);
+            List<User> users = db.ConvertDataTable<User>(tb);
+            return users[0];
         }
         public List<User> GetAllUsers()
         {

@@ -36,7 +36,7 @@ namespace ShoppingList.Controllers
             {
                 string apiKey = "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";
                 var client = new SendGridClient(apiKey);
-                var from = new EmailAddress("ayobnas@gmail.com", "Example User");
+                var from = new EmailAddress("ayobnas@gmail.com", "Example User");   
                 var subject = "Sending with SendGrid is Fun";
                 var to = new EmailAddress("ayobnas12@gmail.com", "Example User");
                 var plainTextContent = "and easy to do anywhere, even with C#";

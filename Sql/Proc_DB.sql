@@ -33,7 +33,7 @@ Go
 
 
 
-Create Proc Proc_Update_User
+alter Proc Proc_Update_User
 @UserID int ,
 @Email nvarchar (150),
 @FirstName nvarchar (150),
@@ -45,6 +45,14 @@ Begin
   	UPDATE [users]
 	SET  [Email]=@Email,[FirstName]=@FirstName,[LastName]=@LastName,[PhoneNumber]=@PhoneNumber,[Img]=@Img
 	WHERE  [UserID]=@UserID ;
+	Begin transaction
+	select  UserID,[Email],[FirstName],[LastName],[Password],[PhoneNumber],[Img],[IsActive],[NotificationToken]from users where UserID = @UserID
+	IF @@ERROR<>0
+		Begin
+			rollback transaction
+			return
+		End
+commit transaction
 End 
 Go
 

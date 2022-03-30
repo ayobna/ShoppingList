@@ -2224,12 +2224,12 @@ export const UserApiAxiosParamCreator = function (configuration?: Configuration)
         },
         /**
          * 
-         * @param {string} [base64] 
+         * @param {boolean} [ishaveBase64Img] 
          * @param {User} [user] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiUserUpdateUserPost: async (base64?: string, user?: User, options: any = {}): Promise<RequestArgs> => {
+        apiUserUpdateUserPost: async (ishaveBase64Img?: boolean, user?: User, options: any = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/User/UpdateUser`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -2242,8 +2242,8 @@ export const UserApiAxiosParamCreator = function (configuration?: Configuration)
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            if (base64 !== undefined) {
-                localVarQueryParameter['base64'] = base64;
+            if (ishaveBase64Img !== undefined) {
+                localVarQueryParameter['IshaveBase64Img'] = ishaveBase64Img;
             }
 
 
@@ -2344,13 +2344,13 @@ export const UserApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {string} [base64] 
+         * @param {boolean} [ishaveBase64Img] 
          * @param {User} [user] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiUserUpdateUserPost(base64?: string, user?: User, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.apiUserUpdateUserPost(base64, user, options);
+        async apiUserUpdateUserPost(ishaveBase64Img?: boolean, user?: User, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiUserUpdateUserPost(ishaveBase64Img, user, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -2393,13 +2393,13 @@ export const UserApiFactory = function (configuration?: Configuration, basePath?
         },
         /**
          * 
-         * @param {string} [base64] 
+         * @param {boolean} [ishaveBase64Img] 
          * @param {User} [user] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiUserUpdateUserPost(base64?: string, user?: User, options?: any): AxiosPromise<void> {
-            return localVarFp.apiUserUpdateUserPost(base64, user, options).then((request) => request(axios, basePath));
+        apiUserUpdateUserPost(ishaveBase64Img?: boolean, user?: User, options?: any): AxiosPromise<void> {
+            return localVarFp.apiUserUpdateUserPost(ishaveBase64Img, user, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -2441,14 +2441,14 @@ export class UserApi extends BaseAPI {
 
     /**
      * 
-     * @param {string} [base64] 
+     * @param {boolean} [ishaveBase64Img] 
      * @param {User} [user] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof UserApi
      */
-    public apiUserUpdateUserPost(base64?: string, user?: User, options?: any) {
-        return UserApiFp(this.configuration).apiUserUpdateUserPost(base64, user, options).then((request) => request(this.axios, this.basePath));
+    public apiUserUpdateUserPost(ishaveBase64Img?: boolean, user?: User, options?: any) {
+        return UserApiFp(this.configuration).apiUserUpdateUserPost(ishaveBase64Img, user, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
