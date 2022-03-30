@@ -34,7 +34,7 @@ namespace ShoppingList.Controllers
             {
 
 
-                int id = user.CreateUser(userReq);
+                int id = userData.CreateUser(userReq);
 
                 if (id == -1)
                 {

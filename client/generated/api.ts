@@ -1538,6 +1538,100 @@ export class RequestsApi extends BaseAPI {
 
 
 /**
+ * SendMailApi - axios parameter creator
+ * @export
+ */
+export const SendMailApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiSendMailApiLoginSendmailPost: async (options: any = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/SendMail/api/Login/sendmail`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * SendMailApi - functional programming interface
+ * @export
+ */
+export const SendMailApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = SendMailApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiSendMailApiLoginSendmailPost(options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiSendMailApiLoginSendmailPost(options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+    }
+};
+
+/**
+ * SendMailApi - factory interface
+ * @export
+ */
+export const SendMailApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = SendMailApiFp(configuration)
+    return {
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiSendMailApiLoginSendmailPost(options?: any): AxiosPromise<void> {
+            return localVarFp.apiSendMailApiLoginSendmailPost(options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * SendMailApi - object-oriented interface
+ * @export
+ * @class SendMailApi
+ * @extends {BaseAPI}
+ */
+export class SendMailApi extends BaseAPI {
+    /**
+     * 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof SendMailApi
+     */
+    public apiSendMailApiLoginSendmailPost(options?: any) {
+        return SendMailApiFp(this.configuration).apiSendMailApiLoginSendmailPost(options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+/**
  * ShoppinglistApi - axios parameter creator
  * @export
  */
@@ -2130,6 +2224,44 @@ export const UserApiAxiosParamCreator = function (configuration?: Configuration)
         },
         /**
          * 
+         * @param {string} [base64] 
+         * @param {User} [user] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiUserUpdateUserPost: async (base64?: string, user?: User, options: any = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/User/UpdateUser`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (base64 !== undefined) {
+                localVarQueryParameter['base64'] = base64;
+            }
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(user, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @param {User} [user] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -2212,6 +2344,17 @@ export const UserApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @param {string} [base64] 
+         * @param {User} [user] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiUserUpdateUserPost(base64?: string, user?: User, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiUserUpdateUserPost(base64, user, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
          * @param {User} [user] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -2250,6 +2393,16 @@ export const UserApiFactory = function (configuration?: Configuration, basePath?
         },
         /**
          * 
+         * @param {string} [base64] 
+         * @param {User} [user] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiUserUpdateUserPost(base64?: string, user?: User, options?: any): AxiosPromise<void> {
+            return localVarFp.apiUserUpdateUserPost(base64, user, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @param {User} [user] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -2284,6 +2437,18 @@ export class UserApi extends BaseAPI {
      */
     public apiGetUserByIdIdGet(id: number, options?: any) {
         return UserApiFp(this.configuration).apiGetUserByIdIdGet(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} [base64] 
+     * @param {User} [user] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof UserApi
+     */
+    public apiUserUpdateUserPost(base64?: string, user?: User, options?: any) {
+        return UserApiFp(this.configuration).apiUserUpdateUserPost(base64, user, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
