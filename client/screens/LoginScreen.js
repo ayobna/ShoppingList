@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
-import { StyleSheet, Text, View, TouchableOpacity, Image, ScrollView } from "react-native";
+import { StyleSheet, View, TouchableOpacity, Image, ScrollView } from "react-native";
 import { _storeData, _getData, _registerForPushNotificationsAsync, _diff_minutes } from "../utils/Functions";
-import { Button, TextInput, HelperText, Avatar, Caption } from "react-native-paper";
+import { Button, TextInput, HelperText, Avatar, Caption, Text } from "react-native-paper";
 import * as WebBrowser from 'expo-web-browser';
 import { makeRedirectUri, useAuthRequest, useAutoDiscovery } from 'expo-auth-session';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -81,11 +81,8 @@ const LoginScreen = (props) => {
     }
   }, [code]);
 
-  const Register = () => {
-
-
+  const goToRegister = () => {
     navigation.navigate('RegisterScreen')
-
   };
 
 
@@ -251,7 +248,7 @@ const LoginScreen = (props) => {
   return (
     isPageLoaded ?
       <SafeAreaView style={styles.container}>
-        <ScrollView style={styles.container} contentContainerStyle={{ flex: 1 }}>
+        <ScrollView style={styles.container} contentContainerStyle={{ flexGrow: 1 }}>
           <View style={styles.wrapper}>
             <View style={styles.logoWrapper}>
               <Image style={styles.logo} source={require('../assets/our_logo.png')} />
@@ -326,7 +323,7 @@ const LoginScreen = (props) => {
 
             <View style={styles.registerWrapper}>
               <Text>עדיין לא נרשמת? </Text>
-              <TouchableOpacity style={styles.btnRegisterWrapper} onPress={Register}>
+              <TouchableOpacity style={styles.btnRegisterWrapper} onPress={goToRegister}>
                 <Text style={styles.registerLink}>לחץ כאן להרשמה!</Text>
               </TouchableOpacity>
             </View>
@@ -456,6 +453,7 @@ const LoginScreen = (props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexDirection: "column",
     backgroundColor: "white"
   },
   wrapper: {

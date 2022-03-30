@@ -7,7 +7,7 @@ namespace ShoppingList.Models.Interfaces
 {
     public interface IUser
     {
-        public User CreateUser(User user);
+        public int CreateUser(User user);
         public List<User> GetAllUsers();
         public User GetUserById(int id);
 

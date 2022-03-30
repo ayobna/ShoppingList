@@ -25,25 +25,25 @@ namespace ShoppingList.Controllers
 
         [HttpPost]
         [Route("Api/Users/CreateUser")]
-        public IActionResult Post([FromBody] User userReq)
+        public IActionResult CreateUser([FromBody] User userReq)
         {
             try
             {
-                User u = user.CreateUser(userReq);
+                int id = user.CreateUser(userReq);
 
-                if (u == null)
+                if (id == -1)
                 {
-                    logger.LogWarning("User not created ");
-                    return Ok("User not created");
+                    logger.LogWarning("CreateUser - Email exists in the db");
+                    return Ok(id);
                 }
-                else
-                {
-                    logger.LogInformation("User not created ");
-                    return Ok(u);
-                }
+
+                logger.LogInformation("CreateUser - User succesfully created");
+                return Ok(id);
+                
             }
             catch (Exception ex)
             {
+                logger.LogError($"CreateUser - something wrong happaned while creating a user\n=> {ex.Message}");
                 return BadRequest(ex);
             }
         }
