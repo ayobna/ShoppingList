@@ -8,24 +8,24 @@ Go
 
 --exec Proc_Get_Users
 
-Create Proc Proc_Create_User
-@Email nvarchar (150),
-@FirstName nvarchar (150),
-@LastName nvarchar (150),
-@Password varchar(max),
-@PhoneNumber nvarchar (150),
-@Img nvarchar(max),
-@IsActive bit,
-@NotificationToken nvarchar(max),
-@UserID int output
-AS
-IF NOT EXISTS (Select * From [users] Where Email=@Email or PhoneNumber=@PhoneNumber) 
-Begin
-    Insert [users] ([Email],[FirstName],[LastName],[Password],[PhoneNumber],[Img],[IsActive],[NotificationToken]) 
-    values (@Email, @FirstName, @LastName, @Password, @PhoneNumber, @Img, @IsActive, @NotificationToken)
-	set @UserID = @@identity 
-End 
-Go
+--Drop Proc Proc_Create_User
+--@Email nvarchar (150),
+--@FirstName nvarchar (150),
+--@LastName nvarchar (150),
+--@Password varchar(max),
+--@PhoneNumber nvarchar (150),
+--@Img nvarchar(max),
+--@IsActive bit,
+--@NotificationToken nvarchar(max),
+--@UserID int output
+--AS
+--IF NOT EXISTS (Select * From [users] Where Email=@Email or PhoneNumber=@PhoneNumber) 
+--Begin
+--    Insert [users] ([Email],[FirstName],[LastName],[Password],[PhoneNumber],[Img],[IsActive],[NotificationToken]) 
+--    values (@Email, @FirstName, @LastName, @Password, @PhoneNumber, @Img, @IsActive, @NotificationToken)
+--	set @UserID = @@identity 
+--End 
+--Go
 
 --DECLARE @UserID int;
 --exec Proc_Create_User 'test5@g.com','test4','test4', '12345', '1268',null,1,null, @UserID OUTPUT
@@ -269,7 +269,7 @@ alter Proc Proc_Get_User_For_Search
 @ListID int
 As
 Begin transaction
-SELECT Email, FirstName, LastName, UserID, dbo.Func_Chack_Statuse_Of_Request(@Email,@ListID) AS isApproved
+SELECT Email, FirstName, LastName, UserID, dbo.Func_Chack_Statuse_Of_Request(@Email,@ListID) AS IsApproved
 FROM     users 
 Where Email = @Email
 IF @@ERROR<>0
@@ -279,7 +279,7 @@ IF @@ERROR<>0
 		End
 commit transaction
 Go
---exec Proc_Get_User_For_Search 'test@g.com', 87
+--exec Proc_Get_User_For_Search 'test3@g.com', 87
 
 -- Alter Proc Proc_User_Confirmation_Of…_Joining 
 -- @ListID int,
@@ -371,5 +371,24 @@ Go
 		SET  [Password] = @Password
 		WHERE Email = @Email
  GO
+
+  ---------------------------- Register -------------------------------------------------------+
+
+Create Proc Proc_Create_User
+@FirstName  nvarchar(150),
+@LastName  nvarchar(150),
+@Email nvarchar(150),
+@Password  nvarchar(max),
+@PhoneNumber nvarchar(150),
+@UserID int output
+AS
+set @UserID = -1
+IF NOT EXISTS (Select * From [users] Where Upper(Email)=Upper(@Email)) 
+Begin
+    Insert[users] ([Email],[FirstName],[LastName],[Password],[PhoneNumber]) 
+    values (@Email,@FirstName,@LastName,@Password,@PhoneNumber)
+	set @UserID = @@identity
+End 
+Go
 
 

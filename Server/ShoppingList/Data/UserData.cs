@@ -19,9 +19,9 @@ namespace ShoppingList.Data
             db = db_;
         }
       
-        public User CreateUser(User user)
+        public int CreateUser(User user)
         {
-            SqlCommand cmd = db.CreateCommand("Proc_Insert_User", db.Connect(), "proc");
+            SqlCommand cmd = db.CreateCommand("Proc_Create_User", db.Connect(), "proc");
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.Add("@UserID", SqlDbType.Int).Direction = ParameterDirection.Output;
             cmd.Parameters.Add("@FirstName", SqlDbType.NVarChar).Value = user.FirstName;
@@ -29,13 +29,8 @@ namespace ShoppingList.Data
             cmd.Parameters.Add("@Email", SqlDbType.NVarChar).Value = user.Email;
             cmd.Parameters.Add("@Password", SqlDbType.NVarChar).Value = user.@Password;
             cmd.Parameters.Add("@PhoneNumber", SqlDbType.NVarChar).Value = user.PhoneNumber;
-            int res = db.ExecuteAndClose(cmd);
-            if (res == 1)
-            {
-                user.UserID = Convert.ToInt32(cmd.Parameters["@UserID"].Value);
-                return user;
-            }
-            return null;
+            db.ExecuteAndClose(cmd);
+            return Convert.ToInt32(cmd.Parameters["@UserID"].Value);
         }
 
         public int UpdateUser(User user)

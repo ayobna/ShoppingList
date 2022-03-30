@@ -16,9 +16,8 @@ const ParticipantsScreen = (props) => {
   const [listCreatorId, setListCreatorId] = useState();
   const [currentUser, setCurrentUser] = useState();
   const [searchListUser, setSearchListUser] = useState();
-  const [searchEmail, setSearchEmail] = useState();
+  const [searchEmail, setSearchEmail] = useState("");
   const [isSearch, setIsSearch] = useState(false);
-
   const [searchResult, setSearchResult] = useState([]);
 
 
@@ -70,7 +69,7 @@ const ParticipantsScreen = (props) => {
   // get all the users, except the list creator, for sending a join requests
   const GetUsersToAddToListUsers = async () => {
     console.log("in GetUsersToAddToListUsers" + searchEmail)
-    let res = await listUsersApi.apiGetUserByEmailToAddToListUsersEmailGet(searchEmail);
+    let res = await listUsersApi.apiGetUserByEmailToAddToListUsersGet(searchEmail,shoppingListID)
     let data = res.data;
     console.log("out GetUsersToAddToListUsers")
     return data;
@@ -98,6 +97,9 @@ const ParticipantsScreen = (props) => {
   };
 
   const searchPress = async () => {
+    if(searchEmail === "" ){
+      return;
+    }
     console.log("in searchPress")
     const searchUsers = await GetUsersToAddToListUsers();
     setSearchResult(searchUsers);
@@ -125,16 +127,27 @@ const ParticipantsScreen = (props) => {
 
   // send a request for the user to join, if the user exists and not a member
   const confirmSendAddRequest = async () => {
-    console.log("in confirmSendAddRequest")
-    try {
-      await listUsersApi.apiShoppingListAddUserForTheListPost({ listID: shoppingListID, userID: searchResult[0].userID });
-      console.log("sendRequestToJoin")
-      Alert.alert("הבקשה נשלחה")
-    } catch (e) {
-      console.log(e);
+    if(searchResult.length === 0 ){
+      searchPress()
+    }
+    else if(searchEmail.toLowerCase()===searchResult[0].email.toLowerCase()){
+      if(searchResult[0].isApproved === 2){
+        try {
+          await listUsersApi.apiShoppingListAddUserForTheListPost({ listID: shoppingListID, userID: searchResult[0].userID });
+          Alert.alert("הבקשה נשלחה")
+          setSearchResult([]);
+        } catch (e) {
+          console.log(e);
+        }
+      }
+      else if(searchResult[0].isApproved === 0){
+        Alert.alert("כבר נשלחה בקשה למשתמש זה")
+      }  
+    }
+    else{
+      searchPress()
     }
   };
-
 
 
   // delete a participant from the list users by the list creator
@@ -185,17 +198,6 @@ const ParticipantsScreen = (props) => {
             :
             <View>{showResolt()}</View>
           }
-
-          {/* {isSearch ? <Text>{showResolt()}</Text>:<Text>חיפוש לפי מייל</Text>}
-         */}
-          {/* <FlatList
-        showsVerticalScrollIndicator={true}
-        data={participants}
-        renderItem={(item) => renderListItem(item)}
-        keyExtractor={(item) => String(item.userID)}
-        contentContainerStyle={{ flexGrow: 1 }}
-        ListEmptyComponent={handleListEmptyComponent}
-      />     */}
         </PopupDialog>
       </View>
     </View>
