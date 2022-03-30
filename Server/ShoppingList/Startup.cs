@@ -31,7 +31,7 @@ namespace ShoppingList
         {
             services.AddSwaggerGen();
             services.AddSignalR()
-            .AddAzureSignalR("Endpoint=https://shoppinglistsignalr.service.signalr.net;AccessKey=PDPDWhz/Y9rOOSkc9ZxaKgoG+h8/FxaW7JnUFTDMzzU=;Version=1.0;");
+            .AddAzureSignalR("Endpoint=https://shoppinglistservice.service.signalr.net;AccessKey=y0J6WhjUlMkZOuMH4olfThRRJ+c7sol1hGodVdPIqag=;Version=1.0;");
             services.Add(new ServiceDescriptor(typeof(IDbConnection), new DbConnection()));
             services.AddSingleton<IShoppingList, ShoppingListData>();
             services.AddSingleton<IChatData, ChatData>();
