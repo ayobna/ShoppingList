@@ -46,7 +46,7 @@ const RegisterScreen = (props) => {
 
   const handleRegister = async () => {
     setUserErrorAlreadyExistsMessage("");
-    if (checkVakidation() !== 6) {
+    if (checkValidation() !== 6) {
       return;
     }
     const res = await createUser();
@@ -58,7 +58,7 @@ const RegisterScreen = (props) => {
     navigation.goBack();
   };
 
-  const checkVakidation = () => {
+  const checkValidation = () => {
     const emailRgx = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9-]{2,15}(?:\.[a-zA-Z]+){1,2}$/;  // פורמט מייל תקין
     const nameRgx = /^[a-zA-Z\u05D0-\u05EA']+([ |\-][a-zA-Z\u05D0-\u05EA']+){0,2}$/;   // שם פרטי לפחות שני תווים, אותיות בעברים בלבד המופרדות ברווח או מקו
     const phoneNumberRgx = /^[0-9]{10}$/ // בדיוק 10 ספרות
