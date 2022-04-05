@@ -277,7 +277,7 @@ alter Proc Proc_Get_User_For_Search
 @ListID int
 As
 Begin transaction
-SELECT Email, FirstName, LastName, UserID, dbo.Func_Chack_Statuse_Of_Request(@Email,@ListID) AS IsApproved
+SELECT Email, FirstName, LastName, UserID,Img, NotificationToken, dbo.Func_Chack_Statuse_Of_Request(@Email,@ListID) AS IsApproved
 FROM     users 
 Where Email = @Email
 IF @@ERROR<>0

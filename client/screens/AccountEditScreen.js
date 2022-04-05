@@ -224,6 +224,7 @@ const AccountEditScreen = (props) => {
               <TextInput
                 label="אימייל"
                 mode="outlined"
+                disabled
                 value={user.email}
                 onChangeText={(text) =>
                   setUser((prevState) => ({
