@@ -14,6 +14,7 @@ import PopupDialog from "../components/PopupDialog";
 import { productApi, shoppingListApi, API } from "../api/api";
 import { _getData } from "../utils/Functions";
 import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
+import withCommonScreen from "../hoc/withCommonScreen";
 const ListScreen = (props) => {
   const { navigation, route } = props;
 
@@ -608,4 +609,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ListScreen;
+export default withCommonScreen(ListScreen, 'ListScreen');

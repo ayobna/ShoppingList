@@ -2,6 +2,7 @@ import react, { useEffect, useState, useCallback } from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
 import { Avatar, Button } from "react-native-paper";
 import { API } from "../api/api";
+import withCommonScreen from "../hoc/withCommonScreen";
 
 import { _getData } from "../utils/Functions";
 
@@ -41,7 +42,7 @@ const AccountScreen = (props) => {
             </Text>
             <Text style={styles.Text}>מייל: {currentUser.email}</Text>
             <Text style={styles.Text}>
-               נייד: {currentUser.phoneNumber}
+              נייד: {currentUser.phoneNumber}
             </Text>
           </View>
           <View style={styles.ViewButton}>
@@ -54,7 +55,7 @@ const AccountScreen = (props) => {
             >
               עריכת חשבון
             </Button>
-            
+
           </View>
         </View>
       )}
@@ -62,7 +63,6 @@ const AccountScreen = (props) => {
   );
 };
 
-export default AccountScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -74,8 +74,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   ViewText: {
-   // alignItems: "center",
-   marginLeft: "20%",
+    // alignItems: "center",
+    marginLeft: "20%",
   },
   Text: {
     marginTop: "8%",
@@ -90,3 +90,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
+
+export default withCommonScreen(AccountScreen, 'AccountScreen');
+

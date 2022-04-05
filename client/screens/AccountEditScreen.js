@@ -20,6 +20,7 @@ import {
   Avatar,
   Caption,
 } from "react-native-paper";
+import withCommonScreen from "../hoc/withCommonScreen";
 const AccountEditScreen = (props) => {
   const { navigation, route } = props;
 
@@ -368,16 +369,16 @@ const AccountEditScreen = (props) => {
               )}
             </View>
           </View>
-          <View style={styles.ViewButtons}>         
+          <View style={styles.ViewButtons}>
             <View style={styles.btnImg}>
               <Button
                 mode="outlined"
                 theme={{ colors: { primary: `white` } }}
                 labelStyle={{ color: "black" }}
                 contentStyle={{ backgroundColor: "#bfbfbf" }}
-                onPress={()=>navigation.goBack()}
+                onPress={() => navigation.goBack()}
               >
-               ביטול
+                ביטול
               </Button>
             </View>
 
@@ -389,7 +390,7 @@ const AccountEditScreen = (props) => {
                 contentStyle={{ backgroundColor: "#bfbfbf" }}
                 onPress={handleSave}
               >
-               שמור
+                שמור
               </Button>
             </View>
           </View>
@@ -398,8 +399,6 @@ const AccountEditScreen = (props) => {
     </View>
   );
 };
-
-export default AccountEditScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -459,3 +458,6 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
 });
+
+export default withCommonScreen(AccountEditScreen, 'AccountEditScreen');
+

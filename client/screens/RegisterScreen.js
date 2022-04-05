@@ -18,6 +18,7 @@ import {
   Caption
 } from "react-native-paper";
 import { userApi } from "../api/api";
+import withCommonScreen from "../hoc/withCommonScreen";
 const RegisterScreen = (props) => {
   const { navigation, route } = props;
 
@@ -349,4 +350,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default RegisterScreen;
+export default withCommonScreen(RegisterScreen, 'RegisterScreen');
