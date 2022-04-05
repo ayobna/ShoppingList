@@ -5,6 +5,7 @@ import { shoppingListApi, userApi } from "../api/api";
 import ShoppingListCard from "../components/ShoppingListCard";
 import PopupDialog from "../components/PopupDialog";
 import { _getData } from "../utils/Functions";
+import withCommonScreen from "../hoc/withCommonScreen";
 
 const HomeScreen = (props) => {
   // props
@@ -24,9 +25,9 @@ const HomeScreen = (props) => {
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", async () => {
-        const user = await LoadUser();  
-       const lists= await ShoppingListsGetFromAPI(user.userID);
-       setCurrentUser(user);
+      const user = await LoadUser();
+      const lists = await ShoppingListsGetFromAPI(user.userID);
+      setCurrentUser(user);
 
     });
     return unsubscribe;
@@ -59,10 +60,10 @@ const HomeScreen = (props) => {
   };
 
   const LoadUser = async () => {
-    let u = await _getData("User");  
-    console.log("LoadUser",u)
+    let u = await _getData("User");
+    console.log("LoadUser", u)
     //  setCurrentUser(u);
-      return u;   
+    return u;
   };
 
   const ShoppingListsGetFromAPI = async (userID) => {
@@ -77,7 +78,7 @@ const HomeScreen = (props) => {
           userID
         );
       //console.log("ShoppingListsGetFromAPI",res.data)
-      let data= res.data
+      let data = res.data
       setShoppingLists(data);
       setRenderedShoppingLists(data);
     } catch (error) {
@@ -238,8 +239,8 @@ const HomeScreen = (props) => {
         contentContainerStyle={{ flexGrow: 1 }}
         ListEmptyComponent={handleListEmptyComponent}
         ListFooterComponent={renderFooter}
-        // refreshing={isFetching}
-        // onRefresh={() => handleRefresh()}
+      // refreshing={isFetching}
+      // onRefresh={() => handleRefresh()}
       />
       {extraDataForTabs === 1 && (
         <FAB
@@ -281,7 +282,6 @@ const HomeScreen = (props) => {
   );
 };
 
-export default HomeScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -300,3 +300,6 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
 });
+
+export default withCommonScreen(HomeScreen, "HomeScreen");
+

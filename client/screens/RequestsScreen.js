@@ -4,13 +4,14 @@ import { Text, Divider } from 'react-native-paper';
 import { requestApi } from "../api/api";
 import PopupDialog from '../components/PopupDialog';
 import RequestsCard from '../components/RequestsCard';
+import withCommonScreen from '../hoc/withCommonScreen';
 import { _getData } from '../utils/Functions';
 
 
 
 const RequestsScreen = (props) => {
   // props
-  const { navigation, route } = props;
+  const { navigation, route, resetRequestDataGlobalState, requestDataGlobal } = props;
 
   // states
   const [currentUser, setCurrentUser] = useState();
@@ -34,6 +35,29 @@ const RequestsScreen = (props) => {
       setPopupDialogVisible(true);
     }
   }, [requestData]);
+
+  useEffect(() => {
+    const init = async () => {
+      if (requestDataGlobal) {
+        switch (requestDataGlobal.actionIdentifier) {
+          case "ok":
+            console.log("ok - withCommonScreen")
+            await handleConfirmRequest(requestDataGlobal.listID);
+            break;
+          case "cancel":
+            console.log("Cancel - withCommonScreen")
+            await declineRequest();
+            break;
+          default:
+            console.log("Default - withCommonScreen")
+            getRequests(requestDataGlobal.userID);
+            break;
+        }
+        resetRequestDataGlobalState();
+      }
+    };
+    init();
+  }, [requestDataGlobal]);
 
   const getRequests = async (userID) => {
     let res = await requestApi.apiRequestsApiRequestsGetRequestsByUserIdIdGet(userID);
@@ -63,9 +87,10 @@ const RequestsScreen = (props) => {
   };
 
   const handleConfirmRequest = async (listID) => {
+    const userID = requestDataGlobal ? requestDataGlobal.userID : currentUser.userID;
     try {
-      await requestApi.apiRequestsApiRequestsConfirmRequestPost({ listID: listID, userID: currentUser.userID });
-      getRequests(currentUser.userID);
+      await requestApi.apiRequestsApiRequestsConfirmRequestPost({ listID: listID, userID: userID });
+      getRequests(userID);
 
     } catch (e) {
       console.log(e);
@@ -82,9 +107,11 @@ const RequestsScreen = (props) => {
   };
 
   const declineRequest = async () => {
+    const userID = requestDataGlobal ? requestDataGlobal.userID : currentUser.userID;
+    const listID = requestDataGlobal ? requestDataGlobal.listID : requestData;
     try {
-      await requestApi.apiRequestsApiRequestsDeclineRequestPost({ listID: requestData, userID: currentUser.userID });
-      getRequests(currentUser.userID);
+      await requestApi.apiRequestsApiRequestsDeclineRequestPost({ listID: listID, userID: userID });
+      getRequests(userID);
       handleCancelPopupDialog();
 
     } catch (e) {
@@ -123,4 +150,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default RequestsScreen;
+export default withCommonScreen(RequestsScreen, 'RequestsScreen');

@@ -15,6 +15,7 @@ import {
 import { API, chatApi } from "../api/api";
 import Spinner from "../components/Spinner";
 import { _getData } from "../utils/Functions";
+import withCommonScreen from "../hoc/withCommonScreen";
 const ChatScreen = (props) => {
   // props
   const { navigation, route } = props;
@@ -34,13 +35,13 @@ const ChatScreen = (props) => {
     const unsubscribe = navigation.addListener("focus", async () => {
       console.log("enter chat")
       await getMessages();
-      const u = await LoadUser();     
-      if (u!=null) {
-        await joinChat( u.userID);
-    
+      const u = await LoadUser();
+      if (u != null) {
+        await joinChat(u.userID);
+
         setIsPageLoaded(true);
       }
- 
+
     });
     return unsubscribe;
   }, [navigation, route]);
@@ -72,7 +73,7 @@ const ChatScreen = (props) => {
     let u = await _getData("User");
     setUser(u)
     console.log(u)
- return u
+    return u
   };
 
   const getMessages = async () => {
@@ -214,4 +215,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ChatScreen;
+export default withCommonScreen(ChatScreen, 'ChatScreen');

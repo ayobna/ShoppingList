@@ -3,30 +3,21 @@ import { StyleSheet, View, TouchableOpacity, Image, ScrollView } from "react-nat
 import { _storeData, _getData, _registerForPushNotificationsAsync, _diff_minutes } from "../utils/Functions";
 import { Button, TextInput, HelperText, Avatar, Caption, Text } from "react-native-paper";
 import * as WebBrowser from 'expo-web-browser';
-import * as Notifications from 'expo-notifications';
 import { makeRedirectUri, useAuthRequest, useAutoDiscovery } from 'expo-auth-session';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { API, loginApi } from "../api/api";
 import Spinner from "../components/Spinner";
 import PopupDialog from "../components/PopupDialog";
 import moment from "moment";
+import withCommonScreen from "../hoc/withCommonScreen";
 
 const Time_For_Code = 10;
 // WebBrowser.maybeCompleteAuthSession();
 
-// מאפשר קבלת פוש נוטיפיקיישן
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: true,
-  }),
-});
 
 const LoginScreen = (props) => {
   // props
   const { navigation } = props;
-  const responseListener = useRef(); //  מחזיק מידע לגבי פוש נוטיפיקיישן
 
   // states
   const [isPageLoaded, setIsPageLoaded] = useState(false);
@@ -55,40 +46,7 @@ const LoginScreen = (props) => {
   const [createResetCodeTime, setCreateResetCodeTime] = useState();
 
 
-  useEffect(() => {
 
-    // יצירת קטגוריות לפוש נוטיפיקיישןת מה שמאפשר שימוש בכפתורים בתוך ההתראה
-    Notifications.setNotificationCategoryAsync("request", [{ identifier: "ok", buttonTitle: "אשר בקשה" }, { identifier: "cancel", buttonTitle: "דחה בקשה" }]);
-
-    // מאזין לקבלת התראות
-    // This listener is fired whenever a user taps on or interacts with a notification (works when app is foregrounded, backgrounded, or killed)
-    responseListener.current = Notifications.addNotificationResponseReceivedListener(async response => {
-
-      if (response.notification.request.content.categoryIdentifier === "request") { // במידה ואנחנו הגענו בפוש של הזמנה לרשימה
-        let data = response.notification.request.content.data;
-        switch (response.actionIdentifier) {
-          case "ok": // אם המשתמש לחץ אשר
-            console.log("Ok")
-            navigation.replace(data.navigate);
-            Notifications.dismissNotificationAsync(response.notification.request.identifier); // מעלים את ההתראה
-
-            break;
-          case "cancel": // אם המשתמש לחץ בטל
-            console.log("Cancel")
-            navigation.replace(data.navigate);
-
-            Notifications.dismissNotificationAsync(response.notification.request.identifier); // מעלים את ההתראה
-            break;
-          default:  // אם המשתמש לחץ על ההתראה עצמה ולא על אחד הכפתורים
-            navigation.navigate(data.navigate, {
-              screen: data.screen
-            });
-            break;
-        }
-      }
-    });
-
-  }, []);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", async () => {
@@ -555,4 +513,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default LoginScreen;
+export default withCommonScreen(LoginScreen, 'LoginScreen');

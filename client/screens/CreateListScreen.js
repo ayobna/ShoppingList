@@ -20,6 +20,7 @@ import ProductCard from "../components/ProductCard";
 import PopupDialog from "../components/PopupDialog";
 import { productApi, shoppingListApi,API } from "../api/api";
 import { _getData } from "../utils/Functions";
+import withCommonScreen from "../hoc/withCommonScreen";
 
 const CreateListScreen = (props) => {
   // props
@@ -555,4 +556,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CreateListScreen;
+export default withCommonScreen(CreateListScreen,"CreateListScreen");

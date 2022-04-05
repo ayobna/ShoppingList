@@ -7,6 +7,7 @@ import { FAB, TextInput, IconButton, Button, Avatar, Searchbar } from "react-nat
 import { _getData, _sendPushNotification } from "../utils/Functions";
 import PopupDialog from "../components/PopupDialog";
 import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
+import withCommonScreen from "../hoc/withCommonScreen";
 
 const ParticipantsScreen = (props) => {
   const { navigation, route } = props;
@@ -232,4 +233,4 @@ const styles = StyleSheet.create({
     marginTop: 15
   }
 });
-export default ParticipantsScreen;
+export default withCommonScreen(ParticipantsScreen, 'ParticipantsScreen');
