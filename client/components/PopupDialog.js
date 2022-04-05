@@ -16,12 +16,17 @@ const PopupDialog = (props) => {
                     </Dialog.Content>
                 }
                 <Dialog.Actions>
-                    <Button onPress={cancel}>{buttonCancelTitle ? buttonCancelTitle : "ביטול"}</Button>
+                    {cancel &&
+                        <Button onPress={cancel}>{buttonCancelTitle ? buttonCancelTitle : "ביטול"}</Button>
+                    }
                     {
                         resend &&
                         <Button onPress={() => resend(true)}>שלח קוד חדש</Button>
                     }
-                    <Button onPress={() => confirm(true)}>{buttonConfirmTitle ? buttonConfirmTitle : "אישור"}</Button>
+                    {
+                        confirm &&
+                        <Button onPress={() => confirm(true)}>{buttonConfirmTitle ? buttonConfirmTitle : "אישור"}</Button>
+                    }
                 </Dialog.Actions>
             </Dialog>
         </Portal>

@@ -79,7 +79,7 @@ const ShoppingListCard = (props) => {
   };
 
   const openList = () => {
-    navigation.navigate("ShoppingListTabs", { shoppingListID: data.listID });
+    navigation.navigate("ShoppingListTabs", { shoppingListID: data.listID, shoppingListTitle: data.title });
   };
 
   const handleDateFormat = () => {

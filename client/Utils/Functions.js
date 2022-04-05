@@ -76,24 +76,18 @@ export const _registerForPushNotificationsAsync = async () => {
 };
 
 
-export const _sendPushNotification = async (notificationInfo, data) => {
+export const _sendPushNotification = async (notificationInfo) => {
   try {
-    if (currentUser.ExpoNotificationToken === null) { // במקרה ואין פוש טוקן לא ניתן לשלוח התראת פוש
+    if (notificationInfo.To === null) { // במקרה ואין פוש טוקן לא ניתן לשלוח התראת פוש
       return false;
     }
     const message = {
-      to: notificationInfo.ExpoNotificationToken, // הטוקן של המשתמש אליו נשלח את ההתראה
+      to: notificationInfo.To, // הטוקן של המשתמש אליו נשלח את ההתראה
       sound: 'default',  // צליל ההתראה
       title: notificationInfo.Title,  // כותרת ההתראה
       body: notificationInfo.Body, // גוף ההודעה בהתראה
       // הנתונים אותם נשלח בהתראה
-      data: data,
-      // {
-      //   courseID: route.params.courseData.ID,
-      //   navigate: "RequestsBottomTabNavigator",
-      //   screen: "CourseRequestsStackNavigator",
-      //   userID: notificationInfo.UserID
-      // },
+      data: notificationInfo.Data,
       categoryId: notificationInfo.CategoryIdentifier // קטגוריית ההתראה, מה שמאפשר ליצור התראות עם כפתורים
     };
     // יצירת הבקשה להתראת פוש באמצעות אקספו
