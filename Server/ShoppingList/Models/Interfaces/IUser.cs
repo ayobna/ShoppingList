@@ -13,5 +13,6 @@ namespace ShoppingList.Models.Interfaces
         public User UpdateUser(User user);
         public int DeleteUser(int id);
         public List<ProfileSatistics> GetProfileSatistics(int id);
+        public int UpdatePasswordInProfile(User user, string oldPassword);
     }
 }

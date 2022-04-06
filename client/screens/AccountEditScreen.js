@@ -93,10 +93,12 @@ const [defaultImg, setDefaultImg] = useState(null)
       setImageBase64(result.base64);
     }
   };
+
   const updateToDefaultImg = async () => {
     setImage(`${API}/uploads/users/user_default/user_default.png`);
     setDefaultImg('user_default/user_default.png')
   };
+  
   const save = async () => {
     try {
       let isHaveBase64Img = false;

@@ -137,7 +137,7 @@ const AccountScreen = (props) => {
 
                 <View style={styles.editPasswordWrapper}>
                   <Divider />
-                  <List.Item title="לעריכת סיסמה לחץ כאן" style={{ backgroundColor: "#f1f1f1" }} left={props => <List.Icon {...props} icon="pencil-lock-outline" />} onPress={() => console.log("edit password")} />
+                  <List.Item title="לעריכת סיסמה לחץ כאן" style={{ backgroundColor: "#f1f1f1" }} left={props => <List.Icon {...props} icon="pencil-lock-outline" />} onPress={() => navigation.navigate("AccountPasswordEditScreen")} />
                   <Divider />
                 </View>
               </View>

@@ -44,7 +44,7 @@ namespace ShoppingList.Controllers
 
                 logger.LogInformation("CreateUser - User successfully created");
                 return Ok(id);
-                
+
             }
             catch (Exception ex)
             {
@@ -99,19 +99,19 @@ namespace ShoppingList.Controllers
 
         [HttpPost]
         [Route("api/User/UpdateUser")]
-        public IActionResult UpdateUser([FromBody] User user ,bool IshaveBase64Img ,string defualtImg)
+        public IActionResult UpdateUser([FromBody] User user, bool IshaveBase64Img, string defualtImg)
         {
             try
             {
                 if (IshaveBase64Img)
-                {                
-                  user.Img=UploadFile(user , user.Img);                
+                {
+                    user.Img = UploadFile(user, user.Img);
                 }
-                if (defualtImg!=null)
+                if (defualtImg != null)
                 {
                     user.Img = defualtImg;
                 }
-                User userAfterUpdate=   userData.UpdateUser(user);
+                User userAfterUpdate = userData.UpdateUser(user);
                 return Ok(userAfterUpdate);
             }
             catch (Exception ex)
@@ -121,21 +121,21 @@ namespace ShoppingList.Controllers
             }
         }
 
-        private  string  UploadFile(User user ,string img)
+        private string UploadFile(User user, string img)
         {
             try
             {
                 string sqlPath, fileName;
                 string path = env.WebRootPath + $"/uploads/users/";
                 sqlPath = $"user_{user.UserID}";
-                path +=sqlPath;
+                path += sqlPath;
                 if (!Directory.Exists(path))
                 {
                     Directory.CreateDirectory(path);
                 }
                 fileName = $"img_{user.UserID}_{DateTime.Now.ToString("yyyyMMddHHmmssffff")}.jpg";
                 path = Path.Combine(path, fileName);
-                logger.LogInformation("path Information", path);          
+                logger.LogInformation("path Information", path);
                 Models.UploadFile.Upload(path, img);
                 return sqlPath + "/" + fileName;
             }
@@ -182,6 +182,28 @@ namespace ShoppingList.Controllers
             {
                 logger.LogError(ex, "Something went wrong while get the user statistics");
                 return NotFound(ex);
+            }
+        }
+
+        [HttpPost]
+        [Route("Api/Users/UpdatePasswordInProfile")]
+        public IActionResult UpdatePasswordInProfile([FromBody] User user, string oldPassword)
+        {
+            try
+            {
+                int res = userData.UpdatePasswordInProfile(user,oldPassword);
+                string logMessage = "UpdatePasswordInProfile - update user password succseed";
+                if (res == -1)
+                {
+                    logMessage = "UpdatePasswordInProfile- update user password failled because old password not the cureent password";
+                }
+                logger.LogInformation(logMessage);
+                return Ok(res);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"DeleteUser - something wrong happened while Deleting a user\n=> {ex.Message}");
+                return BadRequest(ex);
             }
         }
 

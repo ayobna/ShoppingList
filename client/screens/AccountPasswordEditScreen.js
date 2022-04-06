@@ -23,8 +23,16 @@ const AccountPasswordEditScreen = (props) => {
     const { navigation, route } = props;
 
     const [currentUser, setCurrentUser] = useState();
-
+    const [oldPassword, setOldPassword] = useState("");
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [oldPasswordErrorMessage, setOldPasswordErrorMessage] = useState("");
+    const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
+    const [confirmPasswordErrorMessage, setConfirmPasswordErrorMessage] = useState("");
     const [isPageLoaded, setIsPageLoaded] = useState(false);
+    const [isOldPasswordVisible, setIsOldPasswordVisible] = useState(false);
+    const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+    const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
 
     useEffect(() => {
         const unsubscribe = navigation.addListener("focus", async () => {
@@ -47,92 +55,63 @@ const AccountPasswordEditScreen = (props) => {
         return u;
     };
 
+    const handleSave = async () => {
+        console.log("Old password:", oldPassword)
+        console.log("New password:", password)
+
+        if (checkValidation() !== 3) {
+            return;
+        }
+        const result = await save();
+        console.log(result);
+        if(result === -1)
+        {
+            setOldPasswordErrorMessage("הסיסמה הישנה שגויה!");
+            return;
+        }
+        navigation.goBack();
+    };
+
     const save = async () => {
         try {
-            let isHaveBase64Img = false;
-            let userToUpdate = user;
-            if (imageBase64 !== null) {
-                isHaveBase64Img = true;
-                userToUpdate.img = imageBase64;
-            }
-            //console.log(imageBase64)
-            let res = await userApi.apiUserUpdateUserPost(
-                isHaveBase64Img,
-                userToUpdate
+            const userData = { UserID: currentUser.userID, Password: password };
+            let res = await userApi.apiUsersUpdatePasswordInProfilePost(
+                oldPassword,
+                userData
             );
-            console.log(res.data);
-            const resOfDataStore = await _storeData("User", res.data);
-            setUser(res.data);
-            navigation.goBack();
+            return res.data;
         } catch (e) {
             console.log(e);
         }
     };
 
-    const handleSave = async () => {
-        if (checkValidation() !== 4) {
-            return;
-        }
-        save();
-    };
-
     const checkValidation = () => {
-        const emailRgx = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9-]{2,15}(?:\.[a-zA-Z]+){1,2}$/; // פורמט מייל תקין
-        const nameRgx =
-            /^[a-zA-Z\u05D0-\u05EA']+([ |\-][a-zA-Z\u05D0-\u05EA']+){0,2}$/; // שם פרטי לפחות שני תווים, אותיות בעברים בלבד המופרדות ברווח או מקו
-        const phoneNumberRgx = /^[0-9]{10}$/; // בדיוק 10 ספרות
         const passwordRgx =
             /^(?=.*[A-Z])(?=.*\d)(?=.*[!#$%&*_=@])[A-Za-z0-9!#$%&*_=@]{5,}$/; // סיסמה חייבת להכיל אות גדולה, ספרה וסימן מיוחד. אורך סיסמה לפחות 5 תווים
         let counter = 0;
 
-        if (!emailRgx.test(user.email)) {
-            setUserInputsErrorMessage((prevState) => ({
-                ...prevState,
-                email: "המייל אינו תקין!\nדוגמה לפורמט תקין: test@tets.test",
-            }));
-        } else {
-            setUserInputsErrorMessage((prevState) => ({ ...prevState, email: "" }));
+        if (!passwordRgx.test(oldPassword)) {
+            setOldPasswordErrorMessage("סיסמה חייבת להכיל אות גדולה, ספרה וסימן מיוחד. אורך סיסמה לפחות 5 תווים");
+        }
+        else
+        {
+            setOldPasswordErrorMessage("");
             counter++;
         }
-        if (!nameRgx.test(user.firstName)) {
-            setUserInputsErrorMessage((prevState) => ({
-                ...prevState,
-                firstName:
-                    "שם פרטי אינו תקין!\nלפחות שני תווים, הפרדה בין מילים ברווח או בקו",
-            }));
-        } else {
-            setUserInputsErrorMessage((prevState) => ({
-                ...prevState,
-                firstName: "",
-            }));
+        if (!passwordRgx.test(password)) {
+            setPasswordErrorMessage("סיסמה חייבת להכיל אות גדולה, ספרה וסימן מיוחד. אורך סיסמה לפחות 5 תווים");
+        }
+        else {
+            setPasswordErrorMessage("");
             counter++;
         }
-        if (!nameRgx.test(user.lastName)) {
-            setUserInputsErrorMessage((prevState) => ({
-                ...prevState,
-                lastName:
-                    "שם משפחה אינו תקין!\nלפחות שני תווים, הפרדה בין מילים ברווח או בקו",
-            }));
-        } else {
-            setUserInputsErrorMessage((prevState) => ({
-                ...prevState,
-                lastName: "",
-            }));
+        if (password !== confirmPassword) {
+            setConfirmPasswordErrorMessage("הסיסמאות אינן זהות");
+        }
+        else {
+            setConfirmPasswordErrorMessage("");
             counter++;
         }
-        if (!phoneNumberRgx.test(user.phoneNumber)) {
-            setUserInputsErrorMessage((prevState) => ({
-                ...prevState,
-                phoneNumber: "מספר פלאפון אינו תקין!\nחובה 10 ספרות",
-            }));
-        } else {
-            setUserInputsErrorMessage((prevState) => ({
-                ...prevState,
-                phoneNumber: "",
-            }));
-            counter++;
-        }
-
         return counter;
     };
 
@@ -147,35 +126,52 @@ const AccountPasswordEditScreen = (props) => {
                             </View>
                             <Divider style={{ width: "100%" }} /> */}
                             <View style={styles.inputsWrapper}>
+                                <TextInput
+                                    label="סיסמה ישנה"
+                                    mode="outlined"
+                                    value={oldPassword}
+                                    onChangeText={text => setOldPassword(text)}
+                                    secureTextEntry={!isOldPasswordVisible}
+                                    selectionColor="#919191"
+                                    activeOutlineColor="#919191"
+                                    dense
+                                    style={{ backgroundColor: "white" }}
+                                    left={<TextInput.Icon color={oldPasswordErrorMessage !== "" ? "#d0312d" : "#c1c1c1"} name="lock-outline" />}
+                                    right={<TextInput.Icon forceTextInputFocus={false} color="#919191" name={!isOldPasswordVisible ? "eye" : "eye-off"} onPress={() => setIsOldPasswordVisible(!isOldPasswordVisible)} />}
+                                    error={oldPasswordErrorMessage !== ""}
+                                />
+                                {
+                                    oldPasswordErrorMessage !== "" &&
+                                    <View style={styles.captionErrorWrapper}>
+                                        <Caption style={styles.captionError}>{oldPasswordErrorMessage}</Caption>
+                                    </View>
+                                }
                                 <View style={styles.inputWrapper}>
                                     <TextInput
-                                        label="סיסמה"
+                                        label="סיסמה חדשה"
                                         mode="outlined"
-                                        value={user.Password}
-                                        onChangeText={text => setUser((prevState) => ({
-                                            ...prevState,
-                                            Password: text,
-                                        }))}
+                                        value={password}
+                                        onChangeText={text => setPassword(text)}
                                         secureTextEntry={!isPasswordVisible}
                                         selectionColor="#919191"
                                         activeOutlineColor="#919191"
                                         dense
                                         style={{ backgroundColor: "white" }}
-                                        left={<TextInput.Icon color={userInputsErrorMessage.Password !== "" ? "#d0312d" : "#c1c1c1"} name="lock-outline" />}
+                                        left={<TextInput.Icon color={passwordErrorMessage !== "" ? "#d0312d" : "#c1c1c1"} name="lock-outline" />}
                                         right={<TextInput.Icon forceTextInputFocus={false} color="#919191" name={!isPasswordVisible ? "eye" : "eye-off"} onPress={() => setIsPasswordVisible(!isPasswordVisible)} />}
-                                        error={userInputsErrorMessage.Password !== ""}
+                                        error={passwordErrorMessage !== ""}
                                     />
                                     {
-                                        userInputsErrorMessage.Password !== "" &&
+                                        passwordErrorMessage !== "" &&
                                         <View style={styles.captionErrorWrapper}>
-                                            <Caption style={styles.captionError}>{userInputsErrorMessage.Password}</Caption>
+                                            <Caption style={styles.captionError}>{passwordErrorMessage}</Caption>
                                         </View>
                                     }
                                 </View>
 
                                 <View style={styles.inputWrapper}>
                                     <TextInput
-                                        label="אישור סיסמה"
+                                        label="אימות סיסמה"
                                         mode="outlined"
                                         value={confirmPassword}
                                         onChangeText={text => setConfirmPassword(text)}
@@ -184,14 +180,14 @@ const AccountPasswordEditScreen = (props) => {
                                         activeOutlineColor="#919191"
                                         dense
                                         style={{ backgroundColor: "white" }}
-                                        left={<TextInput.Icon color={userInputsErrorMessage.ConfirmPassword !== "" ? "#d0312d" : "#c1c1c1"} name="lock-outline" />}
+                                        left={<TextInput.Icon color={confirmPasswordErrorMessage !== "" ? "#d0312d" : "#c1c1c1"} name="lock-outline" />}
                                         right={<TextInput.Icon forceTextInputFocus={false} color="#919191" name={!isConfirmPasswordVisible ? "eye" : "eye-off"} onPress={() => setIsConfirmPasswordVisible(!isConfirmPasswordVisible)} />}
-                                        error={userInputsErrorMessage.ConfirmPassword !== ""}
+                                        error={confirmPasswordErrorMessage !== ""}
                                     />
                                     {
-                                        userInputsErrorMessage.ConfirmPassword !== "" &&
+                                        confirmPasswordErrorMessage !== "" &&
                                         <View style={styles.captionErrorWrapper}>
-                                            <Caption style={styles.captionError}>{userInputsErrorMessage.ConfirmPassword}</Caption>
+                                            <Caption style={styles.captionError}>{confirmPasswordErrorMessage}</Caption>
                                         </View>
                                     }
                                 </View>
@@ -244,7 +240,7 @@ const styles = StyleSheet.create({
     },
     mainWrapper: {
         flex: 1,
-        justifyContent: "space-around"
+        justifyContent: "center"
     },
     Image: {
         marginVertical: "5%",
