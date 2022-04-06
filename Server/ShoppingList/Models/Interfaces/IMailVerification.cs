@@ -1,8 +1,10 @@
-﻿namespace ShoppingList.Models.Interfaces
+﻿using System.Threading.Tasks;
+
+namespace ShoppingList.Models.Interfaces
 {
     public interface IMailVerification
     {
         public int GenerateVeraficationCode();
-        public void SendEmail(string subject, string to, string firstName, string content, int code);
+        public  Task SendEmail(string subject, string sendTo, string firstName, string content, int code);
     }
 }
