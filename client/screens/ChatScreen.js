@@ -34,14 +34,13 @@ const ChatScreen = (props) => {
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", async () => {
       console.log("enter chat")
-      await getMessages();
-      const u = await LoadUser();
+      const data = await getMessages();
+      setMessages(data);
+      const u = await loadUser();
       if (u != null) {
         await joinChat(u.userID);
-
         setIsPageLoaded(true);
       }
-
     });
     return unsubscribe;
   }, [navigation, route]);
@@ -69,7 +68,7 @@ const ChatScreen = (props) => {
 
 
 
-  const LoadUser = async () => {
+  const loadUser = async () => {
     let u = await _getData("User");
     setUser(u)
     console.log(u)
@@ -77,12 +76,14 @@ const ChatScreen = (props) => {
   };
 
   const getMessages = async () => {
-    let res = await chatApi.apiShoppingListChatMessagesIdGet(
-      route.params.shoppingListID
-    );
-    let data = res.data
-
-    setMessages(data);
+    try {
+      let res = await chatApi.apiShoppingListChatMessagesIdGet(
+        route.params.shoppingListID
+      );
+      return res.data;
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const joinChat = async (userID) => {

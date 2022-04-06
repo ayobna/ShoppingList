@@ -106,9 +106,22 @@ export const _sendPushNotification = async (notificationInfo) => {
   }
 };
 
+export const _logout = async (navigation) => {
+  try {
+    const res = await _removeData("User");
+    if (res) {
+      navigation.replace("LoginScreen");
+      console.log("Sign out");
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 export const _diff_minutes = (dt2, dt1) => {
   var diff = (dt2.getTime() - dt1.getTime()) / 1000;
   diff /= 60;
   return Math.abs(Math.round(diff));
 
 }
+

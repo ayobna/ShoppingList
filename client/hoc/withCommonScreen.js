@@ -1,14 +1,14 @@
 import React, { useEffect, useContext, useState } from "react";
 import GeneralContext from '../utils/GeneralContext';
 
-const withCommonScreen = (WrappedComponent, screen) => props => {
+const withCommonScreen = (WrappedComponent, screenName) => props => {
 
     const { navigation, route } = props;
     const { setCurrentDrawerScreen, requestDataGlobal, setRequestDataGlobal } = useContext(GeneralContext);
 
     useEffect(() => {
         const unsubscribe = navigation.addListener("focus", async () => {
-            switch (screen) {
+            switch (screenName) {
                 case 'CreateListScreen':
                 case 'ListScreen':
                 case 'ParticipantsScreen':
@@ -20,8 +20,12 @@ const withCommonScreen = (WrappedComponent, screen) => props => {
                     setCurrentDrawerScreen("requestsStack");
                     break;
                 case 'AccountEditScreen':
+                case 'AccountPasswordEditScreen':
                 case 'AccountScreen':
                     setCurrentDrawerScreen("AccountStack");
+                    break;
+                default:
+                    setCurrentDrawerScreen("homeStack");
                     break;
             }
         });
@@ -30,10 +34,10 @@ const withCommonScreen = (WrappedComponent, screen) => props => {
 
     useEffect(() => {
         if (requestDataGlobal) {
-            if (screen === 'RegisterScreen' || screen === 'LoginScreen') {
+            if (screenName === 'RegisterScreen' || screenName === 'LoginScreen') {
                 resetRequestDataGlobalState();
             }
-            else if (screen !== "RequestsScreen") {
+            else if (screenName !== "RequestsScreen") {
                 navigation.navigate(requestDataGlobal.navigate, {
                     screen: requestDataGlobal.screen
                 });
@@ -47,7 +51,7 @@ const withCommonScreen = (WrappedComponent, screen) => props => {
 
 
     return (
-        screen === 'RequestsScreen' ?
+        screenName === 'RequestsScreen' ?
             <WrappedComponent
                 {...props}
                 resetRequestDataGlobalState={resetRequestDataGlobalState}

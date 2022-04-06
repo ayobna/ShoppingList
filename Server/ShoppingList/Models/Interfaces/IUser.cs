@@ -11,6 +11,7 @@ namespace ShoppingList.Models.Interfaces
         public List<User> GetAllUsers();
         public User GetUserById(int id);
         public User UpdateUser(User user);
-
+        public int DeleteUser(int id);
+        public List<ProfileSatistics> GetProfileSatistics(int id);
     }
 }

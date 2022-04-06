@@ -34,3 +34,27 @@ Begin
 End
 Go
 
+-- get the amount of lists that the current user created
+Create function Func_Return_Amount_Of_Lists_Created_By_CurrentUser(@UserId int)
+Returns int
+As
+Begin
+	return (Select Count(*) from [shopping_lists] Where [CreatorID] = @UserId And [IsActive] = 1)
+End
+Go
+
+-- get the amount of lists that the current user shares but not their creator
+Create function Func_Return_Amount_Of_Lists_Current_User_Shares_But_No_Creator(@UserId int)
+Returns int
+As
+Begin
+
+return (
+SELECT  COUNT(*)
+FROM            dbo.shopping_lists INNER JOIN
+                         dbo.shopping_lists_users ON dbo.shopping_lists.ListID = dbo.shopping_lists_users.ListID
+where        (dbo.shopping_lists_users.IsApproved = 1) AND (NOT (dbo.shopping_lists.CreatorID = @UserId)) AND (dbo.shopping_lists_users.UserID = @UserId) AND (dbo.shopping_lists.IsActive = 1)
+)
+End
+Go
+
