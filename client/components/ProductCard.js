@@ -26,40 +26,40 @@ const ProductCard = (props) => {
     ScreenName,
     user,
     listCreatorId,
-    checkProduct
+    checkProduct,
   } = props;
-  
+
   //states
   const [visibleMenu, setVisibleMenu] = useState(false);
   const openMenu = () => setVisibleMenu(true);
   const closeMenu = () => setVisibleMenu(false);
   const [checked, setChecked] = useState();
 
-const [leftStyleMarginRight, setLeftStyleMarginRight] = useState("15%")
+  const [leftStyleMarginRight, setLeftStyleMarginRight] = useState("15%");
 
   useEffect(() => {
-   // console.log("product: ", data);
-    setChecked(data.isChecked)
+    // console.log("product: ", data);
+    setChecked(data.isChecked);
     if (ScreenName === "CreateList") {
-      setLeftStyleMarginRight("5%")
+      setLeftStyleMarginRight("5%");
     }
   }, []);
 
   useEffect(() => {
     // console.log("product: ", data);
-     setChecked(data.isChecked)
-   }, [data]);
- 
+    setChecked(data.isChecked);
+  }, [data]);
 
   const ImgName = () => {
-    let imgArray=['0'] ;
+    let imgArray = ["0"];
     if (ScreenName === "CreateList") {
-    imgArray = data.img.split(":/");
+      imgArray = data.img.split(":/");
     }
     let img = data.img;
     if (ScreenName !== "CreateList") {
       if (data.productID !== 0) {
-        img = imgArray[0] === "file"
+        img =
+          imgArray[0] === "file"
             ? data.img
             : API + `/uploads/shoppingLists/` + data.img;
       }
@@ -67,31 +67,34 @@ const [leftStyleMarginRight, setLeftStyleMarginRight] = useState("15%")
     return img;
   };
 
-  const onChecked=async()=>{
-    console.log("onChecked", data.isChecked)
-    await checkProduct(data.productID,!data.isChecked)
-    console.log("after checkProduct " ,data.isChecked)
- //setChecked(!checked)
-
-  }
+  const onChecked = async () => {
+    setChecked(!checked);``
+    await checkProduct(data.productID, !data.isChecked);
+    console.log("after checkProduct ", data.isChecked);
+   
+  };
 
   const leftContent = (props) => {
     if (ScreenName === "CreateList")
       return <Avatar.Image size={60} source={{ uri: ImgName() }} />;
     else {
       return (
-        <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center' }}>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
           <Checkbox
             status={checked ? "checked" : "unchecked"}
-            onPress={ onChecked}
-          
+            onPress={onChecked}
           />
           <Avatar.Image size={60} source={{ uri: ImgName() }} />
         </View>
       );
     }
   };
-
 
   const rightContent = (props) => {
     if (ScreenName === "CreateList") {
@@ -147,14 +150,14 @@ const [leftStyleMarginRight, setLeftStyleMarginRight] = useState("15%")
         underlayColor="red"
         onPress={null}
       >
-        <Card style={{flex:1}}>
+        <Card style={{ flex: 1 }}>
           <Card.Title
             titleNumberOfLines={3}
             title={data.name}
             subtitle={`כמות: ${data.amount}`}
             left={leftContent}
             right={rightContent}
-            leftStyle={{marginRight:leftStyleMarginRight}}
+            leftStyle={{ marginRight: leftStyleMarginRight }}
           />
           {/* <Card.Content>
                         <Paragraph>מספר מזהה: {data.ProductID}</Paragraph>
@@ -169,8 +172,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginHorizontal: 10,
-    marginTop: 10
-    },
+    marginTop: 10,
+  },
 });
 
 export default ProductCard;
