@@ -443,3 +443,11 @@ End
 Go
 
 
+ -------------------
+--Create Proc Proc_Exit_From_List_User_is_A_Participant
+--@ListID int,
+--@UserID int
+--AS
+--delete from [shopping_lists_users]
+--WHERE  [ListID]= @ListID ANd [UserID]=@UserID
+--Go

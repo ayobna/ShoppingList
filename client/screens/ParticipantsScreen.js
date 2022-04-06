@@ -1,9 +1,23 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, FlatList, TouchableHighlight, StyleSheet, Alert } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableHighlight,
+  StyleSheet,
+  Alert,
+} from "react-native";
 import { API, listUsersApi, shoppingListApi, requestApi } from "../api/api";
 import ParticipantsCard from "../components/ParticipantsCard";
 import SearchUserCard from "../components/SearchUserCard";
-import { FAB, TextInput, IconButton, Button, Avatar, Searchbar } from "react-native-paper";
+import {
+  FAB,
+  TextInput,
+  IconButton,
+  Button,
+  Avatar,
+  Searchbar,
+} from "react-native-paper";
 import { _getData, _sendPushNotification } from "../utils/Functions";
 import PopupDialog from "../components/PopupDialog";
 import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
@@ -21,11 +35,9 @@ const ParticipantsScreen = (props) => {
   const [isSearch, setIsSearch] = useState(false);
   const [searchResult, setSearchResult] = useState([]);
 
-
-
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", async () => {
-      console.log("Participant screen")
+      console.log("Participant screen");
       const creatorID = await GetListCreatorByListID();
       const loginUser = await LoadUser();
       const data = await GetParticipantsInTheShoppingList();
@@ -34,8 +46,7 @@ const ParticipantsScreen = (props) => {
       setCurrentUser(loginUser);
       setParticipants(data);
 
-      console.log(route.params.shoppingListID)
-
+      console.log(route.params.shoppingListID);
     });
     return unsubscribe;
   }, [navigation, route]);
@@ -51,7 +62,10 @@ const ParticipantsScreen = (props) => {
   //get all the participants in the list
   const GetParticipantsInTheShoppingList = async () => {
     try {
-      let res = await listUsersApi.apiGetParticipantsInTheShoppingListByListIdIdGet(route.params.shoppingListID);
+      let res =
+        await listUsersApi.apiGetParticipantsInTheShoppingListByListIdIdGet(
+          route.params.shoppingListID
+        );
       return res.data;
     } catch (error) {
       console.log(error);
@@ -61,7 +75,10 @@ const ParticipantsScreen = (props) => {
   //get the list creator
   const GetListCreatorByListID = async () => {
     try {
-      let res = await shoppingListApi.apiShoppingListGetListCreatorByListIDIdGet(shoppingListID);
+      let res =
+        await shoppingListApi.apiShoppingListGetListCreatorByListIDIdGet(
+          shoppingListID
+        );
       return res.data.creatorID;
     } catch (error) {
       console.log(error);
@@ -77,12 +94,14 @@ const ParticipantsScreen = (props) => {
   // get all the users, except the list creator, for sending a join requests
   const GetUsersToAddToListUsers = async () => {
     try {
-      let res = await listUsersApi.apiGetUserByEmailToAddToListUsersGet(searchEmail, shoppingListID)
+      let res = await listUsersApi.apiGetUserByEmailToAddToListUsersGet(
+        searchEmail,
+        shoppingListID
+      );
       return res.data;
     } catch (error) {
       console.log(error);
     }
-
   };
 
   //if there are no participants
@@ -113,21 +132,21 @@ const ParticipantsScreen = (props) => {
       searchUsers = await GetUsersToAddToListUsers();
     }
     setSearchResult(searchUsers);
-    console.log("in searchPress")
-  }
+    console.log("in searchPress");
+  };
 
   const showResult = () => {
     if (searchResult[0].isApproved === 1) {
+      return <Text>המשתמש כבר חבר ברשימה</Text>;
+    } else {
       return (
-        <Text>המשתמש כבר חבר ברשימה</Text>
+        <SearchUserCard
+          data={searchResult[0]}
+          confirm={confirmSendAddRequest}
+        />
       );
     }
-    else {
-      return (
-        <SearchUserCard data={searchResult[0]} confirm={confirmSendAddRequest} />
-      );
-    }
-  }
+  };
 
   // send a request for the user to join, if the user exists and not a member
   const confirmSendAddRequest = async () => {
@@ -145,30 +164,47 @@ const ParticipantsScreen = (props) => {
           listID: shoppingListID,
           navigate: "myDrawer",
           screen: "requestsStack",
-          userID: searchResult[0].userID
-        }
+          userID: searchResult[0].userID,
+        },
       };
-      console.log("notificationInfo before send:", notificationInfo)
+      console.log("notificationInfo before send:", notificationInfo);
 
-      await listUsersApi.apiShoppingListAddUserForTheListPost({ listID: shoppingListID, userID: searchResult[0].userID });
+      await listUsersApi.apiShoppingListAddUserForTheListPost({
+        listID: shoppingListID,
+        userID: searchResult[0].userID,
+      });
       await _sendPushNotification(notificationInfo);
     } catch (e) {
       console.log(e);
     }
   };
 
-
   // delete a participant from the list users by the list creator
-  const deletePraticipant = async (userId) => {
-    await requestApi.apiRequestsApiRequestsDeclineRequestPost({ listID: shoppingListID, userID: userId });
-    GetParticipantsInTheShoppingList();
+  const deleteParticipant = async (userId) => {
+    console.log("deleteParticipant");
+    try {
+      console.log("deleteParticipant");
+      let res = await shoppingListApi.apiShoppingListExitShoppingListPost(
+        shoppingListID,
+        userId
+      );
+      console.log("deleteParticipant", res.data);
+      const data = await GetParticipantsInTheShoppingList();
+      setParticipants(data);
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   //send data to card component
   const renderListItem = (itemData) => (
-    <ParticipantsCard data={itemData.item} listCreatorId={listCreatorId} deletePraticipant={deletePraticipant} currentUser={currentUser} />
+    <ParticipantsCard
+      data={itemData.item}
+      listCreatorId={listCreatorId}
+      deleteParticipant={deleteParticipant}
+      currentUser={currentUser}
+    />
   );
-
 
   return (
     <View style={styles.container}>
@@ -180,12 +216,14 @@ const ParticipantsScreen = (props) => {
         contentContainerStyle={{ flexGrow: 1 }}
         ListEmptyComponent={handleListEmptyComponent}
       />
-      {currentUser && listCreatorId && currentUser.userID === listCreatorId && (<FAB
-        style={styles.fab}
-        color="white"
-        icon="plus"
-        onPress={showPopupDialog}
-      />)}
+      {currentUser && listCreatorId && currentUser.userID === listCreatorId && (
+        <FAB
+          style={styles.fab}
+          color="white"
+          icon="plus"
+          onPress={showPopupDialog}
+        />
+      )}
       <View>
         <PopupDialog
           title={"חפוש משתמש"}
@@ -193,7 +231,6 @@ const ParticipantsScreen = (props) => {
           cancel={cancelPopupDialog}
           buttonCancelTitle="סגור חיפוש"
         >
-
           <Searchbar
             placeholder="חיפוש"
             onChangeText={(txt) => setSearchEmail(txt)}
@@ -203,12 +240,13 @@ const ParticipantsScreen = (props) => {
             onIconPress={searchPress}
           />
 
-          {
-            searchResult.length === 0 ?
-              <View style={styles.noResultWrapper}><Text>אין תוצאות</Text></View>
-              :
-              <View>{showResult()}</View>
-          }
+          {searchResult.length === 0 ? (
+            <View style={styles.noResultWrapper}>
+              <Text>אין תוצאות</Text>
+            </View>
+          ) : (
+            <View>{showResult()}</View>
+          )}
         </PopupDialog>
       </View>
     </View>
@@ -230,7 +268,7 @@ const styles = StyleSheet.create({
   },
   noResultWrapper: {
     alignItems: "center",
-    marginTop: 15
-  }
+    marginTop: 15,
+  },
 });
-export default withCommonScreen(ParticipantsScreen, 'ParticipantsScreen');
+export default withCommonScreen(ParticipantsScreen, "ParticipantsScreen");

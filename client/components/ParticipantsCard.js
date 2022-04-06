@@ -5,7 +5,7 @@ import { API } from '../api/api';
 
 const ParticipantsCard = (props) => {
   // props
-  const { data, listCreatorId, deletePraticipant, currentUser } = props;
+  const { data, listCreatorId,deleteParticipant, currentUser } = props;
 
   const rightContent = props => (
   <View style={styles.buttonContainer}>
@@ -13,7 +13,7 @@ const ParticipantsCard = (props) => {
       icon="delete"
       color='red'
       size={20}
-      onPress={() => deletePraticipant(data.userID)}
+      onPress={() => deleteParticipant(data.userID)}
   />}
 </View>
 )
