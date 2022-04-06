@@ -181,9 +181,7 @@ const ParticipantsScreen = (props) => {
 
   // delete a participant from the list users by the list creator
   const deleteParticipant = async (userId) => {
-    console.log("deleteParticipant");
     try {
-      console.log("deleteParticipant");
       let res = await shoppingListApi.apiShoppingListExitShoppingListPost(
         shoppingListID,
         userId
