@@ -42,13 +42,13 @@ namespace ShoppingList.Controllers
                     return Ok(id);
                 }
 
-                logger.LogInformation("CreateUser - User succesfully created");
+                logger.LogInformation("CreateUser - User successfully created");
                 return Ok(id);
                 
             }
             catch (Exception ex)
             {
-                logger.LogError($"CreateUser - something wrong happaned while creating a user\n=> {ex.Message}");
+                logger.LogError($"CreateUser - something wrong happened while creating a user\n=> {ex.Message}");
                 return BadRequest(ex);
             }
         }
@@ -99,15 +99,19 @@ namespace ShoppingList.Controllers
 
         [HttpPost]
         [Route("api/User/UpdateUser")]
-        public IActionResult UpdateUser([FromBody] User user ,bool IshaveBase64Img)
+        public IActionResult UpdateUser([FromBody] User user ,bool IshaveBase64Img ,string defualtImg)
         {
             try
             {
                 if (IshaveBase64Img)
                 {                
-                  user.Img=  UploadFile(user , user.Img);                
+                  user.Img=UploadFile(user , user.Img);                
                 }
-             User userAfterUpdate=   userData.UpdateUser(user);
+                if (defualtImg!=null)
+                {
+                    user.Img = defualtImg;
+                }
+                User userAfterUpdate=   userData.UpdateUser(user);
                 return Ok(userAfterUpdate);
             }
             catch (Exception ex)
@@ -142,7 +146,7 @@ namespace ShoppingList.Controllers
             }
         }
 
-        // what do you think mates? to create profile contoller? ot keep profile things here?
+        // what do you think mates? to create profile controller? to keep profile things here?
         [HttpDelete]
         [Route("Api/Users/DeleteUser")]
         public IActionResult DeleteUser(int id)
@@ -150,12 +154,12 @@ namespace ShoppingList.Controllers
             try
             {
                 int res = userData.DeleteUser(id);
-                logger.LogInformation("DeleteUser - User succesfully Deleted");
+                logger.LogInformation("DeleteUser - User successfully Deleted");
                 return Ok(res);
             }
             catch (Exception ex)
             {
-                logger.LogError($"DeleteUser - something wrong happaned while Deleting a user\n=> {ex.Message}");
+                logger.LogError($"DeleteUser - something wrong happened while Deleting a user\n=> {ex.Message}");
                 return BadRequest(ex);
             }
         }
@@ -166,7 +170,7 @@ namespace ShoppingList.Controllers
         {
             try
             {
-                logger.LogInformation("Gat User satistics");
+                logger.LogInformation("Get User statistics");
                 List<ProfileSatistics> userSatistics = userData.GetProfileSatistics(id);
                 if (userSatistics.Count <= 0)
                 {
@@ -176,7 +180,7 @@ namespace ShoppingList.Controllers
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Somthing went wrong while get the user satistics");
+                logger.LogError(ex, "Something went wrong while get the user statistics");
                 return NotFound(ex);
             }
         }
