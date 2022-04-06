@@ -86,5 +86,14 @@ namespace ShoppingList.Data
             List<ProfileSatistics> userSatistics = db.ConvertDataTable<ProfileSatistics>(tb);
             return userSatistics;
         }
+
+        public int UpdatePasswordInProfile(User user, string oldPassword)
+        {
+            SqlCommand cmd = db.CreateCommand("Proc_Update_Password_In_Profile", db.Connect(), "proc");
+            cmd.Parameters.Add("@UserID", SqlDbType.Int).Value = user.UserID;
+            cmd.Parameters.Add("@OldPassword", SqlDbType.NVarChar).Value = oldPassword;
+            cmd.Parameters.Add("@NewPassword", SqlDbType.NVarChar).Value = user.Password;
+            return db.ExecuteAndClose(cmd);
+        }
     }
 }

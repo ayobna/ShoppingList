@@ -259,7 +259,7 @@ const RegisterScreen = (props) => {
 
             <View style={styles.inputWrapper}>
               <TextInput
-                label="אישור סיסמה"
+                label="אימות סיסמה"
                 mode="outlined"
                 value={confirmPassword}
                 onChangeText={text => setConfirmPassword(text)}

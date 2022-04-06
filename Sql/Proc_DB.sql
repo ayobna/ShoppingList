@@ -71,7 +71,7 @@ Begin transaction
 commit transaction
 go
 
-
+-- user --> profile
 Create proc Proc_Delete_User
 @UserID int
 as
@@ -94,7 +94,26 @@ as
 	Select dbo.Func_Return_Amount_Of_Lists_Created_By_CurrentUser(@UserID) as MyListsAmount, dbo.Func_Return_Amount_Of_Lists_Current_User_Shares_But_No_Creator(@UserID) as OtherListsAmount
 go
 
-exec  Proc_Get_Profile_Satistics 13
+Create proc Proc_Update_Password_In_Profile
+@UserID int,
+@OldPassword nvarchar(max),
+@NewPassword nvarchar(max)
+as
+	Begin transaction
+	if exists(Select * from users where [UserID] = @UserID And [Password] = @OldPassword)
+	begin
+		UPDATE [users]
+		SET [Password] = @NewPassword
+		WHERE [UserID] = @UserID	
+		IF @@ERROR<>0
+			Begin
+				rollback transaction
+				return
+			End
+	end
+	commit transaction
+go
+--exec  Proc_Get_Profile_Satistics 13
 --exec Proc_Get_User_By_Id 2
 
 
