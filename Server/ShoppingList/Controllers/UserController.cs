@@ -141,5 +141,47 @@ namespace ShoppingList.Controllers
                 return null;
             }
         }
+
+        // what do you think mates? to create profile contoller? ot keep profile things here?
+        [HttpDelete]
+        [Route("Api/Users/DeleteUser")]
+        public IActionResult DeleteUser(int id)
+        {
+            try
+            {
+                int res = userData.DeleteUser(id);
+                logger.LogInformation("DeleteUser - User succesfully Deleted");
+                return Ok(res);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"DeleteUser - something wrong happaned while Deleting a user\n=> {ex.Message}");
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpGet]
+        [Route("api/GetProfileSatistics")]
+        public IActionResult GetProfileSatistics(int id)
+        {
+            try
+            {
+                logger.LogInformation("Gat User satistics");
+                List<ProfileSatistics> userSatistics = userData.GetProfileSatistics(id);
+                if (userSatistics.Count <= 0)
+                {
+                    return BadRequest();
+                }
+                return Ok(userSatistics[0]);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Somthing went wrong while get the user satistics");
+                return NotFound(ex);
+            }
+        }
+
+
+
     }
 }

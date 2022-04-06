@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { View, StyleSheet, Alert } from 'react-native';
 import { DrawerContentScrollView, useDrawerStatus } from '@react-navigation/drawer';
 import { Avatar, Title, Caption, Drawer, Badge, Snackbar, Portal } from 'react-native-paper';
-import { _getData, _removeData } from '../utils/Functions';
+import { _getData, _logout, _removeData } from '../utils/Functions';
 import { API } from '../api/api';
 import GeneralContext from '../utils/GeneralContext';
 
@@ -48,19 +48,18 @@ const MyDrawerContent = (props) => {
     }, [isDrawerOpen])
 
 
-    // התנתקות
-    const logout = async () => {
-        try {
-            const res = await _removeData("User");
-            if(res)
-            {
-                navigation.replace("LoginScreen");
-                console.log("Sign out");
-            }
-        } catch (e) {
-            // remove error
-        }
-    }
+    // // התנתקות
+    // const logout = async () => {
+    //     try {
+    //         const res = await _removeData("User");
+    //         if (res) {
+    //             navigation.replace("LoginScreen");
+    //             console.log("Sign out");
+    //         }
+    //     } catch (e) {
+    //         console.log(error);
+    //     }
+    // }
 
 
     // מטפל בבחירת מסך מהדראוור
@@ -132,7 +131,7 @@ const MyDrawerContent = (props) => {
                         theme={{ colors: { text: "#990f02" } }}
                         icon="logout"
                         label="התנתק/י"
-                        onPress={logout}
+                        onPress={() =>_logout(navigation)}
                         style={styles.drawerItem}
                         color="red"
                     />

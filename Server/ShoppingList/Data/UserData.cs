@@ -70,7 +70,21 @@ namespace ShoppingList.Data
             return users[0];
         }
 
-    
-  
+        // what do you think mates? to create profile contoller? ot keep profile things here?
+        public int DeleteUser(int id)
+        {
+            SqlCommand cmd = db.CreateCommand("Proc_Delete_User", db.Connect(), "proc");
+            cmd.Parameters.Add("@UserID", SqlDbType.Int).Value = id;
+            return db.ExecuteAndClose(cmd);
+        }
+
+        public List<ProfileSatistics> GetProfileSatistics(int id)
+        {
+            SqlCommand cmd = db.CreateCommand("Proc_Get_Profile_Satistics", db.Connect(), "proc");
+            cmd.Parameters.Add("@UserID", SqlDbType.Int).Value = id;
+            DataTable tb = db.ReadAndClose(cmd);
+            List<ProfileSatistics> userSatistics = db.ConvertDataTable<ProfileSatistics>(tb);
+            return userSatistics;
+        }
     }
 }

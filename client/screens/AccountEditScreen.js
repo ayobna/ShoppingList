@@ -5,13 +5,8 @@ import { _getData, _storeData } from "../utils/Functions";
 import {
   View,
   StyleSheet,
-  FlatList,
-  TouchableHighlight,
-  Pressable,
-  TouchableOpacity,
-  KeyboardAvoidingView,
+  ScrollView
 } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
 import {
   TextInput,
   IconButton,
@@ -19,8 +14,11 @@ import {
   Text,
   Avatar,
   Caption,
+  Divider,
 } from "react-native-paper";
 import withCommonScreen from "../hoc/withCommonScreen";
+import Spinner from "../components/Spinner";
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 const AccountEditScreen = (props) => {
   const { navigation, route } = props;
 
@@ -31,37 +29,43 @@ const AccountEditScreen = (props) => {
     email: "",
     img: "",
   });
-  const [imageBase64, setImageBase64] = useState(null);
-
-  const [image, setImage] = useState(null);
-
-  useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", async () => {
-      const user = await LoadUser();
-
-      setUser(user);
-      setImage(`${API}/uploads/users/${user.img}`);
-    });
-    return unsubscribe;
-  }, [navigation, route]);
-
-  const LoadUser = async () => {
-    let u = await _getData("User");
-    return u;
-  };
-
   const [userInputsErrorMessage, setUserInputsErrorMessage] = useState({
     firstName: "",
     lastName: "",
     phoneNumber: "",
     email: "",
   });
-  const [userErrorAlreadyExistsMessage, setUserErrorAlreadyExistsMessage] =
-    useState("");
+  const [imageBase64, setImageBase64] = useState(null);
+  const [image, setImage] = useState(null);
+  const [isPageLoaded, setIsPageLoaded] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", async () => {
+      const user = await loadUser();
+
+      setUser(user);
+      setImage(`${API}/uploads/users/${user.img}`);
+      setIsPageLoaded(true);
+    });
+    return unsubscribe;
+  }, [navigation, route]);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("blur", () => {
+      setIsPageLoaded(false);
+    });
+    return unsubscribe;
+  }, [navigation, route]);
+
+  const loadUser = async () => {
+    let u = await _getData("User");
+    return u;
+  };
+
+
 
   const pickImage = async () => {
-    const permissionResult =
-      await ImagePicker.requestMediaLibraryPermissionsAsync(); // בקשת הרשאה לגלריה
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync(); // בקשת הרשאה לגלריה
 
     if (permissionResult.granted === false) {
       Alert.alert("יש צורך בהרשאת גלריה");
@@ -95,7 +99,7 @@ const AccountEditScreen = (props) => {
     }
   };
 
-  const Save = async () => {
+  const save = async () => {
     try {
       let isHaveBase64Img = false;
       let userToUpdate = user;
@@ -111,6 +115,7 @@ const AccountEditScreen = (props) => {
       console.log(res.data);
       const resOfDataStore = await _storeData("User", res.data);
       setUser(res.data);
+      navigation.goBack();
     } catch (e) {
       console.log(e);
     }
@@ -120,7 +125,7 @@ const AccountEditScreen = (props) => {
     if (checkValidation() !== 4) {
       return;
     }
-    Save();
+    save();
   };
 
   const checkValidation = () => {
@@ -184,219 +189,236 @@ const AccountEditScreen = (props) => {
   };
 
   return (
-    <View style={{ flex: 1, flexDirection: "column" }}>
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        <View style={styles.container}>
-          <View style={styles.Image}>
-            <Avatar.Image
-              size={150}
-              source={{
-                uri: image,
-              }}
-            />
-            <View style={styles.ViewButtons}>
-              <View style={styles.btnImg}>
-                <Button
-                  mode="outlined"
-                  theme={{ colors: { primary: `white` } }}
-                  labelStyle={{ color: "black" }}
-                  contentStyle={{ backgroundColor: "#bfbfbf" }}
-                  onPress={pickImage}
-                >
-                  פחר תמונה
-                </Button>
-              </View>
-              <View style={styles.btnImg}>
-                <Button
-                  mode="outlined"
-                  theme={{ colors: { primary: `white` } }}
-                  labelStyle={{ color: "black" }}
-                  contentStyle={{ backgroundColor: "#bfbfbf" }}
+    isPageLoaded ?
+      <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.scrollViewContentContainer}>
+          <View style={styles.mainWrapper}>
+            <View style={styles.Image}>
+              <Avatar.Image
+                size={140}
+                source={{
+                  uri: image,
+                }}
+              />
+
+              <View style={styles.cameraButtonWrapper}>
+                <IconButton
+                  icon="camera"
+                  style={{ backgroundColor: "#c1c1c1" }}
+                  color="black"
+                  size={20}
                   onPress={openCamera}
-                >
-                  צלם תמונה
-                </Button>
+                />
+              </View>
+
+              <View style={styles.galleryButtonWrapper}>
+                <IconButton
+                  icon="image"
+                  style={{ backgroundColor: "#c1c1c1" }}
+                  color="black"
+                  size={20}
+                  onPress={pickImage}
+                />
+              </View>
+
+              <View style={styles.removeImageButtonWrapper}>
+                <IconButton
+                  icon="close"
+                  style={{ backgroundColor: "#c1c1c1" }}
+                  color="black"
+                  size={20}
+                  onPress={() => console.log('Pressed')}
+                />
+              </View>
+            </View>
+
+            <View style={styles.inputsContainer}>
+              <View style={{ width: "100%", paddingLeft: 10 }}>
+                <Caption>פרטים אישיים</Caption>
+              </View>
+              <Divider style={{ width: "100%" }} />
+              <View style={styles.inputsWrapper}>
+                <TextInput
+                  label="אימייל"
+                  mode="outlined"
+                  disabled
+                  value={user.email}
+                  onChangeText={(text) =>
+                    setUser((prevState) => ({
+                      ...prevState,
+                      email: text,
+                    }))
+                  }
+                  keyboardType="email-address"
+                  selectionColor="#919191"
+                  activeOutlineColor="#919191"
+                  dense
+                  style={{ backgroundColor: "white" }}
+                  left={
+                    <TextInput.Icon
+                      color={
+                        userInputsErrorMessage.email !== ""
+                          ? "#d0312d"
+                          : "#c1c1c1"
+                      }
+                      name="email-outline"
+                    />
+                  }
+                  error={userInputsErrorMessage.email !== ""}
+                />
+                {userInputsErrorMessage.email !== "" && (
+                  <View style={styles.captionErrorWrapper}>
+                    <Caption style={styles.captionError}>
+                      {userInputsErrorMessage.email}
+                    </Caption>
+                  </View>
+                )}
+
+                <View style={styles.inputWrapper}>
+                  <TextInput
+                    label="שם פרטי"
+                    mode="outlined"
+                    value={user.firstName}
+                    onChangeText={(text) =>
+                      setUser((prevState) => ({
+                        ...prevState,
+                        firstName: text,
+                      }))
+                    }
+                    selectionColor="#919191"
+                    activeOutlineColor="#919191"
+                    dense
+                    style={{ backgroundColor: "white" }}
+                    left={
+                      <TextInput.Icon
+                        color={
+                          userInputsErrorMessage.firstName !== ""
+                            ? "#d0312d"
+                            : "#c1c1c1"
+                        }
+                        name="format-text"
+                      />
+                    }
+                    error={userInputsErrorMessage.firstName !== ""}
+                  />
+                  {userInputsErrorMessage.firstName !== "" && (
+                    <View style={styles.captionErrorWrapper}>
+                      <Caption style={styles.captionError}>
+                        {userInputsErrorMessage.firstName}
+                      </Caption>
+                    </View>
+                  )}
+                </View>
+
+                <View style={styles.inputWrapper}>
+                  <TextInput
+                    label="שם משפחה"
+                    mode="outlined"
+                    value={user.lastName}
+                    onChangeText={(text) =>
+                      setUser((prevState) => ({
+                        ...prevState,
+                        lastName: text,
+                      }))
+                    }
+                    selectionColor="#919191"
+                    activeOutlineColor="#919191"
+                    dense
+                    style={{ backgroundColor: "white" }}
+                    left={
+                      <TextInput.Icon
+                        color={
+                          userInputsErrorMessage.lastName !== ""
+                            ? "#d0312d"
+                            : "#c1c1c1"
+                        }
+                        name="format-text"
+                      />
+                    }
+                    error={userInputsErrorMessage.lastName !== ""}
+                  />
+                  {userInputsErrorMessage.lastName !== "" && (
+                    <View style={styles.captionErrorWrapper}>
+                      <Caption style={styles.captionError}>
+                        {userInputsErrorMessage.lastName}
+                      </Caption>
+                    </View>
+                  )}
+                </View>
+
+                <View style={styles.inputWrapper}>
+                  <TextInput
+                    label="פלאפון"
+                    mode="outlined"
+                    value={user.phoneNumber}
+                    onChangeText={(text) =>
+                      setUser((prevState) => ({
+                        ...prevState,
+                        phoneNumber: text.replace(/[^0-9]/g, ""),
+                      }))
+                    }
+                    selectionColor="#919191"
+                    activeOutlineColor="#919191"
+                    keyboardType="numeric"
+                    maxLength={10}
+                    dense
+                    style={{ backgroundColor: "white" }}
+                    left={
+                      <TextInput.Icon
+                        color={
+                          userInputsErrorMessage.phoneNumber !== ""
+                            ? "#d0312d"
+                            : "#c1c1c1"
+                        }
+                        name="cellphone"
+                      />
+                    }
+                    error={userInputsErrorMessage.phoneNumber !== ""}
+                  />
+                  {userInputsErrorMessage.phoneNumber !== "" && (
+                    <View style={styles.captionErrorWrapper}>
+                      <Caption style={styles.captionError}>
+                        {userInputsErrorMessage.phoneNumber}
+                      </Caption>
+                    </View>
+                  )}
+                </View>
+              </View>
+              <View>
+              </View>
+            </View>
+
+            <View style={styles.bottomBtnsContainer}>
+              <View style={styles.bottomBtnsWrapper}>
+                <View style={styles.bottomBtnWrapper}>
+                  <Button
+                    mode="outlined"
+                    theme={{ colors: { primary: `white` } }}
+                    labelStyle={{ color: "black" }}
+                    contentStyle={{ backgroundColor: "#bfbfbf" }}
+                    onPress={() => navigation.goBack()}
+                  >
+                    ביטול
+                  </Button>
+                </View>
+                <View style={styles.bottomBtnWrapper}>
+                  <Button
+                    mode="outlined"
+                    theme={{ colors: { primary: `white` } }}
+                    labelStyle={{ color: "black" }}
+                    contentStyle={{ backgroundColor: "#bfbfbf" }}
+                    onPress={handleSave}
+                  >
+                    שמור
+                  </Button>
+                </View>
               </View>
             </View>
           </View>
-
-          <View style={styles.TextInputViews}>
-            <View>
-              <TextInput
-                label="אימייל"
-                mode="outlined"
-                disabled
-                value={user.email}
-                onChangeText={(text) =>
-                  setUser((prevState) => ({
-                    ...prevState,
-                    email: text,
-                  }))
-                }
-                keyboardType="email-address"
-                selectionColor="#919191"
-                activeOutlineColor="#919191"
-                dense
-                style={{ backgroundColor: "white" }}
-                left={
-                  <TextInput.Icon
-                    color={
-                      userInputsErrorMessage.email !== ""
-                        ? "#d0312d"
-                        : "#c1c1c1"
-                    }
-                    name="email-outline"
-                  />
-                }
-                error={userInputsErrorMessage.email !== ""}
-              />
-              {userInputsErrorMessage.email !== "" && (
-                <View style={styles.captionErrorWrapper}>
-                  <Caption style={styles.captionError}>
-                    {userInputsErrorMessage.email}
-                  </Caption>
-                </View>
-              )}
-            </View>
-
-            <View style={styles.inputWrapper}>
-              <TextInput
-                label="שם פרטי"
-                mode="outlined"
-                value={user.firstName}
-                onChangeText={(text) =>
-                  setUser((prevState) => ({
-                    ...prevState,
-                    firstName: text,
-                  }))
-                }
-                selectionColor="#919191"
-                activeOutlineColor="#919191"
-                dense
-                style={{ backgroundColor: "white" }}
-                left={
-                  <TextInput.Icon
-                    color={
-                      userInputsErrorMessage.firstName !== ""
-                        ? "#d0312d"
-                        : "#c1c1c1"
-                    }
-                    name="format-text"
-                  />
-                }
-                error={userInputsErrorMessage.firstName !== ""}
-              />
-              {userInputsErrorMessage.firstName !== "" && (
-                <View style={styles.captionErrorWrapper}>
-                  <Caption style={styles.captionError}>
-                    {userInputsErrorMessage.firstName}
-                  </Caption>
-                </View>
-              )}
-            </View>
-
-            <View style={styles.inputWrapper}>
-              <TextInput
-                label="שם משפחה"
-                mode="outlined"
-                value={user.lastName}
-                onChangeText={(text) =>
-                  setUser((prevState) => ({
-                    ...prevState,
-                    lastName: text,
-                  }))
-                }
-                selectionColor="#919191"
-                activeOutlineColor="#919191"
-                dense
-                style={{ backgroundColor: "white" }}
-                left={
-                  <TextInput.Icon
-                    color={
-                      userInputsErrorMessage.lastName !== ""
-                        ? "#d0312d"
-                        : "#c1c1c1"
-                    }
-                    name="format-text"
-                  />
-                }
-                error={userInputsErrorMessage.lastName !== ""}
-              />
-              {userInputsErrorMessage.lastName !== "" && (
-                <View style={styles.captionErrorWrapper}>
-                  <Caption style={styles.captionError}>
-                    {userInputsErrorMessage.lastName}
-                  </Caption>
-                </View>
-              )}
-            </View>
-
-            <View style={styles.inputWrapper}>
-              <TextInput
-                label="פלאפון"
-                mode="outlined"
-                value={user.phoneNumber}
-                onChangeText={(text) =>
-                  setUser((prevState) => ({
-                    ...prevState,
-                    phoneNumber: text.replace(/[^0-9]/g, ""),
-                  }))
-                }
-                selectionColor="#919191"
-                activeOutlineColor="#919191"
-                keyboardType="numeric"
-                maxLength={10}
-                dense
-                style={{ backgroundColor: "white" }}
-                left={
-                  <TextInput.Icon
-                    color={
-                      userInputsErrorMessage.phoneNumber !== ""
-                        ? "#d0312d"
-                        : "#c1c1c1"
-                    }
-                    name="cellphone"
-                  />
-                }
-                error={userInputsErrorMessage.phoneNumber !== ""}
-              />
-              {userInputsErrorMessage.phoneNumber !== "" && (
-                <View style={styles.captionErrorWrapper}>
-                  <Caption style={styles.captionError}>
-                    {userInputsErrorMessage.phoneNumber}
-                  </Caption>
-                </View>
-              )}
-            </View>
-          </View>
-          <View style={styles.ViewButtons}>
-            <View style={styles.btnImg}>
-              <Button
-                mode="outlined"
-                theme={{ colors: { primary: `white` } }}
-                labelStyle={{ color: "black" }}
-                contentStyle={{ backgroundColor: "#bfbfbf" }}
-                onPress={() => navigation.goBack()}
-              >
-                ביטול
-              </Button>
-            </View>
-
-            <View style={styles.btnImg}>
-              <Button
-                mode="outlined"
-                theme={{ colors: { primary: `white` } }}
-                labelStyle={{ color: "black" }}
-                contentStyle={{ backgroundColor: "#bfbfbf" }}
-                onPress={handleSave}
-              >
-                שמור
-              </Button>
-            </View>
-          </View>
-        </View>
-      </ScrollView>
-    </View>
+        </ScrollView>
+      </View>
+      :
+      <Spinner />
   );
 };
 
@@ -404,52 +426,48 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
-    alignItems: "center",
-    justifyContent: "space-around",
+  },
+  scrollViewContentContainer: {
+    flexGrow: 1
+  },
+  mainWrapper: {
+    flex: 1,
+    justifyContent: "space-around"
   },
   Image: {
-    marginTop: "10%",
+    marginVertical: "5%",
     alignItems: "center",
   },
-  ViewButton: {
-    marginTop: "8%",
-    width: "50%",
-    marginLeft: "25%",
-
-    //alignItems:'center',
+  cameraButtonWrapper: {
+    position: "absolute",
+    top: 0,
+    left: 185,
+    right: 0,
+    bottom: 0,
     justifyContent: "center",
+    alignItems: "center"
   },
-  ViewButtons: {
-    marginTop: "3%",
-    flexDirection: "row",
-    marginBottom: "2%",
+  galleryButtonWrapper: {
+    position: "absolute",
+    top: 75,
+    left: 170,
+    right: 0,
+    bottom: 0,
+    justifyContent: "center",
+    alignItems: "center"
   },
-  btnImg: {
-    width: "30%",
-    flexDirection: "row",
+  removeImageButtonWrapper: {
+    position: "absolute",
+    top: 137,
+    left: 125,
+    right: 0,
+    bottom: 0,
+    justifyContent: "center",
+    alignItems: "center"
   },
-  TextInputViews: {
-    width: "80%",
-  },
-  TextInputView: {
-    width: "100%",
-  },
-  btnWrapped: {
-    marginTop: 25,
-  },
+
   inputWrapper: {
     marginTop: 20,
-  },
-  loginWrapper: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginTop: 20,
-  },
-  btnLoginWrapper: {
-    marginLeft: 10,
-  },
-  loginLink: {
-    color: "#0502a0",
   },
   captionError: {
     color: "#d0312d",
@@ -457,6 +475,26 @@ const styles = StyleSheet.create({
   captionErrorWrapper: {
     marginLeft: 5,
   },
+  inputsContainer: {
+    alignItems: "center",
+    marginTop: 15
+  },
+  inputsWrapper: {
+    width: "80%",
+    marginVertical: 20
+  },
+  bottomBtnsContainer: {
+    alignItems: "center",
+    marginVertical: 30
+  },
+  bottomBtnsWrapper: {
+    width: "80%",
+    flexDirection: "row",
+    justifyContent: "space-between"
+  },
+  bottomBtnWrapper: {
+    width: "49%"
+  }
 });
 
 export default withCommonScreen(AccountEditScreen, 'AccountEditScreen');

@@ -21,7 +21,7 @@ const LoginScreen = (props) => {
 
   // states
   const [isPageLoaded, setIsPageLoaded] = useState(false);
-  const [email, setEmail] = useState("test@g.com");
+  const [email, setEmail] = useState("test@gmail.com");
   const [password, setPassword] = useState("test1234");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [loginUserDetails, setLoginUserDetails] = useState();

@@ -71,6 +71,30 @@ Begin transaction
 commit transaction
 go
 
+
+Create proc Proc_Delete_User
+@UserID int
+as
+Begin transaction
+	UPDATE [users]
+	SET [IsActive] = 0
+	WHERE [UserID] = @UserID	
+	IF @@ERROR<>0
+		Begin
+			rollback transaction
+			return
+		End
+commit transaction
+go
+
+
+Create proc Proc_Get_Profile_Satistics
+@UserID int
+as
+	Select dbo.Func_Return_Amount_Of_Lists_Created_By_CurrentUser(@UserID) as MyListsAmount, dbo.Func_Return_Amount_Of_Lists_Current_User_Shares_But_No_Creator(@UserID) as OtherListsAmount
+go
+
+exec  Proc_Get_Profile_Satistics 13
 --exec Proc_Get_User_By_Id 2
 
 
