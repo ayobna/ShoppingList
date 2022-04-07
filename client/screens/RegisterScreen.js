@@ -19,8 +19,11 @@ import {
 } from "react-native-paper";
 import { userApi } from "../api/api";
 import withCommonScreen from "../hoc/withCommonScreen";
+import * as Crypto from 'expo-crypto';
+
+
 const RegisterScreen = (props) => {
-  const { navigation} = props;
+  const { navigation } = props;
 
   const [user, setUser] = useState({
     FirstName: "",
@@ -50,7 +53,12 @@ const RegisterScreen = (props) => {
     if (checkValidation() !== 6) {
       return;
     }
-    const res = await createUser();
+    const digest = await Crypto.digestStringAsync(
+      Crypto.CryptoDigestAlgorithm.SHA512,
+      user.Password
+    );
+    const userCrypto = { ...user, Password: digest }
+    const res = await createUser(userCrypto);
     if (res === -1) // user already exists
     {
       setUserErrorAlreadyExistsMessage("המשתמש כבר קיים, נסה מייל אחר!");
@@ -111,9 +119,9 @@ const RegisterScreen = (props) => {
     return counter;
   };
 
-  const createUser = async () => {
+  const createUser = async (userCrypto) => {
     try {
-      let res = await userApi.apiUsersCreateUserPost(user);
+      let res = await userApi.apiUsersCreateUserPost(userCrypto);
       if (res.status >= 200 && res.status < 300) {
         let data = res.data;
         return data;
