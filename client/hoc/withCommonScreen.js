@@ -5,6 +5,8 @@ const withCommonScreen = (WrappedComponent, screenName) => props => {
 
     const { navigation, route } = props;
     const { setCurrentDrawerScreen, requestDataGlobal, setRequestDataGlobal } = useContext(GeneralContext);
+    const [isPageLoaded, setIsPageLoaded] = useState(false);
+    const [isFetching, setIsFetching] = useState(true);
 
     useEffect(() => {
         const unsubscribe = navigation.addListener("focus", async () => {
@@ -33,6 +35,13 @@ const withCommonScreen = (WrappedComponent, screenName) => props => {
     }, [navigation, route]);
 
     useEffect(() => {
+        const unsubscribe = navigation.addListener("blur", async () => {
+            setIsPageLoaded(false);
+        });
+        return unsubscribe;
+    }, [navigation, route]);
+
+    useEffect(() => {
         if (requestDataGlobal) {
             if (screenName === 'RegisterScreen' || screenName === 'LoginScreen') {
                 resetRequestDataGlobalState();
@@ -45,6 +54,19 @@ const withCommonScreen = (WrappedComponent, screenName) => props => {
         }
     }, [requestDataGlobal]);
 
+    const setIsPageLoadedTrue = () => {
+        setIsPageLoaded(true);
+    };
+
+    const setIsFetchingTrue = () => {
+        setIsFetching(true);
+    };
+
+    const setIsFetchingFalse = () => {
+        setIsFetching(false);
+    };
+
+
     const resetRequestDataGlobalState = () => {
         setRequestDataGlobal();
     };
@@ -56,10 +78,20 @@ const withCommonScreen = (WrappedComponent, screenName) => props => {
                 {...props}
                 resetRequestDataGlobalState={resetRequestDataGlobalState}
                 requestDataGlobal={requestDataGlobal}
+                isPageLoaded={isPageLoaded}
+                setIsPageLoadedTrue={setIsPageLoadedTrue}
+                setIsFetchingTrue={setIsFetchingTrue}
+                setIsFetchingFalse={setIsFetchingFalse}
+                isFetching={isFetching}
             />
             :
             <WrappedComponent
                 {...props}
+                isPageLoaded={isPageLoaded}
+                setIsPageLoadedTrue={setIsPageLoadedTrue}
+                setIsFetchingTrue={setIsFetchingTrue}
+                setIsFetchingFalse={setIsFetchingFalse}
+                isFetching={isFetching}
             />
     );
 };

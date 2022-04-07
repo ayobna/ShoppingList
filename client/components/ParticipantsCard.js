@@ -5,46 +5,46 @@ import { API } from '../api/api';
 
 const ParticipantsCard = (props) => {
   // props
-  const { data, listCreatorId,deleteParticipant, currentUser } = props;
+  const { data, listCreatorId, deleteParticipant, currentUser } = props;
 
   const rightContent = props => (
-  <View style={styles.buttonContainer}>
-    {listCreatorId !== data.userID &&  <IconButton
-      icon="delete"
-      color='red'
-      size={20}
-      onPress={() => deleteParticipant(data.userID)}
-  />}
-</View>
-)
+    <View style={styles.buttonContainer}>
+      {listCreatorId !== data.userID && <IconButton
+        icon="delete"
+        color='red'
+        size={20}
+        onPress={() => deleteParticipant(data.userID)}
+      />}
+    </View>
+  )
 
   const leftContent = (props) => (
-    <Avatar.Image size={60} source={{ uri:API+'/uploads/users/'+data.img }} />
+    <Avatar.Image size={60} source={{ uri: API + '/uploads/users/' + data.img }} />
   );
 
 
   return (
     <View style={{ ...styles.container, ...props.style }}>
-{currentUser.userID===listCreatorId?        
-<Card>
-        <Card.Title
-            titleNumberOfLines={3}
-            title={`שם:${data.firstName+' '+data.lastName}`}
-           subtitle={ data.userID===listCreatorId? 'יוצר':''}
-           subtitleStyle={{color:'green'}}
-           right={rightContent}
-          left={leftContent}
-          />
-</Card>:
+      {currentUser.userID === listCreatorId ?
         <Card>
-        <Card.Title
+          <Card.Title
             titleNumberOfLines={3}
-            title={`שם:${data.firstName+' '+data.lastName}`}
-           subtitle={ data.userID===listCreatorId? 'יוצר':''}
-           subtitleStyle={{color:'green'}}
-          left={leftContent}
+            title={data.firstName + ' ' + data.lastName}
+            subtitle={data.userID === listCreatorId ? 'יוצר' : ''}
+            subtitleStyle={{ color: 'green' }}
+            right={rightContent}
+            left={leftContent}
           />
-</Card>}
+        </Card> :
+        <Card>
+          <Card.Title
+            titleNumberOfLines={3}
+            title={data.firstName + ' ' + data.lastName}
+            subtitle={data.userID === listCreatorId ? 'יוצר' : ''}
+            subtitleStyle={{ color: 'green' }}
+            left={leftContent}
+          />
+        </Card>}
 
     </View>
   );

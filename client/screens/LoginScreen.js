@@ -17,10 +17,9 @@ const Time_For_Code = 10;
 
 const LoginScreen = (props) => {
   // props
-  const { navigation } = props;
+  const { navigation, isPageLoaded, setIsPageLoadedTrue } = props;
 
   // states
-  const [isPageLoaded, setIsPageLoaded] = useState(false);
   const [email, setEmail] = useState("test@gmail.com");
   const [password, setPassword] = useState("test1234");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -52,7 +51,7 @@ const LoginScreen = (props) => {
     const unsubscribe = navigation.addListener("focus", async () => {
       const currentUser = await _getData("User");
       if (currentUser === null) {
-        setIsPageLoaded(true);
+        setIsPageLoadedTrue();
       }
       else {
         navigation.replace("myDrawer");
@@ -74,7 +73,6 @@ const LoginScreen = (props) => {
     setPassword("");
     setIsPasswordVisible(false);
     setLoginErrorMessage("");
-    setIsPageLoaded(false);
     setIsInsertEmailDialogVisible(false);
   };
 

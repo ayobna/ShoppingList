@@ -18,7 +18,7 @@ import { _getData } from "../utils/Functions";
 import withCommonScreen from "../hoc/withCommonScreen";
 const ChatScreen = (props) => {
   // props
-  const { navigation, route } = props;
+  const { navigation, route, isPageLoaded, setIsPageLoadedTrue } = props;
 
   // states
   const [connection, setConnection] = useState();
@@ -26,7 +26,6 @@ const ChatScreen = (props) => {
   const [users, setUsers] = useState([]);
   const [message, setMessage] = useState("");
   const [user, setUser] = useState();
-  const [isPageLoaded, setIsPageLoaded] = useState(false);
 
   const flatListRef = useRef();
 
@@ -39,7 +38,7 @@ const ChatScreen = (props) => {
       const u = await loadUser();
       if (u != null) {
         await joinChat(u.userID);
-        setIsPageLoaded(true);
+        setIsPageLoadedTrue();
       }
     });
     return unsubscribe;
@@ -50,7 +49,6 @@ const ChatScreen = (props) => {
     const unsubscribe = navigation.addListener("blur", async () => {
       console.log("leave chat")
       setMessages([]);
-      setIsPageLoaded(false);
     });
     return unsubscribe;
   }, [navigation, route]);

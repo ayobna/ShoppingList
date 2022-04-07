@@ -22,9 +22,10 @@ import { _getData, _sendPushNotification } from "../utils/Functions";
 import PopupDialog from "../components/PopupDialog";
 import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import withCommonScreen from "../hoc/withCommonScreen";
+import Spinner from "../components/Spinner";
 
 const ParticipantsScreen = (props) => {
-  const { navigation, route } = props;
+  const { navigation, route, isPageLoaded, setIsPageLoadedTrue, setIsFetchingTrue, setIsFetchingFalse, isFetching } = props;
   const { shoppingListID, shoppingListTitle } = route.params;
   const [participants, setParticipants] = useState([]);
   const [popupDialogVisible, setPopupDialogVisible] = useState(false);
@@ -39,12 +40,14 @@ const ParticipantsScreen = (props) => {
     const unsubscribe = navigation.addListener("focus", async () => {
       console.log("Participant screen");
       const creatorID = await GetListCreatorByListID();
-      const loginUser = await LoadUser();
+      const loginUser = await loadUser();
       const data = await GetParticipantsInTheShoppingList();
 
       setListCreatorId(creatorID);
       setCurrentUser(loginUser);
       setParticipants(data);
+      setIsPageLoadedTrue();
+      setIsFetchingFalse();
 
       console.log(route.params.shoppingListID);
     });
@@ -86,7 +89,7 @@ const ParticipantsScreen = (props) => {
   };
 
   //get to login user
-  const LoadUser = async () => {
+  const loadUser = async () => {
     let u = await _getData("User");
     return u;
   };
@@ -204,50 +207,62 @@ const ParticipantsScreen = (props) => {
     />
   );
 
-  return (
-    <View style={styles.container}>
-      <FlatList
-        showsVerticalScrollIndicator={false}
-        data={participants}
-        renderItem={(item) => renderListItem(item)}
-        keyExtractor={(item) => String(item.userID)}
-        contentContainerStyle={{ flexGrow: 1 }}
-        ListEmptyComponent={handleListEmptyComponent}
-      />
-      {currentUser && listCreatorId && currentUser.userID === listCreatorId && (
-        <FAB
-          style={styles.fab}
-          color="white"
-          icon="plus"
-          onPress={showPopupDialog}
-        />
-      )}
-      <View>
-        <PopupDialog
-          title={"חפוש משתמש"}
-          visible={popupDialogVisible}
-          cancel={cancelPopupDialog}
-          buttonCancelTitle="סגור חיפוש"
-        >
-          <Searchbar
-            placeholder="חיפוש"
-            onChangeText={(txt) => setSearchEmail(txt)}
-            value={searchEmail}
-            theme={{ colors: { primary: "black" }, roundness: 0 }}
-            iconColor="black"
-            onIconPress={searchPress}
-          />
+  const handleRefresh = async () => {
+    setIsFetchingTrue();
+    const data = await GetParticipantsInTheShoppingList();
+    setParticipants(data);
+    setIsFetchingFalse();
+  };
 
-          {searchResult.length === 0 ? (
-            <View style={styles.noResultWrapper}>
-              <Text>אין תוצאות</Text>
-            </View>
-          ) : (
-            <View>{showResult()}</View>
-          )}
-        </PopupDialog>
+  return (
+    isPageLoaded ?
+      <View style={styles.container}>
+        <FlatList
+          showsVerticalScrollIndicator={false}
+          data={participants}
+          renderItem={(item) => renderListItem(item)}
+          keyExtractor={(item) => String(item.userID)}
+          contentContainerStyle={{ flexGrow: 1 }}
+          ListEmptyComponent={handleListEmptyComponent}
+          refreshing={isFetching}
+          onRefresh={() => handleRefresh()}
+        />
+        {currentUser && listCreatorId && currentUser.userID === listCreatorId && (
+          <FAB
+            style={styles.fab}
+            color="white"
+            icon="plus"
+            onPress={showPopupDialog}
+          />
+        )}
+        <View>
+          <PopupDialog
+            title={"חפוש משתמש"}
+            visible={popupDialogVisible}
+            cancel={cancelPopupDialog}
+            buttonCancelTitle="סגור חיפוש"
+          >
+            <Searchbar
+              placeholder="חיפוש"
+              onChangeText={(txt) => setSearchEmail(txt)}
+              value={searchEmail}
+              theme={{ colors: { primary: "black" }, roundness: 0 }}
+              iconColor="black"
+              onIconPress={searchPress}
+            />
+
+            {searchResult.length === 0 ? (
+              <View style={styles.noResultWrapper}>
+                <Text>אין תוצאות</Text>
+              </View>
+            ) : (
+              <View>{showResult()}</View>
+            )}
+          </PopupDialog>
+        </View>
       </View>
-    </View>
+      :
+      <Spinner />
   );
 };
 
