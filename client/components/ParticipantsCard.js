@@ -13,7 +13,7 @@ const ParticipantsCard = (props) => {
         icon="delete"
         color='red'
         size={20}
-        onPress={() => deleteParticipant(data.userID)}
+        onPress={() => deleteParticipant(data)}
       />}
     </View>
   )

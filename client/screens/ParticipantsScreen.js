@@ -29,6 +29,8 @@ const ParticipantsScreen = (props) => {
   const { shoppingListID, shoppingListTitle } = route.params;
   const [participants, setParticipants] = useState([]);
   const [popupDialogVisible, setPopupDialogVisible] = useState(false);
+  const [popupDialogRemoveParticipantVisible, setPopupDialogRemoveParticipantVisible] = useState(false);
+  const [deleteParticipantData, setDeleteParticipantData] = useState();
   const [listCreatorId, setListCreatorId] = useState();
   const [currentUser, setCurrentUser] = useState();
   const [searchListUser, setSearchListUser] = useState();
@@ -60,7 +62,13 @@ const ParticipantsScreen = (props) => {
     });
 
     return unsubscribe;
-  }, [route]);
+  }, [navigation, route]);
+
+  useEffect(() => {
+    if (deleteParticipantData) {
+      setPopupDialogRemoveParticipantVisible(true);
+    }
+  }, [deleteParticipantData]);
 
   //get all the participants in the list
   const GetParticipantsInTheShoppingList = async () => {
@@ -126,7 +134,9 @@ const ParticipantsScreen = (props) => {
   const cancelPopupDialog = () => {
     setSearchEmail("");
     setSearchResult([]);
+    setDeleteParticipantData();
     setPopupDialogVisible(false);
+    setPopupDialogRemoveParticipantVisible(false);
   };
 
   const searchPress = async () => {
@@ -182,16 +192,23 @@ const ParticipantsScreen = (props) => {
     }
   };
 
+  const handlePopUpDialogDeleteParticipant = (participantToDelete) => {
+    setDeleteParticipantData(participantToDelete);
+  };
+  const handleDeleteParticipant = async () => {
+    await deleteParticipant();
+    const data = await GetParticipantsInTheShoppingList();
+    setParticipants(data);
+    cancelPopupDialog();
+  };
+
   // delete a participant from the list users by the list creator
   const deleteParticipant = async (userId) => {
     try {
-      let res = await shoppingListApi.apiShoppingListExitShoppingListPost(
+      await shoppingListApi.apiShoppingListExitShoppingListPost(
         shoppingListID,
-        userId
+        deleteParticipantData.userID
       );
-      console.log("deleteParticipant", res.data);
-      const data = await GetParticipantsInTheShoppingList();
-      setParticipants(data);
     } catch (e) {
       console.log(e);
     }
@@ -202,7 +219,7 @@ const ParticipantsScreen = (props) => {
     <ParticipantsCard
       data={itemData.item}
       listCreatorId={listCreatorId}
-      deleteParticipant={deleteParticipant}
+      deleteParticipant={handlePopUpDialogDeleteParticipant}
       currentUser={currentUser}
     />
   );
@@ -235,13 +252,14 @@ const ParticipantsScreen = (props) => {
             onPress={showPopupDialog}
           />
         )}
-        <View>
-          <PopupDialog
-            title={"חפוש משתמש"}
-            visible={popupDialogVisible}
-            cancel={cancelPopupDialog}
-            buttonCancelTitle="סגור חיפוש"
-          >
+        <PopupDialog
+          title={"חפוש משתמש"}
+          visible={popupDialogVisible}
+          cancel={cancelPopupDialog}
+          buttonCancelTitle="סגור חיפוש"
+        >
+          {
+            popupDialogVisible &&
             <Searchbar
               placeholder="חיפוש"
               onChangeText={(txt) => setSearchEmail(txt)}
@@ -250,16 +268,26 @@ const ParticipantsScreen = (props) => {
               iconColor="black"
               onIconPress={searchPress}
             />
+          }
 
-            {searchResult.length === 0 ? (
-              <View style={styles.noResultWrapper}>
-                <Text>אין תוצאות</Text>
-              </View>
-            ) : (
-              <View>{showResult()}</View>
-            )}
+          {searchResult.length === 0 ? (
+            <View style={styles.noResultWrapper}>
+              <Text>אין תוצאות</Text>
+            </View>
+          ) : (
+            <View>{showResult()}</View>
+          )}
+        </PopupDialog>
+        {deleteParticipantData &&
+          <PopupDialog
+            title={"מחיקת משתמש מהרשימה"}
+            visible={popupDialogRemoveParticipantVisible}
+            cancel={cancelPopupDialog}
+            confirm={handleDeleteParticipant}
+          >
+            <Text>{`האם את/ה בטוח/ה שברצונך להוציא את ${deleteParticipantData.firstName + ' ' + deleteParticipantData.lastName} מהרשימה?`}</Text>
           </PopupDialog>
-        </View>
+        }
       </View>
       :
       <Spinner />
