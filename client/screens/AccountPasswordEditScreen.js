@@ -20,7 +20,7 @@ import withCommonScreen from "../hoc/withCommonScreen";
 import Spinner from "../components/Spinner";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 const AccountPasswordEditScreen = (props) => {
-    const { navigation, route } = props;
+    const { navigation, route, isPageLoaded, setIsPageLoadedTrue } = props;
 
     const [currentUser, setCurrentUser] = useState();
     const [oldPassword, setOldPassword] = useState("");
@@ -29,7 +29,6 @@ const AccountPasswordEditScreen = (props) => {
     const [oldPasswordErrorMessage, setOldPasswordErrorMessage] = useState("");
     const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
     const [confirmPasswordErrorMessage, setConfirmPasswordErrorMessage] = useState("");
-    const [isPageLoaded, setIsPageLoaded] = useState(false);
     const [isOldPasswordVisible, setIsOldPasswordVisible] = useState(false);
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
     const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
@@ -38,17 +37,12 @@ const AccountPasswordEditScreen = (props) => {
         const unsubscribe = navigation.addListener("focus", async () => {
             const user = await loadUser();
             setCurrentUser(user);
-            setIsPageLoaded(true);
+            setIsPageLoadedTrue();
         });
         return unsubscribe;
     }, [navigation, route]);
 
-    useEffect(() => {
-        const unsubscribe = navigation.addListener("blur", () => {
-            setIsPageLoaded(false);
-        });
-        return unsubscribe;
-    }, [navigation, route]);
+
 
     const loadUser = async () => {
         let u = await _getData("User");
@@ -64,8 +58,7 @@ const AccountPasswordEditScreen = (props) => {
         }
         const result = await save();
         console.log(result);
-        if(result === -1)
-        {
+        if (result === -1) {
             setOldPasswordErrorMessage("הסיסמה הישנה שגויה!");
             return;
         }
@@ -93,8 +86,7 @@ const AccountPasswordEditScreen = (props) => {
         if (!passwordRgx.test(oldPassword)) {
             setOldPasswordErrorMessage("סיסמה חייבת להכיל אות גדולה, ספרה וסימן מיוחד. אורך סיסמה לפחות 5 תווים");
         }
-        else
-        {
+        else {
             setOldPasswordErrorMessage("");
             counter++;
         }

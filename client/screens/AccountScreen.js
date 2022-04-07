@@ -9,12 +9,11 @@ import withCommonScreen from "../hoc/withCommonScreen";
 import { _getData, _logout } from "../utils/Functions";
 
 const AccountScreen = (props) => {
-  const { navigation, route } = props;
+  const { navigation, route, isPageLoaded, setIsPageLoadedTrue } = props;
 
   const [currentUser, setCurrentUser] = useState();
   const [isDeleteAccountDialogVisible, setIsDeleteAccountDialogVisible] = useState(false);
   const [userSatistics, setUserSatistics] = useState({ myListsAmount: 0, otherListsAmount: 0 });
-  const [isPageLoaded, setIsPageLoaded] = useState(false);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", async () => {
@@ -24,7 +23,7 @@ const AccountScreen = (props) => {
       console.log("satistics: ", satistics)
       setCurrentUser(user);
       setUserSatistics(satistics);
-      setIsPageLoaded(true);
+      setIsPageLoadedTrue();
     });
     return unsubscribe;
   }, [navigation, route]);
@@ -45,12 +44,6 @@ const AccountScreen = (props) => {
     return unsubscribe;
   }, [navigation, route]);
 
-  useEffect(() => {
-    const unsubscribe = navigation.addListener("blur", async () => {
-      setIsPageLoaded(false)
-    });
-    return unsubscribe;
-  }, [navigation, route]);
 
   const loadUser = async () => {
     let u = await _getData("User");

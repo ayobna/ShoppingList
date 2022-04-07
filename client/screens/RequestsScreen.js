@@ -4,6 +4,7 @@ import { Text, Divider } from 'react-native-paper';
 import { requestApi } from "../api/api";
 import PopupDialog from '../components/PopupDialog';
 import RequestsCard from '../components/RequestsCard';
+import Spinner from '../components/Spinner';
 import withCommonScreen from '../hoc/withCommonScreen';
 import { _getData } from '../utils/Functions';
 
@@ -11,7 +12,7 @@ import { _getData } from '../utils/Functions';
 
 const RequestsScreen = (props) => {
   // props
-  const { navigation, route, resetRequestDataGlobalState, requestDataGlobal } = props;
+  const { navigation, route, resetRequestDataGlobalState, requestDataGlobal, isPageLoaded, setIsPageLoadedTrue, setIsFetchingTrue, setIsFetchingFalse, isFetching } = props;
 
   // states
   const [currentUser, setCurrentUser] = useState();
@@ -24,11 +25,16 @@ const RequestsScreen = (props) => {
       const user = await _getData("User");
       if (user !== null) {
         setCurrentUser(user);
-        getRequests(user.userID);
+        const data = await getRequests(user.userID);
+        setRequests(data);
+        setIsPageLoadedTrue();
+        setIsFetchingFalse();
       }
     });
     return unsubscribe;
   }, [navigation, route]);
+
+
 
   useEffect(() => {
     if (requestData) {
@@ -50,7 +56,8 @@ const RequestsScreen = (props) => {
             break;
           default:
             console.log("Default - withCommonScreen")
-            getRequests(requestDataGlobal.userID);
+            const data = await getRequests(requestDataGlobal.userID);
+            setRequests(data);
             break;
         }
         resetRequestDataGlobalState();
@@ -61,8 +68,7 @@ const RequestsScreen = (props) => {
 
   const getRequests = async (userID) => {
     let res = await requestApi.apiRequestsApiRequestsGetRequestsByUserIdIdGet(userID);
-    let data = res.data
-    setRequests(data);
+    return res.data
   }
 
   // מרנדר את הבקשות
@@ -90,7 +96,8 @@ const RequestsScreen = (props) => {
     const userID = requestDataGlobal ? requestDataGlobal.userID : currentUser.userID;
     try {
       await requestApi.apiRequestsApiRequestsConfirmRequestPost({ listID: listID, userID: userID });
-      getRequests(userID);
+      const data = await getRequests(userID);
+      setRequests(data);
 
     } catch (e) {
       console.log(e);
@@ -111,7 +118,8 @@ const RequestsScreen = (props) => {
     const listID = requestDataGlobal ? requestDataGlobal.listID : requestData;
     try {
       await requestApi.apiRequestsApiRequestsDeclineRequestPost({ listID: listID, userID: userID });
-      getRequests(userID);
+      const data = await getRequests(userID);
+      setRequests(data);
       handleCancelPopupDialog();
 
     } catch (e) {
@@ -119,34 +127,45 @@ const RequestsScreen = (props) => {
     }
   };
 
+  const handleRefresh = async () => {
+    const userID = requestDataGlobal ? requestDataGlobal.userID : currentUser.userID;
+    setIsFetchingTrue();
+    const data = await getRequests(userID);
+    setRequests(data);
+    setIsFetchingFalse();
+  };
+
 
   return (
-    <View style={styles.container}>
-      <FlatList
-        showsVerticalScrollIndicator={false}
-        data={requests}
-        renderItem={(item) => renderListItem(item)}
-        keyExtractor={(item) => String(item.listID)}
-        contentContainerStyle={{ flexGrow: 1 }}
-        ListEmptyComponent={handleListEmptyComponent}
-        ItemSeparatorComponent={handleSeparatorComponent}
-      // ListFooterComponent={renderFooter}
-      // refreshing={isFetching}
-      // onRefresh={() => handleRefresh()}
-      />
-      <PopupDialog
-        title={"האם ברצונך לבטל בקשה?"}
-        visible={popupDialogVisible}
-        cancel={handleCancelPopupDialog}
-        confirm={declineRequest}
-      />
-    </View>
+    isPageLoaded ?
+      <View style={styles.container}>
+        <FlatList
+          showsVerticalScrollIndicator={false}
+          data={requests}
+          renderItem={(item) => renderListItem(item)}
+          keyExtractor={(item) => String(item.listID)}
+          contentContainerStyle={{ flexGrow: 1 }}
+          ListEmptyComponent={handleListEmptyComponent}
+          ItemSeparatorComponent={handleSeparatorComponent}
+          refreshing={isFetching}
+          onRefresh={() => handleRefresh()}
+        />
+        <PopupDialog
+          title={"האם ברצונך לבטל בקשה?"}
+          visible={popupDialogVisible}
+          cancel={handleCancelPopupDialog}
+          confirm={declineRequest}
+        />
+      </View>
+      :
+      <Spinner />
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    backgroundColor: "white"
   }
 });
 

@@ -20,7 +20,7 @@ import {
 import { userApi } from "../api/api";
 import withCommonScreen from "../hoc/withCommonScreen";
 const RegisterScreen = (props) => {
-  const { navigation, route } = props;
+  const { navigation} = props;
 
   const [user, setUser] = useState({
     FirstName: "",

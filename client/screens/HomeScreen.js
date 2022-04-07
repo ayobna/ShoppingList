@@ -6,10 +6,11 @@ import ShoppingListCard from "../components/ShoppingListCard";
 import PopupDialog from "../components/PopupDialog";
 import { _getData } from "../utils/Functions";
 import withCommonScreen from "../hoc/withCommonScreen";
+import Spinner from "../components/Spinner";
 
 const HomeScreen = (props) => {
   // props
-  const { navigation, route } = props;
+  const { navigation, route, isPageLoaded, setIsPageLoadedTrue, setIsFetchingTrue, setIsFetchingFalse, isFetching } = props;
 
   // states
   const [shoppingLists, setShoppingLists] = useState([]);
@@ -20,14 +21,15 @@ const HomeScreen = (props) => {
   const [chosenMethod, setChosenMethod] = useState();
   const [currentUser, setCurrentUser] = useState();
   const [searchQuery, setSearchQuery] = useState("");
-
   const extraDataForTabs = route.params.extraData;
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", async () => {
-      const user = await LoadUser();
-      const lists = await ShoppingListsGetFromAPI(user.userID);
+      const user = await loadUser();
+      await shoppingListsGetFromAPI(user.userID);
       setCurrentUser(user);
+      setIsPageLoadedTrue();
+      setIsFetchingFalse();
 
     });
     return unsubscribe;
@@ -59,14 +61,14 @@ const HomeScreen = (props) => {
     navigation.navigate("CreateList");
   };
 
-  const LoadUser = async () => {
+  const loadUser = async () => {
     let u = await _getData("User");
     console.log("LoadUser", u)
     //  setCurrentUser(u);
     return u;
   };
 
-  const ShoppingListsGetFromAPI = async (userID) => {
+  const shoppingListsGetFromAPI = async (userID) => {
     let res = null;
     try {
       if (extraDataForTabs == 1)
@@ -91,7 +93,6 @@ const HomeScreen = (props) => {
       data={itemData.item}
       navigation={navigation}
       extraDataForTabs={extraDataForTabs}
-      // handleDeleteProduct={handleDeleteProduct}
       handleChoice={handleChoice}
     />
   );
@@ -121,7 +122,7 @@ const HomeScreen = (props) => {
         chosenListDetails
       );
       handleCancelPopupDialog();
-      ShoppingListsGetFromAPI(currentUser.userID);
+      shoppingListsGetFromAPI(currentUser.userID);
     } catch (error) {
       console.warn(error);
     }
@@ -159,7 +160,7 @@ const HomeScreen = (props) => {
       let res = await shoppingListApi.apiShoppingListCopyShoppingListPost(data);
       console.log(res.data)
       handleCancelPopupDialog();
-      ShoppingListsGetFromAPI(currentUser.userID);
+      shoppingListsGetFromAPI(currentUser.userID);
     } catch (error) {
       console.warn(error);
     }
@@ -171,19 +172,19 @@ const HomeScreen = (props) => {
         chosenListDetails.listID
       );
       handleCancelPopupDialog();
-      ShoppingListsGetFromAPI(currentUser.userID);
+      shoppingListsGetFromAPI(currentUser.userID);
     } catch (error) {
       console.warn(error);
     }
   };
   const exitShoppingList = async () => {
     try {
-      let res = await shoppingListApi.apiShoppingListExitShoppingListPost(
+      await shoppingListApi.apiShoppingListExitShoppingListPost(
         chosenListDetails.listID,
         currentUser.userID
       );
       handleCancelPopupDialog();
-      ShoppingListsGetFromAPI(currentUser.userID);
+      shoppingListsGetFromAPI(currentUser.userID);
     } catch (error) {
       console.warn(error);
     }
@@ -205,9 +206,9 @@ const HomeScreen = (props) => {
   const handleListEmptyComponent = () => {
     return (
       <View
-        style={{ flexGrow: 1, justifyContent: "center", alignItems: "center" }}
+        style={styles.noData}
       >
-        <Text>אין מוצרים</Text>
+        <Text>אין רשימות</Text>
       </View>
     );
   };
@@ -222,63 +223,73 @@ const HomeScreen = (props) => {
     );
   };
 
+  const handleRefresh = async () => {
+    setIsFetchingTrue();
+    await shoppingListsGetFromAPI(currentUser.userID);
+    setSearchQuery("");
+    setIsFetchingFalse();
+  };
+
   return (
-    <View style={styles.container}>
-      <Searchbar
-        placeholder="חיפוש"
-        onChangeText={(txt) => setSearchQuery(txt)}
-        value={searchQuery}
-        theme={{ colors: { primary: "black" }, roundness: 0 }}
-        iconColor="black"
-      />
-      <FlatList
-        showsVerticalScrollIndicator={false}
-        data={renderedShoppingLists}
-        renderItem={(item) => renderListItem(item)}
-        keyExtractor={(item) => String(item.listID)}
-        contentContainerStyle={{ flexGrow: 1 }}
-        ListEmptyComponent={handleListEmptyComponent}
-        ListFooterComponent={renderFooter}
-      // refreshing={isFetching}
-      // onRefresh={() => handleRefresh()}
-      />
-      {extraDataForTabs === 1 && (
-        <FAB
-          style={styles.fab}
-          color="white"
-          icon="plus"
-          onPress={CreateList}
+    isPageLoaded ?
+      <View style={styles.container}>
+        <Searchbar
+          placeholder="חיפוש"
+          onChangeText={(txt) => setSearchQuery(txt)}
+          value={searchQuery}
+          theme={{ colors: { primary: "black" }, roundness: 0 }}
+          iconColor="black"
         />
-      )}
-      {chosenListDetails && chosenMethod && (
-        <PopupDialog
-          title={"עריכת רשימה"}
-          visible={popupDialogVisible}
-          cancel={handleCancelPopupDialog}
-          confirm={handelChosenMethod}
-        >
-          {chosenMethod === "delete" ? (
-            <Text>ברצונך למחוק את הרשימה?</Text>
-          ) : chosenMethod === "exit" ? (
-            <Text>ברצונך לצת מהרשימה?</Text>
-          ) : (
-            <TextInput
-              label="שם מוצר"
-              value={chosenListDetails.title}
-              onChangeText={(txt) =>
-                setChosenListDetails((oldstate) => ({
-                  ...oldstate,
-                  title: txt,
-                }))
-              }
-              dense={true}
-              error={titleError}
-              mode="outlined"
-            />
-          )}
-        </PopupDialog>
-      )}
-    </View>
+        <FlatList
+          showsVerticalScrollIndicator={false}
+          data={renderedShoppingLists}
+          renderItem={(item) => renderListItem(item)}
+          keyExtractor={(item) => String(item.listID)}
+          contentContainerStyle={{ flexGrow: 1 }}
+          ListEmptyComponent={handleListEmptyComponent}
+          ListFooterComponent={renderFooter}
+          refreshing={isFetching}
+          onRefresh={() => handleRefresh()}
+        />
+        {extraDataForTabs === 1 && (
+          <FAB
+            style={styles.fab}
+            color="white"
+            icon="plus"
+            onPress={CreateList}
+          />
+        )}
+        {chosenListDetails && chosenMethod && (
+          <PopupDialog
+            title={"עריכת רשימה"}
+            visible={popupDialogVisible}
+            cancel={handleCancelPopupDialog}
+            confirm={handelChosenMethod}
+          >
+            {chosenMethod === "delete" ? (
+              <Text>ברצונך למחוק את הרשימה?</Text>
+            ) : chosenMethod === "exit" ? (
+              <Text>ברצונך לצת מהרשימה?</Text>
+            ) : (
+              <TextInput
+                label="שם מוצר"
+                value={chosenListDetails.title}
+                onChangeText={(txt) =>
+                  setChosenListDetails((oldstate) => ({
+                    ...oldstate,
+                    title: txt,
+                  }))
+                }
+                dense={true}
+                error={titleError}
+                mode="outlined"
+              />
+            )}
+          </PopupDialog>
+        )}
+      </View>
+      :
+      <Spinner />
   );
 };
 
@@ -299,6 +310,11 @@ const styles = StyleSheet.create({
   renderFooter2: {
     paddingBottom: 10,
   },
+  noData: {
+    flexGrow: 1,
+    justifyContent: "center",
+    alignItems: "center"
+  }
 });
 
 export default withCommonScreen(HomeScreen, "HomeScreen");

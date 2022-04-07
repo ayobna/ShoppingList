@@ -16,7 +16,7 @@ import withCommonScreen from "../hoc/withCommonScreen";
 import Spinner from "../components/Spinner";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 const AccountEditScreen = (props) => {
-  const { navigation, route } = props;
+  const { navigation, route, isPageLoaded, setIsPageLoadedTrue } = props;
 
   const [user, setUser] = useState({
     firstName: "",
@@ -33,25 +33,18 @@ const AccountEditScreen = (props) => {
   });
   const [imageBase64, setImageBase64] = useState(null);
   const [image, setImage] = useState(null);
-  const [isPageLoaded, setIsPageLoaded] = useState(false);
-const [defaultImg, setDefaultImg] = useState(null)
+  const [defaultImg, setDefaultImg] = useState(null)
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", async () => {
       const user = await loadUser();
 
       setUser(user);
       setImage(`${API}/uploads/users/${user.img}`);
-      setIsPageLoaded(true);
+      setIsPageLoadedTrue();
     });
     return unsubscribe;
   }, [navigation, route]);
 
-  useEffect(() => {
-    const unsubscribe = navigation.addListener("blur", () => {
-      setIsPageLoaded(false);
-    });
-    return unsubscribe;
-  }, [navigation, route]);
 
   const loadUser = async () => {
     let u = await _getData("User");
@@ -98,20 +91,20 @@ const [defaultImg, setDefaultImg] = useState(null)
     setImage(`${API}/uploads/users/user_default/user_default.png`);
     setDefaultImg('user_default/user_default.png')
   };
-  
+
   const save = async () => {
     try {
       let isHaveBase64Img = false;
       let userToUpdate = user;
-      let defaultImgToUpdate= defaultImg
+      let defaultImgToUpdate = defaultImg
       if (imageBase64 !== null) {
         isHaveBase64Img = true;
         userToUpdate.img = imageBase64;
-        defaultImgToUpdate=undefined
+        defaultImgToUpdate = undefined
       }
       //console.log(imageBase64)
       let res = await userApi.apiUserUpdateUserPost(
-        isHaveBase64Img,defaultImgToUpdate,userToUpdate  
+        isHaveBase64Img, defaultImgToUpdate, userToUpdate
       );
       console.log(res.data);
       const resOfDataStore = await _storeData("User", res.data);

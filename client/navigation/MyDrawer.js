@@ -12,7 +12,7 @@ const Drawer = createDrawerNavigator();
 
 function MyDrawer(props) {
   return (
-    <Drawer.Navigator drawerContent={props => <MyDrawerContent {...props} />}>
+    <Drawer.Navigator screenOptions={{ swipeEdgeWidth:0 }} drawerContent={props => <MyDrawerContent {...props} />}>
       <Drawer.Screen
         name="homeStack"
         component={ShoppingListMainStack}

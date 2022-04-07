@@ -18,13 +18,14 @@ import AmountInput from "../components/AmountInput";
 import * as ImagePicker from "expo-image-picker";
 import ProductCard from "../components/ProductCard";
 import PopupDialog from "../components/PopupDialog";
-import { productApi, shoppingListApi,API } from "../api/api";
+import { productApi, shoppingListApi, API } from "../api/api";
 import { _getData } from "../utils/Functions";
 import withCommonScreen from "../hoc/withCommonScreen";
+import Spinner from "../components/Spinner";
 
 const CreateListScreen = (props) => {
   // props
-  const { navigation } = props;
+  const { navigation, isPageLoaded, setIsPageLoadedTrue } = props;
 
   // states
   const [products, setProducts] = useState([]);
@@ -42,7 +43,8 @@ const CreateListScreen = (props) => {
   const [editNameError, setEditNameError] = useState(false);
   const [titleError, setTitleError] = useState(false);
   const [user, setUser] = useState();
-const ScreenName = props.route.name;
+  const ScreenName = props.route.name;
+
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -62,9 +64,14 @@ const ScreenName = props.route.name;
   }, [productEditDetails]);
 
   useEffect(() => {
-    LoadUser()
+    const init = async () => {
+      await loadUser();
+      setIsPageLoadedTrue();
+    };
+    init();
   }, []);
-  const LoadUser = async () => {
+
+  const loadUser = async () => {
     let u = await _getData("User");
     console.log(u)
     if (u != null) {
@@ -74,7 +81,7 @@ const ScreenName = props.route.name;
 
   // מרנדר את המוצרים
   const renderListItem = (itemData) => (
-    
+
     <ProductCard
       data={itemData.item}
       handleDeleteProduct={handleDeleteProduct}
@@ -165,15 +172,15 @@ const ScreenName = props.route.name;
       return;
     }
     let product = {
-     productID: 1,
-      creatorID:user.userID,
+      productID: 1,
+      creatorID: user.userID,
       name: productName.trim(),
       amount: amount,
-      imgUri : imageBase64,
-      img     : imageUri
+      imgUri: imageBase64,
+      img: imageUri
         ? imageUri
-        :  API + `/uploads/shoppingLists/default/default_img.jpg`,
-          };
+        : API + `/uploads/shoppingLists/default/default_img.jpg`,
+    };
     let tempProducts = [...products];
     if (tempProducts.length !== 0) {
       product.productID = (
@@ -273,9 +280,9 @@ const ScreenName = props.route.name;
   };
 
   const handleCreateShoppingListApi = async () => {
-   
+
     let newShoppingList = { creatorID: user.userID, Title: title.trim() };
-console.log("newShoppingList create screen",newShoppingList)
+    console.log("newShoppingList create screen", newShoppingList)
     try {
       const res = await shoppingListApi.apiShoppingListCreateShoppingListPost(newShoppingList)
       console.log("Id for Shopping list after created", res.data)
@@ -303,7 +310,7 @@ console.log("newShoppingList create screen",newShoppingList)
   };
 
   const addProductsToShoppingList = async (productsToServer) => {
-    console.log("productsToServer",productsToServer)
+    console.log("productsToServer", productsToServer)
     try {
       const res = await productApi.apiProductAddProductsToShoppingListPost(productsToServer)
       console.log(res.data)
@@ -334,182 +341,185 @@ console.log("newShoppingList create screen",newShoppingList)
   };
 
   return (
-    <View style={styles.container}>
-      <TextInput
-        label="כותרת"
-        value={title}
-        onChangeText={(txt) => setTitle(txt)}
-        dense={true}
-        error={titleError}
-      />
-      <FlatList
-        showsVerticalScrollIndicator={false}
-        data={products}
-        renderItem={(item) => renderListItem(item)}
-        keyExtractor={(item) => String(item.productID)}
-        contentContainerStyle={{ flexGrow: 1 }}
-        ListEmptyComponent={handleListEmptyComponent}
-      // ListFooterComponent={renderFooter}
-      // refreshing={isFetching}
-      // onRefresh={() => handleRefresh()}
-      />
-      <View
-        style={{
-          paddingVertical: 5,
-          paddingHorizontal: 5,
-          borderTopWidth: 2,
-          borderColor: "black",
-          backgroundColor: "#b1b1b1",
-        }}
-      >
-        <View>
-          <TextInput
-            label="שם מוצר"
-            value={productName}
-            onChangeText={(txt) => setProductName(txt)}
-            dense={true}
-            mode="outlined"
-            error={nameError}
-          />
-        </View>
+    isPageLoaded ?
+      <View style={styles.container}>
+        <TextInput
+          label="כותרת"
+          value={title}
+          onChangeText={(txt) => setTitle(txt)}
+          dense={true}
+          error={titleError}
+        />
+        <FlatList
+          showsVerticalScrollIndicator={false}
+          data={products}
+          renderItem={(item) => renderListItem(item)}
+          keyExtractor={(item) => String(item.productID)}
+          contentContainerStyle={{ flexGrow: 1 }}
+          ListEmptyComponent={handleListEmptyComponent}
+        // ListFooterComponent={renderFooter}
+        // refreshing={isFetching}
+        // onRefresh={() => handleRefresh()}
+        />
         <View
           style={{
-            width: "100%",
-            flexDirection: "row",
-            justifyContent: "space-between",
-            marginTop: 5,
+            paddingVertical: 5,
+            paddingHorizontal: 5,
+            borderTopWidth: 1,
+            borderColor: "#e1e1e1",
+            backgroundColor: "#f1f1f1"
           }}
         >
+          <View>
+            <TextInput
+              label="שם מוצר"
+              value={productName}
+              onChangeText={(txt) => setProductName(txt)}
+              dense={true}
+              mode="outlined"
+              error={nameError}
+            />
+          </View>
           <View
             style={{
-              width: "49%",
-              justifyContent: "center",
-              alignItems: "center",
+              width: "100%",
               flexDirection: "row",
-              justifyContent: "space-around",
+              justifyContent: "space-between",
+              marginTop: 5,
             }}
           >
-            <Text>כמות: </Text>
-            <AmountInput
-              edit={false}
-              isError={amountError}
-              amount={amount}
-              handlePlusMinusAmount={handlePlusMinusAmount}
-              handleOnChangeAmount={handleOnChangeAmount}
-            />
-          </View>
-          <View
-            style={{
-              width: "12%",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <IconButton
-              icon="image"
-              size={25}
-              onPress={() => pickFromGallery(false)}
-            />
-          </View>
-          <View
-            style={{
-              width: "36%",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Button
-              contentStyle={{ width: "100%" }}
-              mode="contained"
-              onPress={handleAddProduct}
+            <View
+              style={{
+                width: "49%",
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "row",
+                justifyContent: "space-around",
+              }}
             >
-              הוספה
-            </Button>
+              <Text>כמות: </Text>
+              <AmountInput
+                edit={false}
+                isError={amountError}
+                amount={amount}
+                handlePlusMinusAmount={handlePlusMinusAmount}
+                handleOnChangeAmount={handleOnChangeAmount}
+              />
+            </View>
+            <View
+              style={{
+                width: "12%",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <IconButton
+                icon="image"
+                size={25}
+                onPress={() => pickFromGallery(false)}
+              />
+            </View>
+            <View
+              style={{
+                width: "36%",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Button
+                contentStyle={{ width: "100%" }}
+                mode="contained"
+                onPress={handleAddProduct}
+              >
+                הוספה
+              </Button>
+            </View>
           </View>
         </View>
-      </View>
-      {productEditDetails && (
-        <PopupDialog
-          title={"עריכת מוצר"}
-          visible={popupDialogVisible}
-          cancel={handleCancelPopupDialog}
-          confirm={handleConfirmEdit}
-        >
-          <TextInput
-            label="שם מוצר"
-            value={productEditDetails.name}
-            onChangeText={(txt) =>
-              setProductEditDetails((oldstate) => ({
-                ...oldstate,
-                name: txt,
-              }))
-            }
-            dense={true}
-            error={editNameError}
-            mode="outlined"
-          />
-          <View
-            style={{
-              marginTop: 15,
-              justifyContent: "flex-start",
-              alignItems: "center",
-              flexDirection: "row",
-            }}
+        {productEditDetails && (
+          <PopupDialog
+            title={"עריכת מוצר"}
+            visible={popupDialogVisible}
+            cancel={handleCancelPopupDialog}
+            confirm={handleConfirmEdit}
           >
-            <Text>כמות: </Text>
-            <AmountInput
-              isError={editAmountError}
-              edit={true}
-              amount={productEditDetails.amount}
-              handlePlusMinusAmount={handlePlusMinusAmount}
-              handleOnChangeAmount={handleOnChangeAmount}
+            <TextInput
+              label="שם מוצר"
+              value={productEditDetails.name}
+              onChangeText={(txt) =>
+                setProductEditDetails((oldstate) => ({
+                  ...oldstate,
+                  name: txt,
+                }))
+              }
+              dense={true}
+              error={editNameError}
+              mode="outlined"
             />
-          </View>
-          <View style={styles.editImageContainer}>
-            <View style={styles.editImageWrapper}>
-              <Avatar.Image
-                size={100}
-                // theme={{ colors: { primary: Colors.avatarBackground } }}
-                source={{
-                  uri: productEditDetails.img,
-                }}
+            <View
+              style={{
+                marginTop: 15,
+                justifyContent: "flex-start",
+                alignItems: "center",
+                flexDirection: "row",
+              }}
+            >
+              <Text>כמות: </Text>
+              <AmountInput
+                isError={editAmountError}
+                edit={true}
+                amount={productEditDetails.amount}
+                handlePlusMinusAmount={handlePlusMinusAmount}
+                handleOnChangeAmount={handleOnChangeAmount}
               />
             </View>
-            <View style={styles.editImageIcon}>
-              <TouchableHighlight
-                onPress={null}
-                underlayColor="white"
-                style={styles.touchableProfileCameraAvatar}
-              >
+            <View style={styles.editImageContainer}>
+              <View style={styles.editImageWrapper}>
+                <Avatar.Image
+                  size={100}
+                  // theme={{ colors: { primary: Colors.avatarBackground } }}
+                  source={{
+                    uri: productEditDetails.img,
+                  }}
+                />
+              </View>
+              <View style={styles.editImageIcon}>
+                <TouchableHighlight
+                  onPress={null}
+                  underlayColor="white"
+                  style={styles.touchableProfileCameraAvatar}
+                >
+                  <IconButton
+                    style={{ backgroundColor: "grey" }}
+                    icon="image-edit"
+                    color="white"
+                    size={20}
+                    onPress={() => pickFromGallery(true)}
+                  />
+                </TouchableHighlight>
+              </View>
+              <View style={styles.removeImageIcon}>
                 <IconButton
                   style={{ backgroundColor: "grey" }}
-                  icon="image-edit"
+                  icon="image-remove"
                   color="white"
                   size={20}
-                  onPress={() => pickFromGallery(true)}
+                  onPress={() =>
+                    setProductEditDetails((oldState) => ({
+                      ...oldState,
+                      img:
+                        "https://media.istockphoto.com/vectors/no-image-available-sign-vector-id922962354?k=20&m=922962354&s=612x612&w=0&h=f-9tPXlFXtz9vg_-WonCXKCdBuPUevOBkp3DQ-i0xqo=",
+                      ImageBase64: null,
+                    }))
+                  }
                 />
-              </TouchableHighlight>
+              </View>
             </View>
-            <View style={styles.removeImageIcon}>
-              <IconButton
-                style={{ backgroundColor: "grey" }}
-                icon="image-remove"
-                color="white"
-                size={20}
-                onPress={() =>
-                  setProductEditDetails((oldState) => ({
-                    ...oldState,
-                    img:
-                      "https://media.istockphoto.com/vectors/no-image-available-sign-vector-id922962354?k=20&m=922962354&s=612x612&w=0&h=f-9tPXlFXtz9vg_-WonCXKCdBuPUevOBkp3DQ-i0xqo=",
-                    ImageBase64: null,
-                  }))
-                }
-              />
-            </View>
-          </View>
-        </PopupDialog>
-      )}
-    </View>
+          </PopupDialog>
+        )}
+      </View>
+      :
+      <Spinner />
   );
 };
 
@@ -556,4 +566,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withCommonScreen(CreateListScreen,"CreateListScreen");
+export default withCommonScreen(CreateListScreen, "CreateListScreen");

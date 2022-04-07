@@ -15,8 +15,9 @@ import { productApi, shoppingListApi, API } from "../api/api";
 import { _getData } from "../utils/Functions";
 import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import withCommonScreen from "../hoc/withCommonScreen";
+import Spinner from "../components/Spinner";
 const ListScreen = (props) => {
-  const { navigation, route } = props;
+  const { navigation, route, isPageLoaded, setIsPageLoadedTrue, setIsFetchingFalse, isFetching } = props;
 
   const ScreenName = props.route.name;
   const shoppingListID = route.params.shoppingListID;
@@ -40,11 +41,9 @@ const ListScreen = (props) => {
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", async () => {
-      await LoadUser();
-      //  await  GetProducts();
-
-      await GetListCreatorByListID();
-
+      await loadUser();
+      await getListCreatorByListID();
+      setIsPageLoadedTrue();
     });
     return unsubscribe;
   }, [navigation, route]);
@@ -52,6 +51,7 @@ const ListScreen = (props) => {
   useEffect(() => {
     const openConnection = async () => {
       await joinChat();
+      setIsFetchingFalse();
     };
     openConnection();
   }, [])
@@ -85,7 +85,7 @@ const ListScreen = (props) => {
     }
   }, [productEditDetails]);
 
-  const GetListCreatorByListID = async () => {
+  const getListCreatorByListID = async () => {
     let res = await shoppingListApi.apiShoppingListGetListCreatorByListIDIdGet(
       shoppingListID
     );
@@ -93,7 +93,7 @@ const ListScreen = (props) => {
     setListCreatorId(res.data.creatorID);
     // console.log(res.data);
   };
-  const LoadUser = async () => {
+  const loadUser = async () => {
     let u = await _getData("User");
     if (u != null) {
       setUser(u);
@@ -395,174 +395,179 @@ const ListScreen = (props) => {
   );
 
   return (
-    <View style={styles.container}>
-      <FlatList
-        showsVerticalScrollIndicator={false}
-        data={products}
-        renderItem={(item) => renderListItem(item)}
-        keyExtractor={(item) => String(item.productID)}
-        contentContainerStyle={{ flexGrow: 1 }}
-        ListEmptyComponent={handleListEmptyComponent}
-      />
-      <View
-        style={{
-          paddingVertical: 5,
-          paddingHorizontal: 5,
-          borderTopWidth: 2,
-          borderColor: "black",
-          backgroundColor: "#b1b1b1",
-        }}
-      >
-        <View>
-          <TextInput
-            label="שם מוצר"
-            value={productName}
-            onChangeText={(txt) => setProductName(txt)}
-            dense={true}
-            mode="outlined"
-            error={nameError}
-          />
-        </View>
+    isPageLoaded ?
+      <View style={styles.container}>
+        <FlatList
+          showsVerticalScrollIndicator={false}
+          data={products}
+          renderItem={(item) => renderListItem(item)}
+          keyExtractor={(item) => String(item.productID)}
+          contentContainerStyle={{ flexGrow: 1 }}
+          ListEmptyComponent={handleListEmptyComponent}
+          refreshing={isFetching}
+          onRefresh={() => { }}
+        />
         <View
           style={{
-            width: "100%",
-            flexDirection: "row",
-            justifyContent: "space-between",
-            marginTop: 5,
+            paddingVertical: 5,
+            paddingHorizontal: 5,
+            borderTopWidth: 1,
+            borderColor: "#e1e1e1",
+            backgroundColor: "#f1f1f1"
           }}
         >
+          <View>
+            <TextInput
+              label="שם מוצר"
+              value={productName}
+              onChangeText={(txt) => setProductName(txt)}
+              dense={true}
+              mode="outlined"
+              error={nameError}
+            />
+          </View>
           <View
             style={{
-              width: "49%",
-              justifyContent: "center",
-              alignItems: "center",
+              width: "100%",
               flexDirection: "row",
-              justifyContent: "space-around",
+              justifyContent: "space-between",
+              marginTop: 5,
             }}
           >
-            <Text>כמות: </Text>
-            <AmountInput
-              edit={false}
-              isError={amountError}
-              amount={amount}
-              handlePlusMinusAmount={handlePlusMinusAmount}
-              handleOnChangeAmount={handleOnChangeAmount}
-            />
-          </View>
-          <View
-            style={{
-              width: "12%",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <IconButton
-              icon="image"
-              size={25}
-              onPress={() => pickFromGallery(false)}
-            />
-          </View>
-          <View
-            style={{
-              width: "36%",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Button
-              contentStyle={{ width: "100%" }}
-              mode="contained"
-              onPress={handleAddProduct}
+            <View
+              style={{
+                width: "49%",
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "row",
+                justifyContent: "space-around",
+              }}
             >
-              הוספה
-            </Button>
+              <Text>כמות: </Text>
+              <AmountInput
+                edit={false}
+                isError={amountError}
+                amount={amount}
+                handlePlusMinusAmount={handlePlusMinusAmount}
+                handleOnChangeAmount={handleOnChangeAmount}
+              />
+            </View>
+            <View
+              style={{
+                width: "12%",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <IconButton
+                icon="image"
+                size={25}
+                onPress={() => pickFromGallery(false)}
+              />
+            </View>
+            <View
+              style={{
+                width: "36%",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Button
+                contentStyle={{ width: "100%" }}
+                mode="contained"
+                onPress={handleAddProduct}
+              >
+                הוספה
+              </Button>
+            </View>
           </View>
         </View>
-      </View>
-      {productEditDetails && (
-        <PopupDialog
-          title={"עריכת מוצר"}
-          visible={popupDialogVisible}
-          cancel={handleCancelPopupDialog}
-          confirm={handleConfirmEdit}
-        >
-          <TextInput
-            label="שם מוצר"
-            value={productEditDetails.name}
-            onChangeText={(txt) =>
-              setProductEditDetails((oldstate) => ({
-                ...oldstate,
-                name: txt,
-              }))
-            }
-            dense={true}
-            error={editNameError}
-            mode="outlined"
-          />
-          <View
-            style={{
-              marginTop: 15,
-              justifyContent: "flex-start",
-              alignItems: "center",
-              flexDirection: "row",
-            }}
+        {productEditDetails && (
+          <PopupDialog
+            title={"עריכת מוצר"}
+            visible={popupDialogVisible}
+            cancel={handleCancelPopupDialog}
+            confirm={handleConfirmEdit}
           >
-            <Text>כמות: </Text>
-            <AmountInput
-              isError={editAmountError}
-              edit={true}
-              amount={productEditDetails.amount.toString()}
-              handlePlusMinusAmount={handlePlusMinusAmount}
-              handleOnChangeAmount={handleOnChangeAmount}
+            <TextInput
+              label="שם מוצר"
+              value={productEditDetails.name}
+              onChangeText={(txt) =>
+                setProductEditDetails((oldstate) => ({
+                  ...oldstate,
+                  name: txt,
+                }))
+              }
+              dense={true}
+              error={editNameError}
+              mode="outlined"
             />
-          </View>
-          <View style={styles.editImageContainer}>
-            <View style={styles.editImageWrapper}>
-              <Avatar.Image
-                size={100}
-                // theme={{ colors: { primary: Colors.avatarBackground } }}
-                source={{
-                  uri:
-                    productEditDetails.ImageBase64 === undefined
-                      ? API + `/uploads/shoppingLists/` + productEditDetails.img
-                      : productEditDetails.img,
-                }}
+            <View
+              style={{
+                marginTop: 15,
+                justifyContent: "flex-start",
+                alignItems: "center",
+                flexDirection: "row",
+              }}
+            >
+              <Text>כמות: </Text>
+              <AmountInput
+                isError={editAmountError}
+                edit={true}
+                amount={productEditDetails.amount.toString()}
+                handlePlusMinusAmount={handlePlusMinusAmount}
+                handleOnChangeAmount={handleOnChangeAmount}
               />
             </View>
-            <View style={styles.editImageIcon}>
-              <TouchableHighlight
-                onPress={null}
-                underlayColor="white"
-                style={styles.touchableProfileCameraAvatar}
-              >
+            <View style={styles.editImageContainer}>
+              <View style={styles.editImageWrapper}>
+                <Avatar.Image
+                  size={100}
+                  // theme={{ colors: { primary: Colors.avatarBackground } }}
+                  source={{
+                    uri:
+                      productEditDetails.ImageBase64 === undefined
+                        ? API + `/uploads/shoppingLists/` + productEditDetails.img
+                        : productEditDetails.img,
+                  }}
+                />
+              </View>
+              <View style={styles.editImageIcon}>
+                <TouchableHighlight
+                  onPress={null}
+                  underlayColor="white"
+                  style={styles.touchableProfileCameraAvatar}
+                >
+                  <IconButton
+                    style={{ backgroundColor: "grey" }}
+                    icon="image-edit"
+                    color="white"
+                    size={20}
+                    onPress={() => pickFromGallery(true)}
+                  />
+                </TouchableHighlight>
+              </View>
+              <View style={styles.removeImageIcon}>
                 <IconButton
                   style={{ backgroundColor: "grey" }}
-                  icon="image-edit"
+                  icon="image-remove"
                   color="white"
                   size={20}
-                  onPress={() => pickFromGallery(true)}
+                  onPress={() =>
+                    setProductEditDetails((oldState) => ({
+                      ...oldState,
+                      img: API + `/uploads/shoppingLists/default/default_img.jpg`,
+                      ImageBase64: null,
+                    }))
+                  }
                 />
-              </TouchableHighlight>
+              </View>
             </View>
-            <View style={styles.removeImageIcon}>
-              <IconButton
-                style={{ backgroundColor: "grey" }}
-                icon="image-remove"
-                color="white"
-                size={20}
-                onPress={() =>
-                  setProductEditDetails((oldState) => ({
-                    ...oldState,
-                    img: API + `/uploads/shoppingLists/default/default_img.jpg`,
-                    ImageBase64: null,
-                  }))
-                }
-              />
-            </View>
-          </View>
-        </PopupDialog>
-      )}
-    </View>
+          </PopupDialog>
+        )}
+      </View>
+      :
+      <Spinner />
   );
 };
 
