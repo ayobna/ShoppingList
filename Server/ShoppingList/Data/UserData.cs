@@ -27,7 +27,8 @@ namespace ShoppingList.Data
             cmd.Parameters.Add("@FirstName", SqlDbType.NVarChar).Value = user.FirstName;
             cmd.Parameters.Add("@LastName", SqlDbType.NVarChar).Value = user.LastName;
             cmd.Parameters.Add("@Email", SqlDbType.NVarChar).Value = user.Email;
-            cmd.Parameters.Add("@Password", SqlDbType.NVarChar).Value = user.@Password;
+            string passwordHash = BCrypt.Net.BCrypt.HashPassword(user.Password);
+            cmd.Parameters.Add("@Password", SqlDbType.NVarChar).Value = passwordHash;
             cmd.Parameters.Add("@PhoneNumber", SqlDbType.NVarChar).Value = user.PhoneNumber;
             db.ExecuteAndClose(cmd);
             return Convert.ToInt32(cmd.Parameters["@UserID"].Value);
@@ -89,11 +90,35 @@ namespace ShoppingList.Data
 
         public int UpdatePasswordInProfile(User user, string oldPassword)
         {
-            SqlCommand cmd = db.CreateCommand("Proc_Update_Password_In_Profile", db.Connect(), "proc");
-            cmd.Parameters.Add("@UserID", SqlDbType.Int).Value = user.UserID;
-            cmd.Parameters.Add("@OldPassword", SqlDbType.NVarChar).Value = oldPassword;
-            cmd.Parameters.Add("@NewPassword", SqlDbType.NVarChar).Value = user.Password;
-            return db.ExecuteAndClose(cmd);
+            User u= CheackUpdatePasswordInProfile(user.Email, oldPassword);
+            if(u!=null)
+            return UpdatePassword(user);
+            return -1;
+        }
+        private int UpdatePassword(User user)
+        {
+            SqlCommand cmd = db.CreateCommand("Proc_Update_Password", db.Connect(), "proc");
+            cmd.Parameters.Add("@Email", SqlDbType.NVarChar).Value = user.Email;
+            string passwordHash = BCrypt.Net.BCrypt.HashPassword(user.Password);
+            cmd.Parameters.Add("@Password", SqlDbType.NVarChar).Value = passwordHash;
+            int res= db.ExecuteAndClose(cmd);
+            return res;
+        }
+
+        private User CheackUpdatePasswordInProfile(string Email ,string Password)
+        {
+            SqlCommand cmd = db.CreateCommand("Proc_Check_Login_Details", db.Connect(), "proc");
+            cmd.Parameters.Add("@Email", SqlDbType.NVarChar).Value = Email;
+            DataTable tb = db.ReadAndClose(cmd);
+            List<User> userLIst = db.ConvertDataTable<User>(tb);
+            if (userLIst.Count == 1)
+                if (BCrypt.Net.BCrypt.Verify(Password, userLIst[0].Password))
+                {
+                    userLIst[0].Password = null;
+                    return userLIst[0];
+                }
+            return null;
+
         }
     }
 }

@@ -6,8 +6,8 @@ CREATE TABLE users
 	 UserID int identity not null,
 	 Email nvarchar (150) unique not null,
 	 FirstName nvarchar(150) not null,
-	 LastName nvarchar(150) not null,
-	 Password nvarchar(max),
+	 LastName nvarchar(150) not null,	
+	Password varbinary(max) NOT NULL,
 	 PhoneNumber nvarchar(150) null,
 	 Img nvarchar(max) default 'user_default/user_default.png',
 	 IsActive bit default 1,
@@ -68,7 +68,7 @@ CREATE TABLE shopping_lists_messages
 GO
 
 
-
+select*from users
 ----------------------------------------------- Primary Keys -----------------------------------------------------
 
 ALTER TABLE users 

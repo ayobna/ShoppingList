@@ -94,25 +94,28 @@ as
 	Select dbo.Func_Return_Amount_Of_Lists_Created_By_CurrentUser(@UserID) as MyListsAmount, dbo.Func_Return_Amount_Of_Lists_Current_User_Shares_But_No_Creator(@UserID) as OtherListsAmount
 go
 
-Create proc Proc_Update_Password_In_Profile
-@UserID int,
-@OldPassword nvarchar(max),
-@NewPassword nvarchar(max)
-as
-	Begin transaction
-	if exists(Select * from users where [UserID] = @UserID And [Password] = @OldPassword)
-	begin
-		UPDATE [users]
-		SET [Password] = @NewPassword
-		WHERE [UserID] = @UserID	
-		IF @@ERROR<>0
-			Begin
-				rollback transaction
-				return
-			End
-	end
-	commit transaction
-go
+
+
+
+--Create proc Proc_Update_Password_In_Profile
+--@UserID int,
+--@OldPassword nvarchar(max),
+--@NewPassword nvarchar(max)
+--as
+--	Begin transaction
+--	if exists(Select * from users where [UserID] = @UserID And [Password] = @OldPassword)
+--	begin
+--		UPDATE [users]
+--		SET [Password] = @NewPassword
+--		WHERE [UserID] = @UserID	
+--		IF @@ERROR<>0
+--			Begin
+--				rollback transaction
+--				return
+--			End
+--	end
+--	commit transaction
+--go
 --exec  Proc_Get_Profile_Satistics 13
 --exec Proc_Get_User_By_Id 2
 
@@ -266,7 +269,7 @@ Go
 -- chat
 
 -- Drop Proc_Get_Chat_Messages
-Alter Proc Proc_Get_Chat_Messages
+Create Proc Proc_Get_Chat_Messages
 @ListID int
 AS
 SELECT			shopping_lists_messages.ListID, shopping_lists_messages.UserID, shopping_lists_messages.Message, shopping_lists_messages.CreatedOn, users.FirstName, users.LastName, users.Img
@@ -292,7 +295,7 @@ Go
 
 
 ------------------------------------------------------------------members---------------------------------------------------------------------
- Alter Proc Proc_Get_List_Users
+ Create Proc Proc_Get_List_Users
  @ListID int
  As
  SELECT shopping_lists_users.UserID, users.FirstName, users.LastName, users.Img,  users.Email, users.PhoneNumber, dbo.Func_Return_True_If_Creator_Of_List(@ListID,shopping_lists_users.UserID) As IsCreator
@@ -305,7 +308,7 @@ Go
 --select * from [shopping_lists_users]
 --select * from users
 
- alter Proc Proc_Add_User_To_List
+ Create Proc Proc_Add_User_To_List
  @ListID int,
  @UserID int,
  @JoinedDate DateTime
@@ -315,7 +318,7 @@ INSERT INTO [shopping_lists_users] ([ListID],[UserID],[JoinedDate])
 Go
 --exec Proc_Add_User_To_List 6,5
 
-alter Proc Proc_Get_User_For_Search
+Create Proc Proc_Get_User_For_Search
 @Email nvarchar (150),
 @ListID int
 As
@@ -390,15 +393,19 @@ Go
  ---------------------------- Login -------------------------------------------------------+
  -- its for now until we will decide how we doing the page in the best way
 
- Create Proc Proc_Check_Login_Details
- @Email nvarchar(150), 
- @Password nvarchar(max)
+ Alter Proc Proc_Check_Login_Details
+ @Email nvarchar(150)
+ --@Password nvarchar(max)
  As
-	Select [UserID],[Email],[FirstName],[LastName],[PhoneNumber],[Img],[IsActive],[NotificationToken] from [users] Where UPPER([Email]) = UPPER(@Email) AND [Password] = @Password AND [IsActive] = 1
+	Select [UserID],[Email],[FirstName],[LastName],
+	 CONVERT(nvarchar(max),DecryptByPassphrase ('**********',Password)) As [Password],
+	[PhoneNumber],[Img],[IsActive],[NotificationToken] from [users]
+	Where UPPER([Email]) = UPPER(@Email) 
+	AND [IsActive] = 1
  GO
 
- --Exec Proc_Check_Login_Details 'Test@g.com','test1234'
-
+ --Exec Proc_Check_Login_Details 'Test3@gmail.com'
+ --$2a$11$QAdzZHX/AWEstiPV9xx5fei4zc7PEhaVE8PwgL5dPbKCE.8SN0FQe
  Create Proc Proc_Update_User_Notification_Token
  @UserID int, 
  @NotificationToken nvarchar(max)
@@ -414,18 +421,18 @@ Go
 	Select FirstName from users Where Upper(Email) = Upper(@Email) And IsActive = 1
  GO
 
- Create Proc Proc_Update_Password
+ Alter Proc Proc_Update_Password
  @Email nvarchar(150),
  @Password nvarchar(max)
  As
 		UPDATE [users]
-		SET  [Password] = @Password
+		SET  [Password] =  EncryptByPassPhrase('**********', @Password)
 		WHERE Email = @Email
  GO
 
   ---------------------------- Register -------------------------------------------------------+
 
-Create Proc Proc_Create_User
+Alter Proc Proc_Create_User
 @FirstName  nvarchar(150),
 @LastName  nvarchar(150),
 @Email nvarchar(150),
@@ -437,7 +444,7 @@ set @UserID = -1
 IF NOT EXISTS (Select * From [users] Where Upper(Email)=Upper(@Email)) 
 Begin
     Insert[users] ([Email],[FirstName],[LastName],[Password],[PhoneNumber]) 
-    values (@Email,@FirstName,@LastName,@Password,@PhoneNumber)
+    values (@Email,@FirstName,@LastName, EncryptByPassPhrase('**********', @Password),@PhoneNumber)
 	set @UserID = @@identity
 End 
 Go

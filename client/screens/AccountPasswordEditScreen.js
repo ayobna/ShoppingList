@@ -19,6 +19,7 @@ import {
 import withCommonScreen from "../hoc/withCommonScreen";
 import Spinner from "../components/Spinner";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import * as Crypto from 'expo-crypto';
 const AccountPasswordEditScreen = (props) => {
     const { navigation, route, isPageLoaded, setIsPageLoadedTrue } = props;
 
@@ -66,10 +67,19 @@ const AccountPasswordEditScreen = (props) => {
     };
 
     const save = async () => {
+
+        const NewPassword = await Crypto.digestStringAsync(
+            Crypto.CryptoDigestAlgorithm.SHA512,
+            password
+          );
+          const OldPassword = await Crypto.digestStringAsync(
+            Crypto.CryptoDigestAlgorithm.SHA512,
+            oldPassword
+          );
         try {
-            const userData = { UserID: currentUser.userID, Password: password };
+            const userData = {  Email: currentUser.email, Password: NewPassword };
             let res = await userApi.apiUsersUpdatePasswordInProfilePost(
-                oldPassword,
+                OldPassword,
                 userData
             );
             return res.data;

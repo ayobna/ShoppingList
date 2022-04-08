@@ -20,11 +20,17 @@ namespace ShoppingList.Data
         {
             SqlCommand cmd = db.CreateCommand("Proc_Check_Login_Details", db.Connect(), "proc");
             cmd.Parameters.Add("@Email", SqlDbType.NVarChar).Value = user.Email;
-            cmd.Parameters.Add("@Password", SqlDbType.NVarChar).Value = user.Password;
+
 
             DataTable tb = db.ReadAndClose(cmd);
             List<User> userLIst = db.ConvertDataTable<User>(tb);
-            return userLIst;
+            if (userLIst.Count == 1)            
+                if (BCrypt.Net.BCrypt.Verify(user.Password, userLIst[0].Password))
+                {
+                    userLIst[0].Password = null;
+                    return userLIst;
+                }            
+             return null;
         }
 
         public int UpdateUserNotificationToken(User user)
@@ -55,7 +61,8 @@ namespace ShoppingList.Data
         {
             SqlCommand cmd = db.CreateCommand("Proc_Update_Password", db.Connect(), "proc");
             cmd.Parameters.Add("@Email", SqlDbType.NVarChar).Value = user.Email;
-            cmd.Parameters.Add("@Password", SqlDbType.NVarChar).Value = user.Password;
+            string passwordHash = BCrypt.Net.BCrypt.HashPassword(user.Password);
+            cmd.Parameters.Add("@Password", SqlDbType.NVarChar).Value = passwordHash;
             int res = db.ExecuteAndClose(cmd);
 
             if (res != 1)

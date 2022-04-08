@@ -10,7 +10,7 @@ import Spinner from "../components/Spinner";
 import PopupDialog from "../components/PopupDialog";
 import moment from "moment";
 import withCommonScreen from "../hoc/withCommonScreen";
-
+import * as Crypto from 'expo-crypto';
 const Time_For_Code = 10;
 // WebBrowser.maybeCompleteAuthSession();
 
@@ -20,8 +20,8 @@ const LoginScreen = (props) => {
   const { navigation, isPageLoaded, setIsPageLoadedTrue } = props;
 
   // states
-  const [email, setEmail] = useState("test@gmail.com");
-  const [password, setPassword] = useState("test1234");
+  const [email, setEmail] = useState("ayobnas12@gmail.com");
+  const [password, setPassword] = useState("Ayob1234!");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [loginUserDetails, setLoginUserDetails] = useState();
   const [loginErrorMessage, setLoginErrorMessage] = useState("");
@@ -119,8 +119,12 @@ const LoginScreen = (props) => {
   };
 
   const checkLoginDetails = async () => {
+    const digest = await Crypto.digestStringAsync(
+      Crypto.CryptoDigestAlgorithm.SHA512,
+      password
+    );
     try {
-      const userDetails = { Email: email, Password: password };
+      const userDetails = { Email: email, Password: digest };
       let res = await loginApi.apiLoginCheckLoginDetailsPost(userDetails);
       return res.data;
     } catch (error) {
@@ -205,8 +209,13 @@ const LoginScreen = (props) => {
   };
 
   const updatePassword = async () => {
+
+    const ResetPassword = await Crypto.digestStringAsync(
+      Crypto.CryptoDigestAlgorithm.SHA512,
+      resetPassword
+    );
     try {
-      const userDetails = { Email: resetEmail, Password: resetPassword };
+      const userDetails = { Email: resetEmail, Password: ResetPassword };
       let res = await loginApi.apiLoginUpdatePasswordPost(userDetails);
       return res.data;
     } catch (error) {
