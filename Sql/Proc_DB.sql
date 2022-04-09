@@ -46,7 +46,7 @@ Begin
 	SET  [Email]=@Email,[FirstName]=@FirstName,[LastName]=@LastName,[PhoneNumber]=@PhoneNumber,[Img]=@Img
 	WHERE  [UserID]=@UserID ;
 	Begin transaction
-	select  UserID,[Email],[FirstName],[LastName],[Password],[PhoneNumber],[Img],[IsActive],[NotificationToken]from users where UserID = @UserID
+	select  UserID,[Email],[FirstName],[LastName],[PhoneNumber],[Img],[IsActive],[NotificationToken]from users where UserID = @UserID
 	IF @@ERROR<>0
 		Begin
 			rollback transaction
@@ -58,11 +58,11 @@ Go
 
 
 
-Alter proc Proc_Get_User_By_Id
+alter proc Proc_Get_User_By_Id
 	@UserID int
 as
 Begin transaction
-	select  UserID,[Email],[FirstName],[LastName],[Password],[PhoneNumber],[Img],[IsActive],[NotificationToken]from users where UserID = @UserID
+	select  UserID,[Email],[FirstName],[LastName],[PhoneNumber],[Img],[IsActive],[NotificationToken]from users where UserID = @UserID
 	IF @@ERROR<>0
 		Begin
 			rollback transaction
@@ -70,7 +70,7 @@ Begin transaction
 		End
 commit transaction
 go
-
+exec Proc_Get_User_By_Id 3
 -- user --> profile
 Create proc Proc_Delete_User
 @UserID int
@@ -433,7 +433,7 @@ Go
 
   ---------------------------- Register -------------------------------------------------------+
 
-Alter Proc Proc_Create_User
+create Proc Proc_Create_User
 @FirstName  nvarchar(150),
 @LastName  nvarchar(150),
 @Email nvarchar(150),
