@@ -114,7 +114,7 @@ namespace ShoppingList.Controllers
                 User userAfterUpdate = userData.UpdateUser(user);
                 return Ok(userAfterUpdate);
             }
-            catch (Exception ex)
+                   catch (Exception ex)
             {
                 logger.LogError(": Did not Updated User With Img in DB");
                 return NotFound(ex);

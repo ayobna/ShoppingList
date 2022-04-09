@@ -34,7 +34,7 @@ const AccountEditScreen = (props) => {
   });
   const [imageBase64, setImageBase64] = useState(null);
   const [image, setImage] = useState(null);
-  const [defaultImg, setDefaultImg] = useState(null)
+  const [defaultImg, setDefaultImg] = useState(undefined)
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", async () => {
       const user = await loadUser();
@@ -97,6 +97,7 @@ const AccountEditScreen = (props) => {
     try {
       let isHaveBase64Img = false;
       let userToUpdate = user;
+      console.log(isHaveBase64Img)
       let defaultImgToUpdate = defaultImg
       if (imageBase64 !== null) {
         isHaveBase64Img = true;

@@ -71,21 +71,21 @@ AS
 	WHERE [ProductID] =@ProductID  
 go
 
-Drop Proc Proc_Insert_User
-@FirstName  nvarchar(150),
-@LastName  nvarchar(150),
-@Email nvarchar(150),
-@Password  nvarchar(150),
-@PhoneNumber nvarchar(150),
-@UserID int output
-AS
-IF NOT EXISTS (Select * From [users] Where Email=@Email or PhoneNumber=@PhoneNumber) 
-Begin
-    Insert[users] ([Email],[FirstName],[LastName],[Password],[PhoneNumber]) 
-    values (@Email,@FirstName,@LastName,@Password,@PhoneNumber)
-	set @UserID = @@identity
-End 
-Go
+--Drop Proc Proc_Insert_User
+--@FirstName  nvarchar(150),
+--@LastName  nvarchar(150),
+--@Email nvarchar(150),
+--@Password  nvarchar(150),
+--@PhoneNumber nvarchar(150),
+--@UserID int output
+--AS
+--IF NOT EXISTS (Select * From [users] Where Email=@Email or PhoneNumber=@PhoneNumber) 
+--Begin
+--    Insert[users] ([Email],[FirstName],[LastName],[Password],[PhoneNumber]) 
+--    values (@Email,@FirstName,@LastName,@Password,@PhoneNumber)
+--	set @UserID = @@identity
+--End 
+--Go
 
 
 DECLARE @UserID int;
