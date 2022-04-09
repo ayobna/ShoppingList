@@ -15,8 +15,9 @@ import {
 import withCommonScreen from "../hoc/withCommonScreen";
 import Spinner from "../components/Spinner";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import Colors from "../utils/Colors";
 const AccountEditScreen = (props) => {
-  const { navigation, route, isPageLoaded, setIsPageLoadedTrue } = props;
+  const { navigation, route, isPageLoaded, setIsPageLoadedTrue, isButtonSpinner, setIsButtonSpinnerFalse, setIsButtonSpinnerTrue } = props;
 
   const [user, setUser] = useState({
     firstName: "",
@@ -127,8 +128,6 @@ const AccountEditScreen = (props) => {
     const nameRgx =
       /^[a-zA-Z\u05D0-\u05EA']+([ |\-][a-zA-Z\u05D0-\u05EA']+){0,2}$/; // שם פרטי לפחות שני תווים, אותיות בעברים בלבד המופרדות ברווח או מקו
     const phoneNumberRgx = /^[0-9]{10}$/; // בדיוק 10 ספרות
-    const passwordRgx =
-      /^(?=.*[A-Z])(?=.*\d)(?=.*[!#$%&*_=@])[A-Za-z0-9!#$%&*_=@]{5,}$/; // סיסמה חייבת להכיל אות גדולה, ספרה וסימן מיוחד. אורך סיסמה לפחות 5 תווים
     let counter = 0;
 
     if (!emailRgx.test(user.email)) {
@@ -197,8 +196,8 @@ const AccountEditScreen = (props) => {
             <View style={styles.cameraButtonWrapper}>
               <IconButton
                 icon="camera"
-                style={{ backgroundColor: "#c1c1c1" }}
-                color="black"
+                style={{ backgroundColor: Colors.our_dark_blue }}
+                color="white"
                 size={20}
                 onPress={openCamera}
               />
@@ -206,9 +205,9 @@ const AccountEditScreen = (props) => {
 
             <View style={styles.galleryButtonWrapper}>
               <IconButton
-                icon="image"
-                style={{ backgroundColor: "#c1c1c1" }}
-                color="black"
+                icon="image-edit"
+                style={{ backgroundColor: Colors.our_dark_blue }}
+                color="white"
                 size={20}
                 onPress={pickImage}
               />
@@ -216,9 +215,9 @@ const AccountEditScreen = (props) => {
 
             <View style={styles.removeImageButtonWrapper}>
               <IconButton
-                icon="close"
-                style={{ backgroundColor: "#c1c1c1" }}
-                color="black"
+                icon="image-remove"
+                style={{ backgroundColor: Colors.our_dark_blue }}
+                color="white"
                 size={20}
                 onPress={updateToDefaultImg}
               />
@@ -384,25 +383,29 @@ const AccountEditScreen = (props) => {
             <View style={styles.bottomBtnsWrapper}>
               <View style={styles.bottomBtnWrapper}>
                 <Button
-                  mode="outlined"
-                  theme={{ colors: { primary: `white` } }}
-                  labelStyle={{ color: "black" }}
-                  contentStyle={{ backgroundColor: "#bfbfbf" }}
+                  mode="contained"
+                  color="#bfbfbf"
                   onPress={() => navigation.goBack()}
                 >
                   ביטול
                 </Button>
               </View>
               <View style={styles.bottomBtnWrapper}>
-                <Button
-                  mode="outlined"
-                  theme={{ colors: { primary: `white` } }}
-                  labelStyle={{ color: "black" }}
-                  contentStyle={{ backgroundColor: "#bfbfbf" }}
-                  onPress={handleSave}
-                >
-                  שמור
-                </Button>
+
+                {
+                  isButtonSpinner ?
+                    <View style={styles.btnSpinnerContainer}>
+                      <Spinner smallSize="small" color="white" />
+                    </View>
+                    :
+                    <Button
+                      mode="contained"
+                      color={Colors.our_dark_blue}
+                      onPress={handleSave}
+                    >
+                      שמור
+                    </Button>
+                }
               </View>
             </View>
           </View>
@@ -487,6 +490,11 @@ const styles = StyleSheet.create({
   bottomBtnWrapper: {
     width: "49%",
   },
+  btnSpinnerContainer: {
+    backgroundColor: Colors.our_dark_blue,
+    padding: 8,
+    borderRadius: 5
+  }
 });
 
 export default withCommonScreen(AccountEditScreen, "AccountEditScreen");

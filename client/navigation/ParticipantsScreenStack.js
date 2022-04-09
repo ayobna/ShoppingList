@@ -5,6 +5,7 @@ import AccountEditScreen from "../screens/AccountEditScreen";
 import Icon from "react-native-vector-icons/Ionicons";
 import ListScreen from "../screens/ListScreen";
 import ParticipantsScreen from "../screens/ParticipantsScreen";
+import Style from "../utils/Style";
 
 const Stack = createStackNavigator();
 
@@ -14,7 +15,7 @@ function ParticipantsScreenStack(props) {
     const data = route.params;
   
     return (
-        <Stack.Navigator>
+        <Stack.Navigator screenOptions={Style.screenHeader}>
             <Stack.Screen
                 name="participantsScreenStack"
                 component={ParticipantsScreen}

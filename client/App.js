@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, I18nManager } from 'react-native';
+import { I18nManager } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { Provider as PaperProvider } from 'react-native-paper';
 import paperTheme from './utils/PaperTheme';
-import MyDrawer from './navigation/MyDrawer';
 import AppLoading from 'expo-app-loading';
 import * as Font from 'expo-font';
 import GeneralContext from './utils/GeneralContext';
@@ -96,6 +96,7 @@ const App = (props) => {
   return (
     <GeneralContext.Provider value={{ currentDrawerScreen, setCurrentDrawerScreen, requestDataGlobal, setRequestDataGlobal }}>
       <PaperProvider theme={paperTheme}>
+        <StatusBar backgroundColor="white" style="dark" />{/*משנה את צבע הסטטוס בר למעלה */}
         <NavigationContainer>
           <LoginStack />
         </NavigationContainer>

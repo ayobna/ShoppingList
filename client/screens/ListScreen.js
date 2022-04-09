@@ -16,8 +16,9 @@ import { _getData } from "../utils/Functions";
 import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import withCommonScreen from "../hoc/withCommonScreen";
 import Spinner from "../components/Spinner";
+import Colors from "../utils/Colors";
 const ListScreen = (props) => {
-  const { navigation, route, isPageLoaded, setIsPageLoadedTrue, setIsFetchingFalse, isFetching } = props;
+  const { navigation, route, isPageLoaded, setIsPageLoadedTrue, setIsFetchingFalse, isFetching, isButtonSpinner, setIsButtonSpinnerFalse, setIsButtonSpinnerTrue } = props;
 
   const ScreenName = props.route.name;
   const shoppingListID = route.params.shoppingListID;
@@ -35,6 +36,11 @@ const ListScreen = (props) => {
   const [nameError, setNameError] = useState(false);
   const [editAmountError, setEditAmountError] = useState(false);
   const [editNameError, setEditNameError] = useState(false);
+  const [isDeleteProductDialogVisible, setIsDeleteProductDialogVisible] = useState(false);
+  const [deleteProductData, setDeleteProductData] = useState();
+
+
+
 
   const [fromDB, setFromDB] = useState(true);
   const [connection, setConnection] = useState();
@@ -67,23 +73,18 @@ const ListScreen = (props) => {
     return unsubscribe;
   }, [navigation, connection]);
 
-  // useEffect(() => {
-  //   const unsubscribe = navigation.addListener('tabPress', e => {
-  //     // Prevent default behavior
-  //     e.preventDefault();
-  //     //  closeConnection(e);
-
-  //     navigation.navigate("ListScreen", { shoppingListID: shoppingListID, OldConnection: true });
-  //   });
-
-  //   return unsubscribe;
-  // }, [navigation]);
 
   useEffect(() => {
     if (productEditDetails) {
       setPopupDialogVisible(true);
     }
   }, [productEditDetails]);
+
+  useEffect(() => {
+    if (deleteProductData) {
+      setIsDeleteProductDialogVisible(true);
+    }
+  }, [deleteProductData]);
 
   const getListCreatorByListID = async () => {
     let res = await shoppingListApi.apiShoppingListGetListCreatorByListIDIdGet(
@@ -212,66 +213,59 @@ const ListScreen = (props) => {
   };
 
   const pickFromGallery = async (edit) => {
-    const permissionResult =
-      await ImagePicker.requestMediaLibraryPermissionsAsync(); // בקשת הרשאה לגלריה
+    try {
+      const permissionResult =
+        await ImagePicker.requestMediaLibraryPermissionsAsync(); // בקשת הרשאה לגלריה
 
-    if (permissionResult.granted === false) {
-      Alert.alert("יש צורך בהרשאת גלריה");
-      return;
-    }
-
-    const result = await ImagePicker.launchImageLibraryAsync({
-      base64: true,
-      quality: 0.3,
-    }); // הרצת הגלריה
-
-    if (!result.cancelled) {
-      if (edit) {
-        setProductEditDetails((oldState) => ({
-          ...oldState,
-          img: result.uri,
-          ImageBase64: result.base64,
-        }));
-      } else {
-        setImageUri(result.uri);
-        setImageBase64(result.base64);
+      if (permissionResult.granted === false) {
+        Alert.alert("יש צורך בהרשאת גלריה");
+        return;
       }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        base64: true,
+        quality: 0.3,
+      }); // הרצת הגלריה
+
+      if (!result.cancelled) {
+        if (edit) {
+          setProductEditDetails((oldState) => ({
+            ...oldState,
+            img: result.uri,
+            ImageBase64: result.base64,
+          }));
+        } else {
+          setImageUri(result.uri);
+          setImageBase64(result.base64);
+        }
+      }
+    } catch (error) {
+      console.log(error)
     }
+
+
   };
 
   const handleAddProduct = () => {
     if (regexValidationProduct(false) < 2) {
       return;
     }
-
+    setIsButtonSpinnerTrue();
     let product = {
-      listId: shoppingListID,
-      productID: 0,
+      listID: shoppingListID,
       creatorID: user.userID,
       name: productName.trim(),
       amount: amount,
-      imgUri: imageBase64,
-      img: imageUri ? imageUri : null,
+      img: imageBase64
     };
-    NewProductToTheList(product);
-
+    addANewProductToTheList(product);
 
   };
-  const NewProductToTheList = async (product) => {
 
-    let newProductToList = {
-      listID: product.listId,
-      creatorID: product.creatorID,
-      name: product.name,
-      amount: product.amount,
-      img: product.imgUri === undefined ? product.img : product.imgUri,
-    };
-    // console.log("NewProductToTheList ===>", newProductToList);
-    addANewProductToTheList(newProductToList);
-  };
+
   const addANewProductToTheList = async (newProductToList) => {
     try {
-      let res = await productApi.apiProductAddProductToShoppingListPost(
+      const res = await productApi.apiProductAddProductToShoppingListPost(
         newProductToList
       );
       // console.log("Add new product to server is ", res.data);
@@ -281,6 +275,8 @@ const ListScreen = (props) => {
 
     await invokeNewProduct();
     handleClearStates();
+    setIsButtonSpinnerFalse();
+
 
   };
 
@@ -320,8 +316,10 @@ const ListScreen = (props) => {
   };
 
   const handleCancelPopupDialog = () => {
-    setPopupDialogVisible(false);
     setProductEditDetails();
+    setDeleteProductData();
+    setPopupDialogVisible(false);
+    setIsDeleteProductDialogVisible(false);
   };
 
   const handleConfirmEdit = () => {
@@ -340,11 +338,13 @@ const ListScreen = (props) => {
     handleClearStates();
   };
 
-  const handleEditProduct = (shoppingList) => {
-    setProductEditDetails(shoppingList);
+  const handleEditProduct = (product) => {
+    console.log("product: ", product)
+    setProductEditDetails(product);
   };
 
   const updateProduct = async (Product) => {
+
     let res = await productApi.apiUpdateProductPost(Product);
     let data = res.data;
     // console.log("apiUpdateProductPost data", data);
@@ -364,11 +364,14 @@ const ListScreen = (props) => {
     }
   };
 
-  const handleDeleteProduct = async (productID) => {
-    let res = await productApi.apiDeleteProductIdPost(productID);
-    let data = res.data;
-    // console.log("handleDeleteProduct ", data);
+  const handlePopupDialogDeleteProduct = (productToDelete) => {
+    setDeleteProductData(productToDelete);
+  };
+
+  const handleDeleteProduct = async () => {
+    await productApi.apiDeleteProductIdPost(deleteProductData.productID);
     await invokeNewProduct();
+    handleCancelPopupDialog();
   };
 
   const handleListEmptyComponent = () => {
@@ -384,7 +387,7 @@ const ListScreen = (props) => {
   const renderListItem = (itemData) => (
     <ProductCard
       data={itemData.item}
-      handleDeleteProduct={handleDeleteProduct}
+      handleDeleteProduct={handlePopupDialogDeleteProduct}
       handleEditProduct={handleEditProduct}
       ScreenName={ScreenName}
       user={user}
@@ -420,6 +423,9 @@ const ListScreen = (props) => {
             <TextInput
               label="שם מוצר"
               value={productName}
+              selectionColor="#919191"
+              activeOutlineColor="#919191"
+              style={{ backgroundColor: "#f1f1f1" }}
               onChangeText={(txt) => setProductName(txt)}
               dense={true}
               mode="outlined"
@@ -465,23 +471,27 @@ const ListScreen = (props) => {
                 onPress={() => pickFromGallery(false)}
               />
             </View>
-            <View
-              style={{
-                width: "36%",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Button
-                contentStyle={{ width: "100%" }}
-                mode="contained"
-                onPress={handleAddProduct}
-              >
-                הוספה
-              </Button>
+
+            <View style={{ width: "36%", justifyContent: "center", alignItems: "center", }}>
+              {
+                isButtonSpinner ?
+                  <View style={styles.btnSpinnerContainer}>
+                    <Spinner smallSize="small" color="white" />
+                  </View>
+                  :
+                  <Button
+                    contentStyle={{ width: "100%" }}
+                    color={Colors.our_dark_blue}
+                    mode="contained"
+                    onPress={handleAddProduct}
+                  >
+                    הוספה
+                  </Button>
+              }
             </View>
           </View>
         </View>
+
         {productEditDetails && (
           <PopupDialog
             title={"עריכת מוצר"}
@@ -492,6 +502,9 @@ const ListScreen = (props) => {
             <TextInput
               label="שם מוצר"
               value={productEditDetails.name}
+              selectionColor="#919191"
+              activeOutlineColor="#919191"
+              style={{ backgroundColor: "white" }}
               onChangeText={(txt) =>
                 setProductEditDetails((oldstate) => ({
                   ...oldstate,
@@ -522,8 +535,8 @@ const ListScreen = (props) => {
             <View style={styles.editImageContainer}>
               <View style={styles.editImageWrapper}>
                 <Avatar.Image
+                  theme={{ colors: { primary: "white" } }}
                   size={100}
-                  // theme={{ colors: { primary: Colors.avatarBackground } }}
                   source={{
                     uri:
                       productEditDetails.ImageBase64 === undefined
@@ -533,31 +546,25 @@ const ListScreen = (props) => {
                 />
               </View>
               <View style={styles.editImageIcon}>
-                <TouchableHighlight
-                  onPress={null}
-                  underlayColor="white"
-                  style={styles.touchableProfileCameraAvatar}
-                >
-                  <IconButton
-                    style={{ backgroundColor: "grey" }}
-                    icon="image-edit"
-                    color="white"
-                    size={20}
-                    onPress={() => pickFromGallery(true)}
-                  />
-                </TouchableHighlight>
+                <IconButton
+                  style={{ backgroundColor: Colors.our_dark_blue }}
+                  icon="image-edit"
+                  color="white"
+                  size={20}
+                  onPress={() => pickFromGallery(true)}
+                />
               </View>
               <View style={styles.removeImageIcon}>
                 <IconButton
-                  style={{ backgroundColor: "grey" }}
+                  style={{ backgroundColor: Colors.our_dark_blue }}
                   icon="image-remove"
                   color="white"
                   size={20}
                   onPress={() =>
                     setProductEditDetails((oldState) => ({
                       ...oldState,
-                      img: API + `/uploads/shoppingLists/default/default_img.jpg`,
-                      ImageBase64: null,
+                      img: `default/default_img.jpg`,
+                      ImageBase64: undefined,
                     }))
                   }
                 />
@@ -565,6 +572,17 @@ const ListScreen = (props) => {
             </View>
           </PopupDialog>
         )}
+        {
+          deleteProductData &&
+          <PopupDialog
+            title={"מחיקת מוצר"}
+            visible={isDeleteProductDialogVisible}
+            cancel={handleCancelPopupDialog}
+            confirm={handleDeleteProduct}
+          >
+            <Text>האם את/ה בטוח/ה שברצונך למחוק את המוצר "{deleteProductData.name}"</Text>
+          </PopupDialog>
+        }
       </View>
       :
       <Spinner />
@@ -612,6 +630,15 @@ const styles = StyleSheet.create({
   headerSaveButtonWrapper: {
     marginRight: 5,
   },
+  btnSpinnerContainer: {
+    flexDirection: "row",
+    justifyContent:"center",
+    alignItems:"center",
+    backgroundColor: Colors.our_dark_blue,
+    padding: 8,
+    borderRadius: 5,
+    width: "78%",
+  }
 });
 
 export default withCommonScreen(ListScreen, 'ListScreen');

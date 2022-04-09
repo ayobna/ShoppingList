@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button, Dialog, Portal } from 'react-native-paper';
+import Colors from '../utils/Colors';
 
 const PopupDialog = (props) => {
     const { children, title, visible, cancel, confirm, resend, buttonConfirmTitle, buttonCancelTitle } = props;
@@ -17,15 +18,15 @@ const PopupDialog = (props) => {
                 }
                 <Dialog.Actions>
                     {cancel &&
-                        <Button onPress={cancel}>{buttonCancelTitle ? buttonCancelTitle : "ביטול"}</Button>
+                        <Button color={Colors.our_dark_blue} onPress={cancel}>{buttonCancelTitle ? buttonCancelTitle : "ביטול"}</Button>
                     }
                     {
                         resend &&
-                        <Button onPress={() => resend(true)}>שלח קוד חדש</Button>
+                        <Button color={Colors.our_dark_blue} onPress={() => resend(true)}>שלח קוד חדש</Button>
                     }
                     {
                         confirm &&
-                        <Button onPress={() => confirm(true)}>{buttonConfirmTitle ? buttonConfirmTitle : "אישור"}</Button>
+                        <Button color={Colors.our_dark_blue} onPress={() => confirm(true)}>{buttonConfirmTitle ? buttonConfirmTitle : "אישור"}</Button>
                     }
                 </Dialog.Actions>
             </Dialog>

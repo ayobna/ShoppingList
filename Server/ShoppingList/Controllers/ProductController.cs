@@ -60,6 +60,7 @@ namespace ShoppingList.Controllers
                 return NotFound(ex);
             }
         }
+
         [HttpPost]
         [Route("api/Product/AddProductToShoppingList")]
         public IActionResult AddProductToShoppingList([FromBody] Product product)

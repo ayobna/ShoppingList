@@ -5,6 +5,7 @@ import { API, userApi } from "../api/api";
 import PopupDialog from "../components/PopupDialog";
 import Spinner from "../components/Spinner";
 import withCommonScreen from "../hoc/withCommonScreen";
+import Colors from "../utils/Colors";
 
 import { _getData, _logout } from "../utils/Functions";
 
@@ -93,19 +94,19 @@ const AccountScreen = (props) => {
               <View style={styles.satisticsWrapper}>
                 <View style={styles.satisticsTitleWrapper}>
                   <View style={styles.satisticsContent}>
-                    <Caption>רשימות שלי</Caption>
+                    <Caption style={styles.satistics}>רשימות שלי</Caption>
                   </View>
                   <View style={styles.satisticsContent}>
-                    <Caption>רשימות משותפות</Caption>
+                    <Caption style={styles.satistics}>רשימות משותפות</Caption>
                   </View>
                 </View>
-                <Divider />
+                <Divider style={{backgroundColor:Colors.our_dark_blue}} />
                 <View style={styles.satisicsAmountWrapper}>
                   <View style={styles.satisticsContent}>
-                    <Caption>{userSatistics.myListsAmount}</Caption>
+                    <Caption style={styles.satistics}>{userSatistics.myListsAmount}</Caption>
                   </View>
                   <View style={styles.satisticsContent}>
-                    <Caption>{userSatistics.otherListsAmount}</Caption>
+                    <Caption style={styles.satistics}>{userSatistics.otherListsAmount}</Caption>
                   </View>
                 </View>
               </View>
@@ -116,7 +117,7 @@ const AccountScreen = (props) => {
                     <Caption>פרטים אישיים</Caption>
                     <IconButton
                       icon="account-edit-outline"
-                      color="black"
+                      color={Colors.our_dark_blue}
                       size={25}
                       onPress={() => navigation.navigate("AccountEditScreen")}
                     />
@@ -222,6 +223,9 @@ const styles = StyleSheet.create({
   },
   scrollViewContentContainer: {
     flexGrow: 1
+  },
+  satistics: {
+    color: Colors.our_dark_blue
   }
 
 });

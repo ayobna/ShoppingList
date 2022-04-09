@@ -1,27 +1,15 @@
-import react, { useEffect, useState, useCallback } from "react";
-import { API, userApi } from "../api/api";
-import * as ImagePicker from "expo-image-picker";
+import React, { useEffect, useState } from "react";
+import { userApi } from "../api/api";
 import { _getData, _storeData } from "../utils/Functions";
-import {
-    View,
-    StyleSheet,
-    ScrollView
-} from "react-native";
-import {
-    TextInput,
-    IconButton,
-    Button,
-    Text,
-    Avatar,
-    Caption,
-    Divider,
-} from "react-native-paper";
+import { View, StyleSheet, ScrollView } from "react-native";
+import { TextInput, Button, Caption, } from "react-native-paper";
 import withCommonScreen from "../hoc/withCommonScreen";
 import Spinner from "../components/Spinner";
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as Crypto from 'expo-crypto';
+import Colors from "../utils/Colors";
+
 const AccountPasswordEditScreen = (props) => {
-    const { navigation, route, isPageLoaded, setIsPageLoadedTrue } = props;
+    const { navigation, route, isPageLoaded, setIsPageLoadedTrue, isButtonSpinner, setIsButtonSpinnerFalse, setIsButtonSpinnerTrue } = props;
 
     const [currentUser, setCurrentUser] = useState();
     const [oldPassword, setOldPassword] = useState("");
@@ -57,10 +45,12 @@ const AccountPasswordEditScreen = (props) => {
         if (checkValidation() !== 3) {
             return;
         }
+        setIsButtonSpinnerTrue();
         const result = await save();
         console.log(result);
         if (result === -1) {
             setOldPasswordErrorMessage("הסיסמה הישנה שגויה!");
+            setIsButtonSpinnerFalse();
             return;
         }
         navigation.goBack();
@@ -71,13 +61,13 @@ const AccountPasswordEditScreen = (props) => {
         const NewPassword = await Crypto.digestStringAsync(
             Crypto.CryptoDigestAlgorithm.SHA512,
             password
-          );
-          const OldPassword = await Crypto.digestStringAsync(
+        );
+        const OldPassword = await Crypto.digestStringAsync(
             Crypto.CryptoDigestAlgorithm.SHA512,
             oldPassword
-          );
+        );
         try {
-            const userData = {  Email: currentUser.email, Password: NewPassword };
+            const userData = { Email: currentUser.email, Password: NewPassword };
             let res = await userApi.apiUsersUpdatePasswordInProfilePost(
                 OldPassword,
                 userData
@@ -139,7 +129,7 @@ const AccountPasswordEditScreen = (props) => {
                                     dense
                                     style={{ backgroundColor: "white" }}
                                     left={<TextInput.Icon color={oldPasswordErrorMessage !== "" ? "#d0312d" : "#c1c1c1"} name="lock-outline" />}
-                                    right={<TextInput.Icon forceTextInputFocus={false} color="#919191" name={!isOldPasswordVisible ? "eye" : "eye-off"} onPress={() => setIsOldPasswordVisible(!isOldPasswordVisible)} />}
+                                    right={<TextInput.Icon forceTextInputFocus={false} color={Colors.our_dark_blue} name={!isOldPasswordVisible ? "eye" : "eye-off"} onPress={() => setIsOldPasswordVisible(!isOldPasswordVisible)} />}
                                     error={oldPasswordErrorMessage !== ""}
                                 />
                                 {
@@ -160,7 +150,7 @@ const AccountPasswordEditScreen = (props) => {
                                         dense
                                         style={{ backgroundColor: "white" }}
                                         left={<TextInput.Icon color={passwordErrorMessage !== "" ? "#d0312d" : "#c1c1c1"} name="lock-outline" />}
-                                        right={<TextInput.Icon forceTextInputFocus={false} color="#919191" name={!isPasswordVisible ? "eye" : "eye-off"} onPress={() => setIsPasswordVisible(!isPasswordVisible)} />}
+                                        right={<TextInput.Icon forceTextInputFocus={false} color={Colors.our_dark_blue} name={!isPasswordVisible ? "eye" : "eye-off"} onPress={() => setIsPasswordVisible(!isPasswordVisible)} />}
                                         error={passwordErrorMessage !== ""}
                                     />
                                     {
@@ -183,7 +173,7 @@ const AccountPasswordEditScreen = (props) => {
                                         dense
                                         style={{ backgroundColor: "white" }}
                                         left={<TextInput.Icon color={confirmPasswordErrorMessage !== "" ? "#d0312d" : "#c1c1c1"} name="lock-outline" />}
-                                        right={<TextInput.Icon forceTextInputFocus={false} color="#919191" name={!isConfirmPasswordVisible ? "eye" : "eye-off"} onPress={() => setIsConfirmPasswordVisible(!isConfirmPasswordVisible)} />}
+                                        right={<TextInput.Icon forceTextInputFocus={false} color={Colors.our_dark_blue} name={!isConfirmPasswordVisible ? "eye" : "eye-off"} onPress={() => setIsConfirmPasswordVisible(!isConfirmPasswordVisible)} />}
                                         error={confirmPasswordErrorMessage !== ""}
                                     />
                                     {
@@ -202,25 +192,30 @@ const AccountPasswordEditScreen = (props) => {
                             <View style={styles.bottomBtnsWrapper}>
                                 <View style={styles.bottomBtnWrapper}>
                                     <Button
-                                        mode="outlined"
-                                        theme={{ colors: { primary: `white` } }}
-                                        labelStyle={{ color: "black" }}
-                                        contentStyle={{ backgroundColor: "#bfbfbf" }}
+                                        mode="contained"
+                                        // theme={{ colors: { primary: `white` } }}
+                                        color="#bfbfbf"
                                         onPress={() => navigation.goBack()}
                                     >
                                         ביטול
                                     </Button>
                                 </View>
                                 <View style={styles.bottomBtnWrapper}>
-                                    <Button
-                                        mode="outlined"
-                                        theme={{ colors: { primary: `white` } }}
-                                        labelStyle={{ color: "black" }}
-                                        contentStyle={{ backgroundColor: "#bfbfbf" }}
-                                        onPress={handleSave}
-                                    >
-                                        שמור
-                                    </Button>
+
+                                    {
+                                        isButtonSpinner ?
+                                            <View style={styles.btnSpinnerContainer}>
+                                                <Spinner smallSize="small" color="white" />
+                                            </View>
+                                            :
+                                            <Button
+                                                mode="contained"
+                                                color={Colors.our_dark_blue}
+                                                onPress={handleSave}
+                                            >
+                                                שמור
+                                            </Button>
+                                    }
                                 </View>
                             </View>
                         </View>
@@ -304,6 +299,11 @@ const styles = StyleSheet.create({
     },
     bottomBtnWrapper: {
         width: "49%"
+    },
+    btnSpinnerContainer: {
+        backgroundColor: Colors.our_dark_blue,
+        padding: 8,
+        borderRadius: 5
     }
 });
 

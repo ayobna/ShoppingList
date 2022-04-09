@@ -5,6 +5,7 @@ import { Avatar, Title, Caption, Drawer, Badge, Snackbar, Portal } from 'react-n
 import { _getData, _logout, _removeData } from '../utils/Functions';
 import { API } from '../api/api';
 import GeneralContext from '../utils/GeneralContext';
+import Colors from '../utils/Colors';
 
 const MyDrawerContent = (props) => {
 
@@ -97,7 +98,7 @@ const MyDrawerContent = (props) => {
                             /> */}
 
                             <Drawer.Item
-                                theme={{ colors: { primary: "black" } }}
+                                theme={{ colors: { primary: Colors.our_dark_blue } }}
                                 active={currentDrawerScreen === "homeStack"}
                                 icon="home"
                                 label="דף בית"
@@ -106,7 +107,7 @@ const MyDrawerContent = (props) => {
                             />
 
                             <Drawer.Item
-                                theme={{ colors: { primary: "black" } }}
+                                theme={{ colors: { primary: Colors.our_dark_blue } }}
                                 active={currentDrawerScreen === "requestsStack"}
                                 icon="bell-outline"
                                 label="בקשות"
@@ -115,7 +116,7 @@ const MyDrawerContent = (props) => {
                             />
 
                             <Drawer.Item
-                                theme={{ colors: { primary: "black" } }}
+                                theme={{ colors: { primary: Colors.our_dark_blue } }}
                                 active={currentDrawerScreen === "AccountStack"}
                                 icon="account"
                                 label="חשבון"
@@ -192,7 +193,7 @@ const styles = StyleSheet.create({
         alignSelf: "center"
     },
     drawerItem: {
-        paddingVertical: 2.5,
+        paddingVertical: 3,
         // borderWidth:1,
         // borderColor:"#f1f1f1"
     }

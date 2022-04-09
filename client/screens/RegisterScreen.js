@@ -20,10 +20,12 @@ import {
 import { userApi } from "../api/api";
 import withCommonScreen from "../hoc/withCommonScreen";
 import * as Crypto from 'expo-crypto';
+import Colors from "../utils/Colors";
+import Spinner from "../components/Spinner";
 
 
 const RegisterScreen = (props) => {
-  const { navigation } = props;
+  const { navigation, isButtonSpinner, setIsButtonSpinnerFalse, setIsButtonSpinnerTrue } = props;
 
   const [user, setUser] = useState({
     FirstName: "",
@@ -53,6 +55,7 @@ const RegisterScreen = (props) => {
     if (checkValidation() !== 6) {
       return;
     }
+    setIsButtonSpinnerTrue();
     const digest = await Crypto.digestStringAsync(
       Crypto.CryptoDigestAlgorithm.SHA512,
       user.Password
@@ -62,6 +65,7 @@ const RegisterScreen = (props) => {
     if (res === -1) // user already exists
     {
       setUserErrorAlreadyExistsMessage("המשתמש כבר קיים, נסה מייל אחר!");
+      setIsButtonSpinnerFalse();
       return;
     }
     navigation.goBack();
@@ -254,7 +258,7 @@ const RegisterScreen = (props) => {
                 dense
                 style={{ backgroundColor: "white" }}
                 left={<TextInput.Icon color={userInputsErrorMessage.Password !== "" ? "#d0312d" : "#c1c1c1"} name="lock-outline" />}
-                right={<TextInput.Icon forceTextInputFocus={false} color="#919191" name={!isPasswordVisible ? "eye" : "eye-off"} onPress={() => setIsPasswordVisible(!isPasswordVisible)} />}
+                right={<TextInput.Icon forceTextInputFocus={false} color={Colors.our_dark_blue} name={!isPasswordVisible ? "eye" : "eye-off"} onPress={() => setIsPasswordVisible(!isPasswordVisible)} />}
                 error={userInputsErrorMessage.Password !== ""}
               />
               {
@@ -274,10 +278,10 @@ const RegisterScreen = (props) => {
                 secureTextEntry={!isConfirmPasswordVisible}
                 selectionColor="#919191"
                 activeOutlineColor="#919191"
-                dense
                 style={{ backgroundColor: "white" }}
+                dense
                 left={<TextInput.Icon color={userInputsErrorMessage.ConfirmPassword !== "" ? "#d0312d" : "#c1c1c1"} name="lock-outline" />}
-                right={<TextInput.Icon forceTextInputFocus={false} color="#919191" name={!isConfirmPasswordVisible ? "eye" : "eye-off"} onPress={() => setIsConfirmPasswordVisible(!isConfirmPasswordVisible)} />}
+                right={<TextInput.Icon forceTextInputFocus={false} color={Colors.our_dark_blue} name={!isConfirmPasswordVisible ? "eye" : "eye-off"} onPress={() => setIsConfirmPasswordVisible(!isConfirmPasswordVisible)} />}
                 error={userInputsErrorMessage.ConfirmPassword !== ""}
               />
               {
@@ -294,16 +298,23 @@ const RegisterScreen = (props) => {
               </View>
             }
             <View style={styles.btnWrapped}>
-              <Button
-                //mode="outlined"
-                theme={{ colors: { primary: `white` } }}
-                labelStyle={{ color: "black" }}
-                contentStyle={{ backgroundColor: "#bfbfbf" }}
-                style={{ width: "100%" }}
-                onPress={handleRegister}
-              >
-                הרשמה
-              </Button>
+              {isButtonSpinner ?
+                <View style={styles.btnSpinnerContainer}>
+                  <Spinner smallSize="small" color="white" />
+                </View>
+                :
+                <Button
+                  mode="contained"
+                  // theme={{ colors: { primary: `white` } }}
+                  // labelStyle={{ color: "black" }}
+                  // contentStyle={{ backgroundColor: "#bfbfbf" }}
+                  color={Colors.our_dark_blue}
+                  style={{ width: "100%" }}
+                  onPress={handleRegister}
+                >
+                  הרשמה
+                </Button>
+              }
 
             </View>
           </View>
@@ -348,13 +359,18 @@ const styles = StyleSheet.create({
     marginLeft: 10
   },
   loginLink: {
-    color: "#0502a0"
+    color: Colors.our_dark_blue
   },
   captionError: {
     color: "#d0312d"
   },
   captionErrorWrapper: {
     marginLeft: 5
+  },
+  btnSpinnerContainer: {
+    backgroundColor: Colors.our_dark_blue,
+    padding: 8,
+    borderRadius: 5
   }
 });
 

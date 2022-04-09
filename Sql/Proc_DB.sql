@@ -295,16 +295,17 @@ Go
 
 
 ------------------------------------------------------------------members---------------------------------------------------------------------
- Create Proc Proc_Get_List_Users
+ Alter Proc Proc_Get_List_Users
  @ListID int
  As
  SELECT shopping_lists_users.UserID, users.FirstName, users.LastName, users.Img,  users.Email, users.PhoneNumber, dbo.Func_Return_True_If_Creator_Of_List(@ListID,shopping_lists_users.UserID) As IsCreator
 FROM     shopping_lists_users INNER JOIN
                   users ON dbo.shopping_lists_users.UserID = dbo.users.UserID
 Where (shopping_lists_users.ListID = @ListID) And (shopping_lists_users.IsApproved = 1)
+Order By IsCreator desc, shopping_lists_users.JoinedDate
 Go
 
---exec Proc_Get_List_Users 6
+--exec Proc_Get_List_Users 1
 --select * from [shopping_lists_users]
 --select * from users
 

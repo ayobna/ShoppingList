@@ -237,7 +237,7 @@ const HomeScreen = (props) => {
           placeholder="חיפוש"
           onChangeText={(txt) => setSearchQuery(txt)}
           value={searchQuery}
-          theme={{ colors: { primary: "black" }, roundness: 0 }}
+          theme={{ colors: { primary: "#919191" }, roundness: 0 }}
           iconColor="black"
         />
         <FlatList
@@ -261,7 +261,7 @@ const HomeScreen = (props) => {
         )}
         {chosenListDetails && chosenMethod && (
           <PopupDialog
-            title={"עריכת רשימה"}
+            title={chosenMethod === "edit" ? "עריכת רשימה" : chosenMethod === "copy" ? "העתקת רשימה" : chosenMethod === "delete" ? "מחיקת רשימה" : "יציאה מרשימה"}
             visible={popupDialogVisible}
             cancel={handleCancelPopupDialog}
             confirm={handelChosenMethod}
@@ -274,6 +274,9 @@ const HomeScreen = (props) => {
               <TextInput
                 label="שם מוצר"
                 value={chosenListDetails.title}
+                selectionColor="#919191"
+                activeOutlineColor="#919191"
+                style={{ backgroundColor: "white" }}
                 onChangeText={(txt) =>
                   setChosenListDetails((oldstate) => ({
                     ...oldstate,

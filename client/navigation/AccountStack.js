@@ -5,13 +5,15 @@ import AccountScreen from "../screens/AccountScreen";
 import AccountEditScreen from "../screens/AccountEditScreen";
 import Icon from "react-native-vector-icons/Ionicons";
 import AccountPasswordEditScreen from "../screens/AccountPasswordEditScreen";
+import Colors from "../utils/Colors";
+import Style from "../utils/Style";
 
 const Stack = createStackNavigator();
 
 function AccountStack(props) {
     const { navigation, route } = props;
     return (
-        <Stack.Navigator>
+        <Stack.Navigator screenOptions={Style.screenHeader}>
             <Stack.Screen
                 name="AccountScreen"
                 component={AccountScreen}
@@ -20,16 +22,16 @@ function AccountStack(props) {
                     title: "חשבון",
                     headerLeft: () => (
                         <View style={styles.menuWrapper}>
-                            <Icon.Button
-                                name="ios-menu"
-                                backgroundColor="white"
-                                color="black"
-                                activeOpacity={0.5}
-                                underlayColor="#f1f1f1"
-                                size={25}
-                                onPress={() => navigation.openDrawer()}
-                            />
-                        </View>
+                        <Icon.Button
+                          name="ios-menu"
+                          backgroundColor={Colors.our_dark_blue}
+                          color="white"
+                          activeOpacity={0.95}
+                          underlayColor="#f1f1f1"
+                          size={25}
+                          onPress={() => navigation.openDrawer()}
+                        />
+                      </View>
                     ),
                 }}
             />

@@ -7,6 +7,7 @@ const withCommonScreen = (WrappedComponent, screenName) => props => {
     const { setCurrentDrawerScreen, requestDataGlobal, setRequestDataGlobal } = useContext(GeneralContext);
     const [isPageLoaded, setIsPageLoaded] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
+    const [isButtonSpinner,setIsButtonSpinner] = useState(false);
 
     useEffect(() => {
         const unsubscribe = navigation.addListener("focus", async () => {
@@ -37,6 +38,8 @@ const withCommonScreen = (WrappedComponent, screenName) => props => {
     useEffect(() => {
         const unsubscribe = navigation.addListener("blur", async () => {
             setIsPageLoaded(false);
+            setIsButtonSpinner(false);
+
         });
         return unsubscribe;
     }, [navigation, route]);
@@ -71,6 +74,15 @@ const withCommonScreen = (WrappedComponent, screenName) => props => {
         setRequestDataGlobal();
     };
 
+    const setIsButtonSpinnerTrue = () => {
+        setIsButtonSpinner(true);
+    };
+
+    const setIsButtonSpinnerFalse = () => {
+        setIsButtonSpinner(false);
+    };
+
+
 
     return (
         screenName === 'RequestsScreen' ?
@@ -83,6 +95,9 @@ const withCommonScreen = (WrappedComponent, screenName) => props => {
                 setIsFetchingTrue={setIsFetchingTrue}
                 setIsFetchingFalse={setIsFetchingFalse}
                 isFetching={isFetching}
+                isButtonSpinner={isButtonSpinner}
+                setIsButtonSpinnerFalse={setIsButtonSpinnerFalse}
+                setIsButtonSpinnerTrue={setIsButtonSpinnerTrue}
             />
             :
             <WrappedComponent
@@ -92,6 +107,9 @@ const withCommonScreen = (WrappedComponent, screenName) => props => {
                 setIsFetchingTrue={setIsFetchingTrue}
                 setIsFetchingFalse={setIsFetchingFalse}
                 isFetching={isFetching}
+                isButtonSpinner={isButtonSpinner}
+                setIsButtonSpinnerFalse={setIsButtonSpinnerFalse}
+                setIsButtonSpinnerTrue={setIsButtonSpinnerTrue}
             />
     );
 };
