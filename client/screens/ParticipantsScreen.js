@@ -150,7 +150,7 @@ const ParticipantsScreen = (props) => {
 
   const showResult = () => {
     if (searchResult[0].isApproved === 1) {
-      return <Text>המשתמש כבר חבר ברשימה</Text>;
+      return <View style={styles.noResultWrapper}><Text>המשתמש כבר חבר ברשימה</Text></View>;
     } else {
       return (
         <SearchUserCard

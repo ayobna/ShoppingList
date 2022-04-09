@@ -7,6 +7,7 @@ import ChatScreen from "../screens/ChatScreen";
 import ParticipantsScreen from "../screens/ParticipantsScreen";
 import ListScreenStack from "./ListScreenStack";
 import ParticipantsScreenStack from "./ParticipantsScreenStack";
+import Style from "../utils/Style";
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -15,7 +16,7 @@ function ShoppingListTabs(props) {
   const data = route.params;
 
   return (
-    <Tab.Navigator>
+    <Tab.Navigator barStyle={Style.barStyle}>
       <Tab.Screen
         name="ListScreen"
         component={ListScreenStack}

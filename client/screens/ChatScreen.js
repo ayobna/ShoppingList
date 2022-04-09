@@ -16,6 +16,7 @@ import { API, chatApi } from "../api/api";
 import Spinner from "../components/Spinner";
 import { _getData } from "../utils/Functions";
 import withCommonScreen from "../hoc/withCommonScreen";
+import Colors from "../utils/Colors";
 const ChatScreen = (props) => {
   // props
   const { navigation, route, isPageLoaded, setIsPageLoadedTrue } = props;
@@ -192,15 +193,10 @@ const ChatScreen = (props) => {
             icon="send"
             size={20}
             onPress={() => sendMessage()}
+            color={Colors.our_dark_blue}
             style={{ transform: [{ rotateY: '180deg' }] }}
             disabled={message.length === 0}
           />
-          {/* <IconButton
-          icon="home"
-          size={20}
-          onPress={() => closeConnection()}
-          style={{ transform: [{ rotateY: '180deg' }] }}
-        /> */}
         </View>
       </View>
       :

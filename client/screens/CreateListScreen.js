@@ -4,7 +4,6 @@ import {
   StyleSheet,
   FlatList,
   TouchableHighlight,
-  Pressable,
 } from "react-native";
 import {
   TextInput,
@@ -13,7 +12,6 @@ import {
   Text,
   Avatar,
 } from "react-native-paper";
-import NumericInput from "react-native-numeric-input";
 import AmountInput from "../components/AmountInput";
 import * as ImagePicker from "expo-image-picker";
 import ProductCard from "../components/ProductCard";
@@ -22,10 +20,11 @@ import { productApi, shoppingListApi, API } from "../api/api";
 import { _getData } from "../utils/Functions";
 import withCommonScreen from "../hoc/withCommonScreen";
 import Spinner from "../components/Spinner";
+import Colors from "../utils/Colors";
 
 const CreateListScreen = (props) => {
   // props
-  const { navigation, isPageLoaded, setIsPageLoadedTrue } = props;
+  const { navigation, isPageLoaded, setIsPageLoadedTrue, isButtonSpinner, setIsButtonSpinnerFalse, setIsButtonSpinnerTrue } = props;
 
   // states
   const [products, setProducts] = useState([]);
@@ -49,13 +48,20 @@ const CreateListScreen = (props) => {
     navigation.setOptions({
       headerRight: () => (
         <View style={styles.headerSaveButtonWrapper}>
-          <Button mode="text" compact onPress={handleSaveShoppingList}>
-            שמור
-          </Button>
+          {
+            isButtonSpinner ?
+              <View style={styles.btnSpinnerContainer}>
+                <Spinner smallSize="small" color="white" />
+              </View>
+              :
+              <Button color="white" mode="text" compact onPress={handleSaveShoppingList}>
+                שמור
+              </Button>
+          }
         </View>
       ),
     });
-  }, [title, products]);
+  }, [title, products, isButtonSpinner]);
 
   useEffect(() => {
     if (productEditDetails) {
@@ -139,30 +145,34 @@ const CreateListScreen = (props) => {
 
   // בחירת תמונה מהגלריה
   const pickFromGallery = async (edit) => {
-    const permissionResult =
-      await ImagePicker.requestMediaLibraryPermissionsAsync(); // בקשת הרשאה לגלריה
+    try {
+      const permissionResult =
+        await ImagePicker.requestMediaLibraryPermissionsAsync(); // בקשת הרשאה לגלריה
 
-    if (permissionResult.granted === false) {
-      Alert.alert("יש צורך בהרשאת גלריה");
-      return;
-    }
-
-    const result = await ImagePicker.launchImageLibraryAsync({
-      base64: true,
-      quality: 0.3,
-    }); // הרצת הגלריה
-
-    if (!result.cancelled) {
-      if (edit) {
-        setProductEditDetails((oldState) => ({
-          ...oldState,
-          img: result.uri,
-          ImageBase64: result.base64,
-        }));
-      } else {
-        setImageUri(result.uri);
-        setImageBase64(result.base64);
+      if (permissionResult.granted === false) {
+        Alert.alert("יש צורך בהרשאת גלריה");
+        return;
       }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        base64: true,
+        quality: 0.3,
+      }); // הרצת הגלריה
+
+      if (!result.cancelled) {
+        if (edit) {
+          setProductEditDetails((oldState) => ({
+            ...oldState,
+            img: result.uri,
+            ImageBase64: result.base64,
+          }));
+        } else {
+          setImageUri(result.uri);
+          setImageBase64(result.base64);
+        }
+      }
+    } catch (error) {
+      console.log(error)
     }
   };
 
@@ -276,6 +286,7 @@ const CreateListScreen = (props) => {
       console.log("handleSaveShoppingList error")
       return;
     }
+    setIsButtonSpinnerTrue();
     handleCreateShoppingListApi();
   };
 
@@ -303,7 +314,7 @@ const CreateListScreen = (props) => {
         creatorID: user.userID,
         name: ProductsFromList[index].name,
         amount: ProductsFromList[index].amount,
-        img: ProductsFromList[index].imgUri,
+        img: ProductsFromList[index].imgUri, // image uri = base64
       });
     }
     addProductsToShoppingList(productsToServer)
@@ -312,9 +323,9 @@ const CreateListScreen = (props) => {
   const addProductsToShoppingList = async (productsToServer) => {
     console.log("productsToServer", productsToServer)
     try {
-      const res = await productApi.apiProductAddProductsToShoppingListPost(productsToServer)
+      const res = await productApi.apiProductAddProductsToShoppingListPost(productsToServer);
       console.log(res.data)
-      navigation.navigate('HomeScreen')
+      navigation.goBack();
     } catch (error) {
       console.warn(error)
     }
@@ -344,8 +355,11 @@ const CreateListScreen = (props) => {
     isPageLoaded ?
       <View style={styles.container}>
         <TextInput
-          label="כותרת"
+          placeholder="כותרת"
+          theme={{ colors: { primary: "#919191" } }}
           value={title}
+          selectionColor="#919191"
+          activeOutlineColor="#919191"
           onChangeText={(txt) => setTitle(txt)}
           dense={true}
           error={titleError}
@@ -375,6 +389,9 @@ const CreateListScreen = (props) => {
               label="שם מוצר"
               value={productName}
               onChangeText={(txt) => setProductName(txt)}
+              selectionColor="#919191"
+              activeOutlineColor="#919191"
+              style={{ backgroundColor: "#f1f1f1" }}
               dense={true}
               mode="outlined"
               error={nameError}
@@ -429,6 +446,7 @@ const CreateListScreen = (props) => {
               <Button
                 contentStyle={{ width: "100%" }}
                 mode="contained"
+                color={Colors.our_dark_blue}
                 onPress={handleAddProduct}
               >
                 הוספה
@@ -446,6 +464,9 @@ const CreateListScreen = (props) => {
             <TextInput
               label="שם מוצר"
               value={productEditDetails.name}
+              selectionColor="#919191"
+              activeOutlineColor="#919191"
+              style={{ backgroundColor: "white" }}
               onChangeText={(txt) =>
                 setProductEditDetails((oldstate) => ({
                   ...oldstate,
@@ -477,30 +498,25 @@ const CreateListScreen = (props) => {
               <View style={styles.editImageWrapper}>
                 <Avatar.Image
                   size={100}
-                  // theme={{ colors: { primary: Colors.avatarBackground } }}
+                  theme={{ colors: { primary: "white" } }}
                   source={{
                     uri: productEditDetails.img,
                   }}
                 />
               </View>
               <View style={styles.editImageIcon}>
-                <TouchableHighlight
-                  onPress={null}
-                  underlayColor="white"
-                  style={styles.touchableProfileCameraAvatar}
-                >
-                  <IconButton
-                    style={{ backgroundColor: "grey" }}
-                    icon="image-edit"
-                    color="white"
-                    size={20}
-                    onPress={() => pickFromGallery(true)}
-                  />
-                </TouchableHighlight>
+
+                <IconButton
+                  style={{ backgroundColor: Colors.our_dark_blue }}
+                  icon="image-edit"
+                  color="white"
+                  size={20}
+                  onPress={() => pickFromGallery(true)}
+                />
               </View>
               <View style={styles.removeImageIcon}>
                 <IconButton
-                  style={{ backgroundColor: "grey" }}
+                  style={{ backgroundColor: Colors.our_dark_blue }}
                   icon="image-remove"
                   color="white"
                   size={20}
@@ -508,7 +524,7 @@ const CreateListScreen = (props) => {
                     setProductEditDetails((oldState) => ({
                       ...oldState,
                       img:
-                        "https://media.istockphoto.com/vectors/no-image-available-sign-vector-id922962354?k=20&m=922962354&s=612x612&w=0&h=f-9tPXlFXtz9vg_-WonCXKCdBuPUevOBkp3DQ-i0xqo=",
+                        API + `/uploads/shoppingLists/default/default_img.jpg`,
                       ImageBase64: null,
                     }))
                   }
@@ -564,6 +580,11 @@ const styles = StyleSheet.create({
   headerSaveButtonWrapper: {
     marginRight: 5,
   },
+  btnSpinnerContainer: {
+    backgroundColor: Colors.our_dark_blue,
+    padding: 8,
+    borderRadius: 5
+  }
 });
 
 export default withCommonScreen(CreateListScreen, "CreateListScreen");

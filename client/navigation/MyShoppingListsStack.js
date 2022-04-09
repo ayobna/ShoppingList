@@ -5,6 +5,8 @@ import { createStackNavigator } from "@react-navigation/stack";
 import Icon from "react-native-vector-icons/Ionicons";
 
 import HomeScreen from "../screens/HomeScreen";
+import Style from "../utils/Style";
+import Colors from "../utils/Colors";
 
 const Stack = createStackNavigator();
 
@@ -15,7 +17,7 @@ function MyShoppingListsStack(props) {
 
 
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={Style.screenHeader}>
       <Stack.Screen
         name="HomeScreen"
         component={HomeScreen}
@@ -26,9 +28,9 @@ function MyShoppingListsStack(props) {
             <View style={styles.menuWrapper}>
               <Icon.Button
                 name="ios-menu"
-                backgroundColor="white"
-                color="black"
-                activeOpacity={0.5}
+                backgroundColor={Colors.our_dark_blue}
+                color="white"
+                activeOpacity={0.95}
                 underlayColor="#f1f1f1"
                 size={25}
                 onPress={() => navigation.openDrawer()}

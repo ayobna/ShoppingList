@@ -4,6 +4,7 @@ import AccountScreen from "../screens/AccountScreen";
 import AccountEditScreen from "../screens/AccountEditScreen";
 import Icon from "react-native-vector-icons/Ionicons";
 import ListScreen from "../screens/ListScreen";
+import Style from "../utils/Style";
 
 const Stack = createStackNavigator();
 
@@ -13,7 +14,7 @@ function ListScreenStack(props) {
     const data = route.params;
   
     return (
-        <Stack.Navigator>
+        <Stack.Navigator screenOptions={Style.screenHeader}>
             <Stack.Screen
                 name="listScreenStack"
                 component={ListScreen}

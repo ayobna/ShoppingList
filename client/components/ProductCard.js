@@ -18,6 +18,7 @@ import {
 } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { API, shoppingListApi } from "../api/api";
+import Colors from "../utils/Colors";
 const ProductCard = (props) => {
   const {
     data,
@@ -68,15 +69,15 @@ const ProductCard = (props) => {
   };
 
   const onChecked = async () => {
-    setChecked(!checked);``
+    setChecked(!checked); ``
     await checkProduct(data.productID, !data.isChecked);
     console.log("after checkProduct ", data.isChecked);
-   
+
   };
 
   const leftContent = (props) => {
     if (ScreenName === "CreateList")
-      return <Avatar.Image size={60} source={{ uri: ImgName() }} />;
+      return <Avatar.Image theme={{ colors: { primary: "black" } }} size={60} source={{ uri: ImgName() }} />;
     else {
       return (
         <View
@@ -89,8 +90,9 @@ const ProductCard = (props) => {
           <Checkbox
             status={checked ? "checked" : "unchecked"}
             onPress={onChecked}
+            color={Colors.our_dark_blue}
           />
-          <Avatar.Image size={60} source={{ uri: ImgName() }} />
+          <Avatar.Image theme={{ colors: { primary: "black" } }} size={60} source={{ uri: ImgName() }} />
         </View>
       );
     }
@@ -131,7 +133,7 @@ const ProductCard = (props) => {
             <Divider style={styles.menuDivider} />
             <Menu.Item
               icon="delete"
-              onPress={() => handleDeleteProduct(data.productID)}
+              onPress={deleteProduct}
               title="מחק"
             />
           </Menu>
@@ -143,6 +145,11 @@ const ProductCard = (props) => {
     closeMenu();
     handleEditProduct(data);
   };
+
+  const deleteProduct = () => {
+    closeMenu();
+    handleDeleteProduct(data);
+  }
   return (
     <View style={{ ...styles.container, ...props.style }}>
       <TouchableHighlight

@@ -3,12 +3,13 @@ import { View, StyleSheet } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 
 const Spinner = (props) => {
-    return(
+    const { smallSize, color } = props;
+    return (
         <View style={styles.container}>
-            <ActivityIndicator size="large" animating={true} color="black"/>
+            <ActivityIndicator size={smallSize ? smallSize : "large"} animating={true} color={color ? color : "black"} />
         </View>
     );
- };
+};
 
 
 const styles = StyleSheet.create({

@@ -11,7 +11,7 @@ const ParticipantsCard = (props) => {
     <View style={styles.buttonContainer}>
       {listCreatorId !== data.userID && <IconButton
         icon="delete"
-        color='red'
+        color='#d0312d'
         size={20}
         onPress={() => deleteParticipant(data)}
       />}
@@ -35,7 +35,8 @@ const ParticipantsCard = (props) => {
             right={rightContent}
             left={leftContent}
           />
-        </Card> :
+        </Card>
+        :
         <Card>
           <Card.Title
             titleNumberOfLines={3}

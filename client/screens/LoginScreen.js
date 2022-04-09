@@ -11,13 +11,14 @@ import PopupDialog from "../components/PopupDialog";
 import moment from "moment";
 import withCommonScreen from "../hoc/withCommonScreen";
 import * as Crypto from 'expo-crypto';
+import Colors from "../utils/Colors";
 const Time_For_Code = 10;
 // WebBrowser.maybeCompleteAuthSession();
 
 
 const LoginScreen = (props) => {
   // props
-  const { navigation, isPageLoaded, setIsPageLoadedTrue } = props;
+  const { navigation, isPageLoaded, setIsPageLoadedTrue, isButtonSpinner, setIsButtonSpinnerFalse, setIsButtonSpinnerTrue } = props;
 
   // states
   const [email, setEmail] = useState("ayobnas12@gmail.com");
@@ -74,6 +75,7 @@ const LoginScreen = (props) => {
     setIsPasswordVisible(false);
     setLoginErrorMessage("");
     setIsInsertEmailDialogVisible(false);
+    setIsButtonSpinnerFalse();
   };
 
   useEffect(() => {
@@ -94,9 +96,11 @@ const LoginScreen = (props) => {
       setLoginErrorMessage("כל השדות חייבים להיות מלאים!");
       return;
     }
+    setIsButtonSpinnerTrue();
     const userDetails = await checkLoginDetails();
     if (!userDetails || userDetails === null) {
       setLoginErrorMessage("היוזר לא קיים / הפרטים שגויים!");
+      setIsButtonSpinnerFalse();
       return;
     }
     setLoginErrorMessage("");
@@ -241,21 +245,6 @@ const LoginScreen = (props) => {
   };
 
 
-  // const discovery = useAutoDiscovery('https://login.microsoftonline.com/0ff03880-4d75-4d76-889a-26760370fcd3/v2.0');
-  // const [request, response, promptAsync] = useAuthRequest(
-  //   {
-  //     clientId: '6d6f2820-78ec-4918-a473-56f6b691fb56',
-  //     scopes: ['openid', 'profile', 'email', 'offline_access'],
-  //     redirectUri: makeRedirectUri({
-  //       scheme: 'client'
-  //       }),
-  //   },
-  //   discovery
-  // );
-
-  //
-
-
   return (
     isPageLoaded ?
       <SafeAreaView style={styles.container}>
@@ -295,7 +284,7 @@ const LoginScreen = (props) => {
                   dense
                   style={{ backgroundColor: "white" }}
                   left={<TextInput.Icon color={loginErrorMessage !== "" ? "#d0312d" : "#c1c1c1"} name="lock-outline" />}
-                  right={<TextInput.Icon forceTextInputFocus={false} color="#919191" name={!isPasswordVisible ? "eye" : "eye-off"} onPress={() => setIsPasswordVisible(!isPasswordVisible)} />}
+                  right={<TextInput.Icon forceTextInputFocus={false} color={Colors.our_dark_blue} name={!isPasswordVisible ? "eye" : "eye-off"} onPress={() => setIsPasswordVisible(!isPasswordVisible)} />}
                   error={loginErrorMessage !== ""}
                 />
 
@@ -317,18 +306,23 @@ const LoginScreen = (props) => {
 
 
               <View style={styles.btnWrapped}>
-                <Button
-                  //mode="outlined"
-                  theme={{ colors: { primary: `white` } }}
-                  labelStyle={{ color: "black" }}
-                  contentStyle={{ backgroundColor: "#bfbfbf" }}
-                  style={{ width: "100%" }}
-                  onPress={handleLogin}
-                >
-                  התחברות
-                </Button>
-              </View>
 
+                {isButtonSpinner ?
+                  <View style={styles.btnSpinnerContainer}>
+                    <Spinner smallSize="small" color="white" />
+                  </View>
+                  :
+                  <Button
+                    mode="contained"
+                    color={Colors.our_dark_blue}
+                    // theme={{ colors: { primary: `white` } }}
+                    onPress={handleLogin}
+                  >
+                    התחברות
+                  </Button>
+                }
+
+              </View>
 
             </View>
 
@@ -422,7 +416,7 @@ const LoginScreen = (props) => {
                 dense
                 style={{ backgroundColor: "white" }}
                 left={<TextInput.Icon color={resetPasswordErrorMessage !== "" ? "#d0312d" : "#c1c1c1"} name="lock-outline" />}
-                right={<TextInput.Icon forceTextInputFocus={false} color="#919191" name={!isResetPasswordVisible ? "eye" : "eye-off"} onPress={() => setIsResetPasswordVisible(!isResetPasswordVisible)} />}
+                right={<TextInput.Icon forceTextInputFocus={false} color={Colors.our_dark_blue} name={!isResetPasswordVisible ? "eye" : "eye-off"} onPress={() => setIsResetPasswordVisible(!isResetPasswordVisible)} />}
                 error={resetPasswordErrorMessage !== ""}
               />
 
@@ -439,7 +433,7 @@ const LoginScreen = (props) => {
                 dense
                 style={{ backgroundColor: "white" }}
                 left={<TextInput.Icon color={resetPasswordErrorMessage !== "" ? "#d0312d" : "#c1c1c1"} name="lock-outline" />}
-                right={<TextInput.Icon forceTextInputFocus={false} color="#919191" name={!isResetPasswordConfirmVisible ? "eye" : "eye-off"} onPress={() => setIsResetPasswordConfirmVisible(!isResetPasswordConfirmVisible)} />}
+                right={<TextInput.Icon forceTextInputFocus={false} color={Colors.our_dark_blue} name={!isResetPasswordConfirmVisible ? "eye" : "eye-off"} onPress={() => setIsResetPasswordConfirmVisible(!isResetPasswordConfirmVisible)} />}
                 error={resetPasswordErrorMessage !== ""}
               />
 
@@ -480,8 +474,8 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   logo: {
-    width: 350,
-    height: 144
+    width: 300,
+    height: 123
   },
   inputWrapper: {
     marginTop: 20
@@ -508,7 +502,7 @@ const styles = StyleSheet.create({
     marginLeft: 10
   },
   registerLink: {
-    color: "#0502a0"
+    color: Colors.our_dark_blue
   },
   captionInDialogWrapper: {
     marginTop: 10,
@@ -516,6 +510,16 @@ const styles = StyleSheet.create({
   },
   captionInDialog: {
     color: "#d0312d"
+  },
+  btnSpinnerContainer: {
+    backgroundColor: Colors.our_dark_blue,
+    padding: 8,
+    borderRadius: 5
+  },
+  btnSpinnerContainer: {
+    backgroundColor: Colors.our_dark_blue,
+    padding: 8,
+    borderRadius: 5
   }
 
 });
