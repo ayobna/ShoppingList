@@ -45,8 +45,8 @@ namespace ShoppingList.Models
 
         public async Task SendEmail(string subject, string sendTo, string firstName, string content, int code)
         {
-            //   string apiKey = "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";
-              string apiKey = "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";
+           
+              string apiKey = "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";
             var client = new SendGridClient(apiKey);
             var from = new EmailAddress("myshoppinglistappspt@gmail.com", "ShoppingList User");
 

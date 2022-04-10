@@ -81,7 +81,7 @@ namespace ShoppingList.Controllers
                 }
 
                 int code = mailVerification.GenerateVeraficationCode();
-                mailVerification.SendEmail("איפוס סיסמה - MyShoppingList app", user.Email, userList[0].FirstName, "קוד זמני:", code);
+                mailVerification.SendEmail("איפוס סיסמה - MyShoppingList app", user.Email, userList[0].FirstName, "קוד זמני:", code).Wait();
                 logger.LogInformation($"ResetPasswordCheckEmailAndSendCode - VerificationCode create succesfully!");
                 return Ok(code);
 
