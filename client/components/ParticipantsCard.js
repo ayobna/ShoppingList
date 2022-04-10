@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableHighlight } from 'react-native';
-import { Avatar, Card, Title, Paragraph, Menu, Divider, IconButton, List, Caption } from 'react-native-paper';
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
+import { Avatar, Card, IconButton } from 'react-native-paper';
 import { API } from '../api/api';
 
 const ParticipantsCard = (props) => {

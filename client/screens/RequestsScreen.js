@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, FlatList } from 'react-native';
-import { Text, Divider } from 'react-native-paper';
+import { Text, Divider, Snackbar } from 'react-native-paper';
 import { requestApi } from "../api/api";
 import PopupDialog from '../components/PopupDialog';
 import RequestsCard from '../components/RequestsCard';
@@ -12,7 +12,19 @@ import { _getData } from '../utils/Functions';
 
 const RequestsScreen = (props) => {
   // props
-  const { navigation, route, resetRequestDataGlobalState, requestDataGlobal, isPageLoaded, setIsPageLoadedTrue, setIsFetchingTrue, setIsFetchingFalse, isFetching } = props;
+  const {
+    navigation,
+    route,
+    resetRequestDataGlobalState,
+    requestDataGlobal,
+    isPageLoaded,
+    setIsPageLoadedTrue,
+    setIsFetchingTrue,
+    setIsFetchingFalse,
+    isFetching,
+    snackBarDetails,
+    setSnackBar
+  } = props;
 
   // states
   const [currentUser, setCurrentUser] = useState();
@@ -49,10 +61,12 @@ const RequestsScreen = (props) => {
           case "ok":
             console.log("ok - withCommonScreen")
             await handleConfirmRequest(requestDataGlobal.listID);
+            setSnackBar({ visible: true, duration: 3000, message: "הבקשה אושרה!", color: "green", timeStamp: new Date().getMilliseconds() })
             break;
           case "cancel":
             console.log("Cancel - withCommonScreen")
             await declineRequest();
+            setSnackBar({ visible: true, duration: 3000, message: "הבקשה נדחתה!", color: "green", timeStamp: new Date().getMilliseconds() })
             break;
           default:
             console.log("Default - withCommonScreen")
@@ -156,6 +170,17 @@ const RequestsScreen = (props) => {
           cancel={handleCancelPopupDialog}
           confirm={declineRequest}
         />
+        {
+          snackBarDetails.visible &&
+          <Snackbar
+            visible={snackBarDetails.visible}
+            onDismiss={() => setSnackBar()}
+            duration={snackBarDetails.duration}
+            style={{ backgroundColor: snackBarDetails.color }}
+          >
+            {snackBarDetails.message}
+          </Snackbar>
+        }
       </View>
       :
       <Spinner />

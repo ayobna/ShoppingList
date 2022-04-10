@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View, StyleSheet, Alert } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { DrawerContentScrollView, useDrawerStatus } from '@react-navigation/drawer';
-import { Avatar, Title, Caption, Drawer, Badge, Snackbar, Portal } from 'react-native-paper';
+import { Avatar, Title, Drawer } from 'react-native-paper';
 import { _getData, _logout, _removeData } from '../utils/Functions';
 import { API } from '../api/api';
 import GeneralContext from '../utils/GeneralContext';
@@ -20,15 +20,7 @@ const MyDrawerContent = (props) => {
 
     //varibls
     const [currentUser, setCurrentUser] = useState();
-    // const [timeStamp, setTimeStamp] = useState(Date.now());
-    // const [coursesAmount, setCoursesAmount] = useState(0);
-    // const [eventsAmount, setEventsAmount] = useState(0);
-    // const [requestAmount, setRequestAmount] = useState(0);
 
-    // // snackBar
-    // const [showSnackBar, setShowSnackBar] = useState(false);
-    // const [snackBarMessage, setSnackBarMessage] = useState("");
-    // const [snackBarColor, setSnackBarColor] = useState(Colors.snackbarOnSurfaceColor);
 
 
     // // קורה בפתיחת הדראוור
@@ -40,27 +32,10 @@ const MyDrawerContent = (props) => {
                 if (user !== null) {
                     setCurrentUser(user);
                 }
-                // getDrawerRelevantEventsAmount(user.ID);
-                // getDrawerCoursesAmount(user.ID);
-                // getAllOpenRequestsAmount(user.ID);
             }
         }
         init()
     }, [isDrawerOpen])
-
-
-    // // התנתקות
-    // const logout = async () => {
-    //     try {
-    //         const res = await _removeData("User");
-    //         if (res) {
-    //             navigation.replace("LoginScreen");
-    //             console.log("Sign out");
-    //         }
-    //     } catch (e) {
-    //         console.log(error);
-    //     }
-    // }
 
 
     // מטפל בבחירת מסך מהדראוור
@@ -80,7 +55,7 @@ const MyDrawerContent = (props) => {
                             <View style={styles.userInfoWrapper}>
                                 <Avatar.Image
                                     size={50}
-                                    // theme={{ colors: { primary: Colors.avatarBackground } }}
+                                    theme={{ colors: { primary: "black" } }}
                                     source={{
                                         uri: `${API}/uploads/users/${currentUser.img}`
                                     }} />
@@ -90,12 +65,6 @@ const MyDrawerContent = (props) => {
                             </View>
                         </View>
                         <Drawer.Section style={styles.drawerSection}>
-
-                            {/* <Drawer.Item
-                                icon="star"
-                                label="התחברות"
-                                onPress={() => handleSelectedScreen("CoursesBottomTabNavigator")}
-                            /> */}
 
                             <Drawer.Item
                                 theme={{ colors: { primary: Colors.our_dark_blue } }}
@@ -132,7 +101,7 @@ const MyDrawerContent = (props) => {
                         theme={{ colors: { text: "#990f02" } }}
                         icon="logout"
                         label="התנתק/י"
-                        onPress={() =>_logout(navigation)}
+                        onPress={() => _logout(navigation)}
                         style={styles.drawerItem}
                         color="red"
                     />

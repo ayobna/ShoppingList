@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, FlatList, TouchableHighlight, StyleSheet } from "react-native";
+import { View, FlatList, StyleSheet } from "react-native";
 import ProductCard from "../components/ProductCard";
 import {
   TextInput,
@@ -13,16 +13,19 @@ import * as ImagePicker from "expo-image-picker";
 import PopupDialog from "../components/PopupDialog";
 import { productApi, shoppingListApi, API } from "../api/api";
 import { _getData } from "../utils/Functions";
-import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
+import { HubConnectionBuilder } from "@microsoft/signalr";
 import withCommonScreen from "../hoc/withCommonScreen";
 import Spinner from "../components/Spinner";
 import Colors from "../utils/Colors";
-const ListScreen = (props) => {
-  const { navigation, route, isPageLoaded, setIsPageLoadedTrue, setIsFetchingFalse, isFetching, isButtonSpinner, setIsButtonSpinnerFalse, setIsButtonSpinnerTrue } = props;
 
+const ListScreen = (props) => {
+  //props
+  const { navigation, route, isPageLoaded, setIsPageLoadedTrue, setIsFetchingFalse, isFetching, isButtonSpinner, setIsButtonSpinnerFalse,
+    setIsButtonSpinnerTrue } = props;
   const ScreenName = props.route.name;
   const shoppingListID = route.params.shoppingListID;
 
+  //states
   const [listCreatorId, setListCreatorId] = useState();
   const [products, setProducts] = useState();
   const [user, setUser] = useState({});
@@ -38,12 +41,12 @@ const ListScreen = (props) => {
   const [editNameError, setEditNameError] = useState(false);
   const [isDeleteProductDialogVisible, setIsDeleteProductDialogVisible] = useState(false);
   const [deleteProductData, setDeleteProductData] = useState();
-
-
-
-
-  const [fromDB, setFromDB] = useState(true);
   const [connection, setConnection] = useState();
+
+  //veribales
+  const amountMaxValue = 1000;
+  const amountMinValue = 1;
+  const validationAmount = 2;
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", async () => {
@@ -90,15 +93,13 @@ const ListScreen = (props) => {
     let res = await shoppingListApi.apiShoppingListGetListCreatorByListIDIdGet(
       shoppingListID
     );
-    // console.log("res.data.creatorID", res.data.creatorID);
     setListCreatorId(res.data.creatorID);
-    // console.log(res.data);
   };
+
   const loadUser = async () => {
     let u = await _getData("User");
     if (u != null) {
       setUser(u);
-      // console.log(u);
     }
   };
 
@@ -128,9 +129,9 @@ const ListScreen = (props) => {
       console.log(e);
     }
   };
+
   const invokeNewProduct = async () => {
     try {
-      console.log("here")
       await connection.invoke("NewProduct");
     } catch (e) {
       console.log(e);
@@ -138,31 +139,26 @@ const ListScreen = (props) => {
   };
 
   const invokeCheckedProduct = async (productID) => {
-
     try {
-      console.log("Checked")
-      //   setProducts()
       await connection.invoke("CheckedProduct", productID);
 
     } catch (e) {
       console.log(e);
     }
   };
-  const invokeUnCheckedProduct = async (productID) => {
 
+  const invokeUnCheckedProduct = async (productID) => {
     try {
-      console.log("UnChecked")
-      //  setProducts()
       await connection.invoke("UnCheckedProduct", productID);
 
     } catch (e) {
       console.log(e);
     }
   };
+
   const closeConnection = async (e) => {
     try {
       await connection.stop();
-      console.log("closeConnection");
       navigation.dispatch(e.data.action);
     } catch (e) {
       console.log(e);
@@ -185,9 +181,9 @@ const ListScreen = (props) => {
     let value = parseInt(edit ? productEditDetails.amount : amount);
 
     if (operation === "+") {
-      if (value !== 1000) value += 1;
+      if (value !== amountMaxValue) value += 1;
     } else {
-      if (value !== 1) value -= 1;
+      if (value !== amountMinValue) value -= 1;
     }
     edit
       ? setProductEditDetails((oldState) => ({
@@ -198,9 +194,10 @@ const ListScreen = (props) => {
   };
 
   const handleOnChangeAmount = (txt, edit) => {
-    if (parseInt(txt) !== 0) {
+    const preventNumnerZero = 0;
+    if (parseInt(txt) !== preventNumnerZero) {
       const amountRgx = /^[1-9]*([0-9]*)$/;
-      if (!amountRgx.test(txt) || parseInt(txt) > 1000) {
+      if (!amountRgx.test(txt) || parseInt(txt) > amountMaxValue) {
         return;
       }
       edit
@@ -247,7 +244,8 @@ const ListScreen = (props) => {
   };
 
   const handleAddProduct = () => {
-    if (regexValidationProduct(false) < 2) {
+
+    if (regexValidationProduct(false) < validationAmount) {
       return;
     }
     setIsButtonSpinnerTrue();
@@ -265,10 +263,9 @@ const ListScreen = (props) => {
 
   const addANewProductToTheList = async (newProductToList) => {
     try {
-      const res = await productApi.apiProductAddProductToShoppingListPost(
+      await productApi.apiProductAddProductToShoppingListPost(
         newProductToList
       );
-      // console.log("Add new product to server is ", res.data);
     } catch (e) {
       console.log(e);
     }
@@ -323,7 +320,7 @@ const ListScreen = (props) => {
   };
 
   const handleConfirmEdit = () => {
-    if (regexValidationProduct(true) < 2) {
+    if (regexValidationProduct(true) < validationAmount) {
       return;
     }
     let tempProduct = productEditDetails;
@@ -345,22 +342,20 @@ const ListScreen = (props) => {
 
   const updateProduct = async (Product) => {
 
-    let res = await productApi.apiUpdateProductPost(Product);
-    let data = res.data;
-    // console.log("apiUpdateProductPost data", data);
+    await productApi.apiUpdateProductPost(Product);
     await invokeNewProduct();
   };
+
   const updateProductNewImg = async (Product) => {
-    let res = await productApi.apiUpdateProductNewImgPost(Product);
-    let data = res.data;
-    // console.log("updateProductNewImg data", data);
+    await productApi.apiUpdateProductNewImgPost(Product);
     await invokeNewProduct();
   };
+
   const checkProduct = async (productID, checked) => {
     if (checked) {
-      let res = await invokeCheckedProduct(productID);
+      await invokeCheckedProduct(productID);
     } else {
-      let res = await invokeUnCheckedProduct(productID);
+      await invokeUnCheckedProduct(productID);
     }
   };
 
@@ -391,7 +386,6 @@ const ListScreen = (props) => {
       handleEditProduct={handleEditProduct}
       ScreenName={ScreenName}
       user={user}
-      FromDB={fromDB}
       listCreatorId={listCreatorId}
       checkProduct={checkProduct}
     />
@@ -632,8 +626,8 @@ const styles = StyleSheet.create({
   },
   btnSpinnerContainer: {
     flexDirection: "row",
-    justifyContent:"center",
-    alignItems:"center",
+    justifyContent: "center",
+    alignItems: "center",
     backgroundColor: Colors.our_dark_blue,
     padding: 8,
     borderRadius: 5,

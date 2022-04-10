@@ -1,17 +1,6 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  StyleSheet,
-  FlatList,
-  TouchableHighlight,
-} from "react-native";
-import {
-  TextInput,
-  IconButton,
-  Button,
-  Text,
-  Avatar,
-} from "react-native-paper";
+import { View, StyleSheet, FlatList } from "react-native";
+import { TextInput, IconButton, Button, Text, Avatar, Snackbar } from "react-native-paper";
 import AmountInput from "../components/AmountInput";
 import * as ImagePicker from "expo-image-picker";
 import ProductCard from "../components/ProductCard";
@@ -24,11 +13,19 @@ import Colors from "../utils/Colors";
 
 const CreateListScreen = (props) => {
   // props
-  const { navigation, isPageLoaded, setIsPageLoadedTrue, isButtonSpinner, setIsButtonSpinnerFalse, setIsButtonSpinnerTrue } = props;
+  const {
+    navigation,
+    isPageLoaded,
+    setIsPageLoadedTrue,
+    isButtonSpinner,
+    setIsButtonSpinnerFalse,
+    setIsButtonSpinnerTrue,
+    snackBarDetails,
+    setSnackBar
+  } = props;
 
   // states
   const [products, setProducts] = useState([]);
-
   const [title, setTitle] = useState("");
   const [productName, setProductName] = useState("");
   const [amount, setAmount] = useState("1");
@@ -43,6 +40,13 @@ const CreateListScreen = (props) => {
   const [titleError, setTitleError] = useState(false);
   const [user, setUser] = useState();
   const ScreenName = props.route.name;
+  
+  //veribales
+  const amountMaxValue = 1000;
+  const amountMinValue = 1;
+
+
+
 
   useEffect(() => {
     navigation.setOptions({
@@ -115,9 +119,9 @@ const CreateListScreen = (props) => {
     let value = parseInt(edit ? productEditDetails.amount : amount);
 
     if (operation === "+") {
-      if (value !== 1000) value += 1;
+      if (value !== amountMaxValue) value += 1;
     } else {
-      if (value !== 1) value -= 1;
+      if (value !== amountMinValue) value -= 1;
     }
     edit
       ? setProductEditDetails((oldState) => ({
@@ -131,7 +135,7 @@ const CreateListScreen = (props) => {
   const handleOnChangeAmount = (txt, edit) => {
     if (parseInt(txt) !== 0) {
       const amountRgx = /^[1-9]*([0-9]*)$/;
-      if (!amountRgx.test(txt) || parseInt(txt) > 1000) {
+      if (!amountRgx.test(txt) || parseInt(txt) > amountMaxValue) {
         return;
       }
       edit
@@ -325,7 +329,13 @@ const CreateListScreen = (props) => {
     try {
       const res = await productApi.apiProductAddProductsToShoppingListPost(productsToServer);
       console.log(res.data)
-      navigation.goBack();
+      navigation.navigate('Home', {
+        screen: 'HomeScreen',
+        params: {
+          snackBar: { visible: true, duration: 3000, message: "יצירת הרשימה בוצעה בהצלחה!", color: "green", timeStamp: new Date().getMilliseconds() },
+        },
+      });
+
     } catch (error) {
       console.warn(error)
     }
@@ -337,9 +347,9 @@ const CreateListScreen = (props) => {
     const titleRgx =
       /^[\u05D0-\u05EAa-zA-Z0-9']+([ |\-|.|/]*[\u05D0-\u05EAa-zA-Z0-9'\s]+)*$/;
     if (products.length === 0) {
-      console.log("didn't success");
+      setSnackBar({ visible: true, duration: 3000, message: "לא ניתן ליצור רשימה ללא מוצרים!", color: "#990f02", timeStamp: new Date().getMilliseconds() })
     } else {
-      console.log("success");
+      setSnackBar();
       counter++;
     }
     if (!titleRgx.test(title)) {
@@ -371,9 +381,6 @@ const CreateListScreen = (props) => {
           keyExtractor={(item) => String(item.productID)}
           contentContainerStyle={{ flexGrow: 1 }}
           ListEmptyComponent={handleListEmptyComponent}
-        // ListFooterComponent={renderFooter}
-        // refreshing={isFetching}
-        // onRefresh={() => handleRefresh()}
         />
         <View
           style={{
@@ -533,6 +540,18 @@ const CreateListScreen = (props) => {
             </View>
           </PopupDialog>
         )}
+
+        {
+          snackBarDetails.visible &&
+          <Snackbar
+            visible={snackBarDetails.visible}
+            onDismiss={() => setSnackBar()}
+            duration={snackBarDetails.duration}
+            style={{ backgroundColor: snackBarDetails.color }}
+          >
+            {snackBarDetails.message}
+          </Snackbar>
+        }
       </View>
       :
       <Spinner />

@@ -6,32 +6,6 @@ AS
 Select * From [users]
 Go
 
---exec Proc_Get_Users
-
---Drop Proc Proc_Create_User
---@Email nvarchar (150),
---@FirstName nvarchar (150),
---@LastName nvarchar (150),
---@Password varchar(max),
---@PhoneNumber nvarchar (150),
---@Img nvarchar(max),
---@IsActive bit,
---@NotificationToken nvarchar(max),
---@UserID int output
---AS
---IF NOT EXISTS (Select * From [users] Where Email=@Email or PhoneNumber=@PhoneNumber) 
---Begin
---    Insert [users] ([Email],[FirstName],[LastName],[Password],[PhoneNumber],[Img],[IsActive],[NotificationToken]) 
---    values (@Email, @FirstName, @LastName, @Password, @PhoneNumber, @Img, @IsActive, @NotificationToken)
---	set @UserID = @@identity 
---End 
---Go
-
---DECLARE @UserID int;
---exec Proc_Create_User 'test5@g.com','test4','test4', '12345', '1268',null,1,null, @UserID OUTPUT
---SELECT @UserID
-
-
 
 alter Proc Proc_Update_User
 @UserID int ,
@@ -93,31 +67,6 @@ Create proc Proc_Get_Profile_Satistics
 as
 	Select dbo.Func_Return_Amount_Of_Lists_Created_By_CurrentUser(@UserID) as MyListsAmount, dbo.Func_Return_Amount_Of_Lists_Current_User_Shares_But_No_Creator(@UserID) as OtherListsAmount
 go
-
-
-
-
---Create proc Proc_Update_Password_In_Profile
---@UserID int,
---@OldPassword nvarchar(max),
---@NewPassword nvarchar(max)
---as
---	Begin transaction
---	if exists(Select * from users where [UserID] = @UserID And [Password] = @OldPassword)
---	begin
---		UPDATE [users]
---		SET [Password] = @NewPassword
---		WHERE [UserID] = @UserID	
---		IF @@ERROR<>0
---			Begin
---				rollback transaction
---				return
---			End
---	end
---	commit transaction
---go
---exec  Proc_Get_Profile_Satistics 13
---exec Proc_Get_User_By_Id 2
 
 
 -------------------------------------------------List----------------------------------------------
@@ -234,9 +183,6 @@ Go
 exec  Proc_Exit_From_List_User_is_A_Participant 24,1
 -------------------------------------------------Product----------------------------------------------
 
---declare @x int, @date datetime
---set @date = GetDate()
---exec Proc_Create_Shopping_List 1, 'try', @date , @x out
 
 -- Drop Proc Proc_Create_Product
 Create Proc Proc_Create_Product
@@ -334,28 +280,6 @@ IF @@ERROR<>0
 		End
 commit transaction
 Go
---exec Proc_Get_User_For_Search 'test3@g.com', 87
-
--- Alter Proc Proc_User_Confirmation_Of…_Joining 
--- @ListID int,
--- @UserID int,
--- @JoinedDate DateTime,
--- @IsApproved bit
--- As
--- If(@IsApproved = 1)
---	Begin
---		UPDATE [shopping_lists_users]
---		SET  ListID= @ListID, UserID = @UserID, [JoinedDate] = @JoinedDate, [IsApproved] = 1
---		WHERE ListID = @ListID And UserID= @UserID
---	End
---Else
---	Begin
---		Delete From [shopping_lists_users]
---		Where ListID = @ListID And UserID= @UserID
---	End
---Go
-
- --exec Proc_User_Confirmation_Of…_Joining 6, 5, null,0
 
 
  ---------------------------- Requests -------------------------------------------------------+
@@ -392,7 +316,6 @@ Go
  GO
 
  ---------------------------- Login -------------------------------------------------------+
- -- its for now until we will decide how we doing the page in the best way
 
  Alter Proc Proc_Check_Login_Details
  @Email nvarchar(150)
@@ -406,7 +329,6 @@ Go
  GO
 
  --Exec Proc_Check_Login_Details 'Test3@gmail.com'
- --$2a$11$QAdzZHX/AWEstiPV9xx5fei4zc7PEhaVE8PwgL5dPbKCE.8SN0FQe
  Create Proc Proc_Update_User_Notification_Token
  @UserID int, 
  @NotificationToken nvarchar(max)
@@ -451,11 +373,74 @@ End
 Go
 
 
- -------------------
---Create Proc Proc_Exit_From_List_User_is_A_Participant
---@ListID int,
---@UserID int
---AS
---delete from [shopping_lists_users]
---WHERE  [ListID]= @ListID ANd [UserID]=@UserID
---Go
+---  more procs
+
+Alter Proc Proc_Get_Products_By_ListId
+@ListID int
+AS
+select *from [products]
+where [ListID] = @ListID  and IsActive =1 
+Go
+exec Proc_Get_Products_By_ListId 59
+
+
+
+
+Create Proc Proc_Update_Product_By_ProductId_And_CreatorID
+@ProductID int,
+@CreatorID int,
+@Name nvarchar(150),
+@Amount int ,
+@Img nvarchar(150),
+@IsActive bit
+AS
+UPDATE [products]
+	SET  Img =@Img , Amount=@Amount,[Name]=@Name,[IsActive] =@IsActive
+	WHERE [ProductID] =@ProductID  and CreatorID=@CreatorID;
+Go
+
+exec Proc_Update_Product_By_ProductId_And_CreatorID 64,1
+
+
+
+Create Proc Proc_Get_List_Creator_By_ListID
+@ListID int
+AS
+select *from [shopping_lists]
+where [ListID]=@ListID
+go
+
+--exec Proc_Get_List_CreatorId_By_ListID 55
+
+
+alter Proc Proc_Delete_Product_By_ID
+@ProductID int
+AS
+		UPDATE [products]
+	SET [IsActive]=0
+	WHERE [ProductID] =@ProductID  
+go
+
+
+
+alter Proc Proc_Checked_Product_By_ID
+@ProductID int
+AS
+	UPDATE [products]
+	SET [IsChecked]=1
+	WHERE [ProductID] =@ProductID  
+go
+
+
+alter Proc Proc_Un_Checked_Product_By_ID
+@ProductID int
+AS
+	UPDATE [products]
+	SET [IsChecked]=0
+	WHERE [ProductID] =@ProductID  
+go
+
+
+DECLARE @UserID int;
+exec Proc_Insert_User 'ayob','nas','as@g.com','asd1234','0502158', @UserID OUTPUT
+SELECT @UserID

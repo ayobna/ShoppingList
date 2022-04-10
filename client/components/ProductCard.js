@@ -1,23 +1,18 @@
 import React, { useState, useEffect } from "react";
 import {
   View,
-  Text,
   StyleSheet,
-  TextInput,
   TouchableHighlight,
 } from "react-native";
 import {
   Avatar,
   Card,
-  Title,
-  Paragraph,
   Menu,
   Divider,
   IconButton,
   Checkbox,
 } from "react-native-paper";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { API, shoppingListApi } from "../api/api";
+import { API } from "../api/api";
 import Colors from "../utils/Colors";
 const ProductCard = (props) => {
   const {
@@ -52,13 +47,14 @@ const ProductCard = (props) => {
   }, [data]);
 
   const ImgName = () => {
+    const noProductID = 0;
     let imgArray = ["0"];
     if (ScreenName === "CreateList") {
       imgArray = data.img.split(":/");
     }
     let img = data.img;
     if (ScreenName !== "CreateList") {
-      if (data.productID !== 0) {
+      if (data.productID !== noProductID) {
         img =
           imgArray[0] === "file"
             ? data.img
@@ -166,9 +162,6 @@ const ProductCard = (props) => {
             right={rightContent}
             leftStyle={{ marginRight: leftStyleMarginRight }}
           />
-          {/* <Card.Content>
-                        <Paragraph>מספר מזהה: {data.ProductID}</Paragraph>
-                    </Card.Content>  */}
         </Card>
       </TouchableHighlight>
     </View>

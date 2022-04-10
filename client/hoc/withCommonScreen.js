@@ -7,7 +7,14 @@ const withCommonScreen = (WrappedComponent, screenName) => props => {
     const { setCurrentDrawerScreen, requestDataGlobal, setRequestDataGlobal } = useContext(GeneralContext);
     const [isPageLoaded, setIsPageLoaded] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
-    const [isButtonSpinner,setIsButtonSpinner] = useState(false);
+    const [isButtonSpinner, setIsButtonSpinner] = useState(false);
+    const [snackBarDetails, setSnackBarDetails] = useState({
+        visible: false,
+        duration: 3000,
+        message: "",
+        color: "green",
+        timeStamp: new Date().getMilliseconds()
+    });
 
     useEffect(() => {
         const unsubscribe = navigation.addListener("focus", async () => {
@@ -39,6 +46,13 @@ const withCommonScreen = (WrappedComponent, screenName) => props => {
         const unsubscribe = navigation.addListener("blur", async () => {
             setIsPageLoaded(false);
             setIsButtonSpinner(false);
+            setSnackBar({
+                visible: false,
+                duration: 3000,
+                message: "",
+                color: "green",
+                timeStamp: new Date().getMilliseconds()
+            });
 
         });
         return unsubscribe;
@@ -83,34 +97,29 @@ const withCommonScreen = (WrappedComponent, screenName) => props => {
     };
 
 
+    const setSnackBar = (data = { visible: false, duration: 3000, message: "", color: "green", timeStamp: new Date().getMilliseconds() }) => {
+        setSnackBarDetails(data);
+    };
+
+
 
     return (
-        screenName === 'RequestsScreen' ?
-            <WrappedComponent
-                {...props}
-                resetRequestDataGlobalState={resetRequestDataGlobalState}
-                requestDataGlobal={requestDataGlobal}
-                isPageLoaded={isPageLoaded}
-                setIsPageLoadedTrue={setIsPageLoadedTrue}
-                setIsFetchingTrue={setIsFetchingTrue}
-                setIsFetchingFalse={setIsFetchingFalse}
-                isFetching={isFetching}
-                isButtonSpinner={isButtonSpinner}
-                setIsButtonSpinnerFalse={setIsButtonSpinnerFalse}
-                setIsButtonSpinnerTrue={setIsButtonSpinnerTrue}
-            />
-            :
-            <WrappedComponent
-                {...props}
-                isPageLoaded={isPageLoaded}
-                setIsPageLoadedTrue={setIsPageLoadedTrue}
-                setIsFetchingTrue={setIsFetchingTrue}
-                setIsFetchingFalse={setIsFetchingFalse}
-                isFetching={isFetching}
-                isButtonSpinner={isButtonSpinner}
-                setIsButtonSpinnerFalse={setIsButtonSpinnerFalse}
-                setIsButtonSpinnerTrue={setIsButtonSpinnerTrue}
-            />
+        <WrappedComponent
+            {...props}
+            resetRequestDataGlobalState={resetRequestDataGlobalState}
+            requestDataGlobal={requestDataGlobal}
+            isPageLoaded={isPageLoaded}
+            setIsPageLoadedTrue={setIsPageLoadedTrue}
+            setIsFetchingTrue={setIsFetchingTrue}
+            setIsFetchingFalse={setIsFetchingFalse}
+            isFetching={isFetching}
+            isButtonSpinner={isButtonSpinner}
+            setIsButtonSpinnerFalse={setIsButtonSpinnerFalse}
+            setIsButtonSpinnerTrue={setIsButtonSpinnerTrue}
+            snackBarDetails={snackBarDetails}
+            setSnackBar={setSnackBar}
+
+        />
     );
 };
 

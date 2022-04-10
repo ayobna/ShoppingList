@@ -1,7 +1,7 @@
-import react, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
-import { FAB, TextInput, Searchbar } from "react-native-paper";
-import { shoppingListApi, userApi } from "../api/api";
+import { FAB, TextInput, Searchbar, Snackbar } from "react-native-paper";
+import { shoppingListApi } from "../api/api";
 import ShoppingListCard from "../components/ShoppingListCard";
 import PopupDialog from "../components/PopupDialog";
 import { _getData } from "../utils/Functions";
@@ -10,7 +10,8 @@ import Spinner from "../components/Spinner";
 
 const HomeScreen = (props) => {
   // props
-  const { navigation, route, isPageLoaded, setIsPageLoadedTrue, setIsFetchingTrue, setIsFetchingFalse, isFetching } = props;
+  const { navigation, route, isPageLoaded, setIsPageLoadedTrue, setIsFetchingTrue, setIsFetchingFalse, isFetching, snackBarDetails,
+    setSnackBar } = props;
 
   // states
   const [shoppingLists, setShoppingLists] = useState([]);
@@ -22,6 +23,10 @@ const HomeScreen = (props) => {
   const [currentUser, setCurrentUser] = useState();
   const [searchQuery, setSearchQuery] = useState("");
   const extraDataForTabs = route.params.extraData;
+
+  //veribales
+  const myListsScreen = 1;
+
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", async () => {
@@ -57,6 +62,13 @@ const HomeScreen = (props) => {
     setRenderedShoppingLists(newData);
   }, [searchQuery]);
 
+  useEffect(() => {
+
+    if (extraDataForTabs === myListsScreen && route.params?.snackBar) {
+      setSnackBar(route.params.snackBar);
+    }
+  }, [route.params?.snackBar]);
+
   const CreateList = async () => {
     navigation.navigate("CreateList");
   };
@@ -64,14 +76,13 @@ const HomeScreen = (props) => {
   const loadUser = async () => {
     let u = await _getData("User");
     console.log("LoadUser", u)
-    //  setCurrentUser(u);
     return u;
   };
 
   const shoppingListsGetFromAPI = async (userID) => {
     let res = null;
     try {
-      if (extraDataForTabs == 1)
+      if (extraDataForTabs == myListsScreen)
         res = await shoppingListApi.apiShoppingListCreatedByUserIdGet(
           userID
         );
@@ -79,7 +90,6 @@ const HomeScreen = (props) => {
         res = await shoppingListApi.apiShoppingListUserIsAParticipantIdGet(
           userID
         );
-      //console.log("ShoppingListsGetFromAPI",res.data)
       let data = res.data
       setShoppingLists(data);
       setRenderedShoppingLists(data);
@@ -110,7 +120,9 @@ const HomeScreen = (props) => {
   };
 
   const handleConfirmEdit = () => {
-    if (regexValidationShoppingList() < 1) {
+    const validationAmount = 1;
+
+    if (regexValidationShoppingList() < validationAmount) {
       return;
     }
     updateShoppingList();
@@ -118,7 +130,7 @@ const HomeScreen = (props) => {
 
   const updateShoppingList = async () => {
     try {
-      const res = await shoppingListApi.apiShoppingListUpdateShoppinglistPost(
+      await shoppingListApi.apiShoppingListUpdateShoppinglistPost(
         chosenListDetails
       );
       handleCancelPopupDialog();
@@ -168,7 +180,7 @@ const HomeScreen = (props) => {
 
   const deleteShoppingList = async () => {
     try {
-      let res = await shoppingListApi.apiShoppingListDeleteShoppinglistPost(
+      await shoppingListApi.apiShoppingListDeleteShoppinglistPost(
         chosenListDetails.listID
       );
       handleCancelPopupDialog();
@@ -290,6 +302,18 @@ const HomeScreen = (props) => {
             )}
           </PopupDialog>
         )}
+
+        {
+          snackBarDetails.visible &&
+          <Snackbar
+            visible={snackBarDetails.visible}
+            onDismiss={() => setSnackBar()}
+            duration={snackBarDetails.duration}
+            style={{ backgroundColor: snackBarDetails.color }}
+          >
+            {snackBarDetails.message}
+          </Snackbar>
+        }
       </View>
       :
       <Spinner />

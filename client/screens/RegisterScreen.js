@@ -1,20 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   View,
   StyleSheet,
-  FlatList,
-  TouchableHighlight,
-  Pressable,
-  TouchableOpacity,
-  KeyboardAvoidingView
+  TouchableOpacity
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import {
   TextInput,
-  IconButton,
   Button,
   Text,
-  Avatar,
   Caption
 } from "react-native-paper";
 import { userApi } from "../api/api";
@@ -51,8 +45,10 @@ const RegisterScreen = (props) => {
 
 
   const handleRegister = async () => {
+    const userAlreadyExists = -1;
+    const validationAmount = 6;
     setUserErrorAlreadyExistsMessage("");
-    if (checkValidation() !== 6) {
+    if (checkValidation() !== validationAmount) {
       return;
     }
     setIsButtonSpinnerTrue();
@@ -62,13 +58,13 @@ const RegisterScreen = (props) => {
     );
     const userCrypto = { ...user, Password: digest }
     const res = await createUser(userCrypto);
-    if (res === -1) // user already exists
+    if (res === userAlreadyExists)
     {
       setUserErrorAlreadyExistsMessage("המשתמש כבר קיים, נסה מייל אחר!");
       setIsButtonSpinnerFalse();
       return;
     }
-    navigation.goBack();
+    navigation.navigate("LoginScreen", { snackBar: { visible: true, duration: 3000, message: "ההרשמה בוצעה בהצלחה!", color: "green", timeStamp: new Date().getMilliseconds() } });
   };
 
   const checkValidation = () => {

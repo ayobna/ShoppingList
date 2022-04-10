@@ -1,22 +1,18 @@
 import React, { useState } from "react";
 import {
   View,
-  Text,
   StyleSheet,
-  TextInput,
   TouchableHighlight,
 } from "react-native";
 import {
-  Avatar,
   Card,
-  Title,
-  Paragraph,
   Menu,
   Divider,
   IconButton,
-  Caption,
 } from "react-native-paper";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+
+// veribles
+const myShoppingLists = 1;
 
 const ShoppingListCard = (props) => {
   // props
@@ -34,7 +30,7 @@ const ShoppingListCard = (props) => {
       onDismiss={closeMenu}
       anchor={<IconButton {...props} icon="dots-vertical" onPress={openMenu} />}
     >
-      {extraDataForTabs === 1 ? (
+      {extraDataForTabs === myShoppingLists ? (
         <View>
           <Menu.Item
             icon="redo"

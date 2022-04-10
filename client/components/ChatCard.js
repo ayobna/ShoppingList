@@ -1,14 +1,13 @@
 import moment from 'moment';
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableHighlight } from 'react-native';
-import { Avatar, Card, Title, Paragraph, Menu, Divider, IconButton, List, Caption } from 'react-native-paper';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
+import { Avatar, List, Caption } from 'react-native-paper';
 import { API } from '../api/api';
 
 const ChatCard = (props) => {
     // props
     const { data } = props;
-    
+
     const leftContent = props => <Avatar.Image style={{ alignSelf: "center" }} size={40} source={{ uri: `${API}/uploads/users/${data.img}` }} />
 
 

@@ -1,6 +1,6 @@
-import react, { useEffect, useState, useCallback } from "react";
+import react, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, FlatList, ScrollView } from "react-native";
-import { Avatar, Button, Caption, Divider, Headline, IconButton, List } from "react-native-paper";
+import { Avatar, Button, Caption, Divider, Headline, IconButton, List, Snackbar } from "react-native-paper";
 import { API, userApi } from "../api/api";
 import PopupDialog from "../components/PopupDialog";
 import Spinner from "../components/Spinner";
@@ -10,7 +10,7 @@ import Colors from "../utils/Colors";
 import { _getData, _logout } from "../utils/Functions";
 
 const AccountScreen = (props) => {
-  const { navigation, route, isPageLoaded, setIsPageLoadedTrue } = props;
+  const { navigation, route, isPageLoaded, setIsPageLoadedTrue, snackBarDetails, setSnackBar } = props;
 
   const [currentUser, setCurrentUser] = useState();
   const [isDeleteAccountDialogVisible, setIsDeleteAccountDialogVisible] = useState(false);
@@ -28,6 +28,12 @@ const AccountScreen = (props) => {
     });
     return unsubscribe;
   }, [navigation, route]);
+
+  useEffect(() => {
+    if (route.params?.snackBar) {
+      setSnackBar(route.params.snackBar);
+    }
+  }, [route.params?.snackBar]);
 
   const getUserSatistics = async (userID) => {
     try {
@@ -100,7 +106,7 @@ const AccountScreen = (props) => {
                     <Caption style={styles.satistics}>רשימות משותפות</Caption>
                   </View>
                 </View>
-                <Divider style={{backgroundColor:Colors.our_dark_blue}} />
+                <Divider style={{ backgroundColor: Colors.our_dark_blue }} />
                 <View style={styles.satisicsAmountWrapper}>
                   <View style={styles.satisticsContent}>
                     <Caption style={styles.satistics}>{userSatistics.myListsAmount}</Caption>
@@ -157,6 +163,18 @@ const AccountScreen = (props) => {
             <Text>האם את/ה בטוח/ה שברצונך למחווק את החשבון?</Text>
           </PopupDialog>
         }
+
+        {
+          snackBarDetails.visible &&
+          <Snackbar
+            visible={snackBarDetails.visible}
+            onDismiss={() => setSnackBar()}
+            duration={snackBarDetails.duration}
+            style={{ backgroundColor: snackBarDetails.color }}
+          >
+            {snackBarDetails.message}
+          </Snackbar>
+        }
       </View>
       :
       <Spinner />
@@ -166,7 +184,6 @@ const AccountScreen = (props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    //  justifyContent: "center",
     backgroundColor: "white",
   },
   mainWrapper: {

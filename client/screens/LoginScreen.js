@@ -1,30 +1,38 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { StyleSheet, View, TouchableOpacity, Image, ScrollView } from "react-native";
 import { _storeData, _getData, _registerForPushNotificationsAsync, _diff_minutes } from "../utils/Functions";
-import { Button, TextInput, HelperText, Avatar, Caption, Text } from "react-native-paper";
-import * as WebBrowser from 'expo-web-browser';
-import { makeRedirectUri, useAuthRequest, useAutoDiscovery } from 'expo-auth-session';
+import { Button, TextInput, Caption, Text, Snackbar } from "react-native-paper";
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { API, loginApi } from "../api/api";
+import { loginApi } from "../api/api";
 import Spinner from "../components/Spinner";
 import PopupDialog from "../components/PopupDialog";
-import moment from "moment";
 import withCommonScreen from "../hoc/withCommonScreen";
 import * as Crypto from 'expo-crypto';
 import Colors from "../utils/Colors";
+
+// veribales
 const Time_For_Code = 10;
-// WebBrowser.maybeCompleteAuthSession();
+const emptyInput = 0;
 
 
 const LoginScreen = (props) => {
   // props
-  const { navigation, isPageLoaded, setIsPageLoadedTrue, isButtonSpinner, setIsButtonSpinnerFalse, setIsButtonSpinnerTrue } = props;
+  const {
+    navigation,
+    route,
+    isPageLoaded,
+    setIsPageLoadedTrue,
+    isButtonSpinner,
+    setIsButtonSpinnerFalse,
+    setIsButtonSpinnerTrue,
+    snackBarDetails,
+    setSnackBar
+  } = props;
 
   // states
   const [email, setEmail] = useState("ayobnas12@gmail.com");
   const [password, setPassword] = useState("Ayob1234!");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [loginUserDetails, setLoginUserDetails] = useState();
   const [loginErrorMessage, setLoginErrorMessage] = useState("");
   // states - reset password
   const [isInsertEmailDialogVisible, setIsInsertEmailDialogVisible] = useState(false);
@@ -35,14 +43,12 @@ const LoginScreen = (props) => {
   const [code, setCode] = useState();
   const [inputCode, setInputCode] = useState("");
   const [codeErrorMessage, setCodeErrorMessage] = useState("");
-
   const [isInsertPasswordDialogVisible, setIsInsertPasswordDialogVisible] = useState(false);
   const [resetPassword, setResetPassword] = useState("");
   const [resetPasswordConfirm, setResetPasswordConfirm] = useState("");
   const [resetPasswordErrorMessage, setResetPasswordErrorMessage] = useState("");
   const [isResetPasswordVisible, setIsResetPasswordVisible] = useState(false);
   const [isResetPasswordConfirmVisible, setIsResetPasswordConfirmVisible] = useState(false);
-
   const [createResetCodeTime, setCreateResetCodeTime] = useState();
 
 
@@ -69,6 +75,15 @@ const LoginScreen = (props) => {
     return unsubscribe;
   }, [navigation]);
 
+
+  useEffect(() => {
+    if (route.params?.snackBar) {
+      setSnackBar(route.params.snackBar);
+    }
+  }, [route.params?.snackBar]);
+
+
+
   const clearLoginStates = () => {
     setEmail("");
     setPassword("");
@@ -86,7 +101,7 @@ const LoginScreen = (props) => {
   }, [code]);
 
   const goToRegister = () => {
-    navigation.navigate('RegisterScreen')
+    navigation.navigate('RegisterScreen');
   };
 
 
@@ -104,7 +119,6 @@ const LoginScreen = (props) => {
       return;
     }
     setLoginErrorMessage("");
-    // notification
     const notificationToken = await _registerForPushNotificationsAsync();
     userDetails.notificationToken = notificationToken;
     const updateTokenRes = await updateUserNotificationToken(userDetails.userID, notificationToken);
@@ -112,10 +126,7 @@ const LoginScreen = (props) => {
       console.log("something wrong with the token update")
       return;
     }
-    console.log('login screen userDetails', userDetails)
-
     const resOfDataStore = await _storeData("User", userDetails);
-    // צריך פה לשמור תאריך התחברות אחרון
     if (resOfDataStore) {
       navigation.replace("myDrawer");
     }
@@ -148,7 +159,7 @@ const LoginScreen = (props) => {
   };
 
   const confirmInsertEmailDialog = async () => {
-    if (resetEmail.length === 0) {
+    if (resetEmail.length === emptyInput) {
       setResetEmailErrorMessage("שדה האימייל חייב להכיל לפחות אות אחת!");
       return;
     }
@@ -167,7 +178,7 @@ const LoginScreen = (props) => {
 
 
   const confirmInsertCodeDialog = () => {
-    if (inputCode.length === 0) {
+    if (inputCode.length === emptyInput) {
       setCodeErrorMessage("השדה של הקוד חייב להכיל לפחות מספר אחד!");
       return;
     }
@@ -315,7 +326,6 @@ const LoginScreen = (props) => {
                   <Button
                     mode="contained"
                     color={Colors.our_dark_blue}
-                    // theme={{ colors: { primary: `white` } }}
                     onPress={handleLogin}
                   >
                     התחברות
@@ -349,6 +359,7 @@ const LoginScreen = (props) => {
               onChangeText={text => setResetEmail(text)}
               selectionColor="#919191"
               activeOutlineColor="#919191"
+              keyboardType="email-address"
               dense
               style={{ backgroundColor: "white" }}
               left={<TextInput.Icon color={resetEmailErrorMessage !== "" ? "#d0312d" : "#c1c1c1"} name="email-outline" />}
@@ -445,6 +456,18 @@ const LoginScreen = (props) => {
               </View>
             }
           </PopupDialog>
+        }
+
+        {
+          snackBarDetails.visible &&
+          <Snackbar
+            visible={snackBarDetails.visible}
+            onDismiss={() => setSnackBar()}
+            duration={snackBarDetails.duration}
+            style={{ backgroundColor: snackBarDetails.color }}
+          >
+            {snackBarDetails.message}
+          </Snackbar>
         }
 
       </SafeAreaView >

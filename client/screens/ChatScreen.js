@@ -1,22 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View, FlatList, StyleSheet, Keyboard, TextInput } from "react-native";
-
-
-import ShoppingListCard from "../components/ShoppingListCard";
-import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
+import { View, FlatList, StyleSheet, TextInput } from "react-native";
+import { HubConnectionBuilder } from "@microsoft/signalr";
 import ChatCard from "../components/ChatCard";
-import {
-  IconButton,
-  Button,
-  Text,
-  Avatar,
-  Divider,
-} from "react-native-paper";
+import { IconButton, Divider } from "react-native-paper";
 import { API, chatApi } from "../api/api";
 import Spinner from "../components/Spinner";
 import { _getData } from "../utils/Functions";
 import withCommonScreen from "../hoc/withCommonScreen";
 import Colors from "../utils/Colors";
+
 const ChatScreen = (props) => {
   // props
   const { navigation, route, isPageLoaded, setIsPageLoadedTrue } = props;
@@ -24,12 +16,8 @@ const ChatScreen = (props) => {
   // states
   const [connection, setConnection] = useState();
   const [messages, setMessages] = useState([]);
-  const [users, setUsers] = useState([]);
   const [message, setMessage] = useState("");
   const [user, setUser] = useState();
-
-  const flatListRef = useRef();
-
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", async () => {
@@ -93,7 +81,6 @@ const ChatScreen = (props) => {
         .build();
 
       connection.on("ReceiveMessage", (chatMessageCard) => {
-
         setMessages((messages) => [chatMessageCard, ...messages]);
         // setFirstJoin(false)
 
@@ -122,6 +109,7 @@ const ChatScreen = (props) => {
       FirstName: user.firstName,
       LastName: user.lastName,
       Img: user.img,
+      CreatedOn: new Date()
     };
     try {
       await connection.invoke("SendMessage", chatMessageCard);
@@ -144,15 +132,6 @@ const ChatScreen = (props) => {
   const renderListItem = (itemData) => (
     <ChatCard data={itemData.item} navigation={navigation} />
   );
-  const handleListEmptyComponent = () => {
-    return (
-      <View
-        style={{ flexGrow: 1, justifyContent: "center", alignItems: "center" }}
-      >
-        <Text>אין מוצרים</Text>
-      </View>
-    );
-  };
 
   const handleSeparatorComponent = () => {
     return (
@@ -168,33 +147,26 @@ const ChatScreen = (props) => {
     isPageLoaded ?
       <View style={styles.container}>
         <FlatList
-          ref={flatListRef}
-          // onContentSizeChange={() => flatListRef.current.scrollToEnd()}
           showsVerticalScrollIndicator={false}
           inverted
-
           data={messages}
           renderItem={(item) => renderListItem(item)}
           keyExtractor={(item, index) => String(index)}
           contentContainerStyle={{ flexGrow: 1 }}
-          // ListEmptyComponent={handleListEmptyComponent}
           ListFooterComponent={renderFooter}
-
           ItemSeparatorComponent={handleSeparatorComponent}
-        // refreshing={isFetching}
-        // onRefresh={() => handleRefresh()}
-
         />
-        <View style={{ flexDirection: "row", backgroundColor: "#f1f1f1", justifyContent: "center", alignItems: "flex-end", paddingVertical: 10, paddingLeft: 10, borderTopColor: "#e1e1e1", borderTopWidth: 1, maxHeight: 150 }}>
-          <View style={{ flex: 1, backgroundColor: "white", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 2 }}>
-            <TextInput value={message} onChangeText={(txt) => setMessage(txt)} selectionColor="black" placeholder="תרשום תרשום.." style={{ fontFamily: "our-font-regular" }} numberOfLines={2} multiline />
+
+        <View style={styles.createMessageArea}>
+          <View style={styles.inputWrapper}>
+            <TextInput value={message} onChangeText={(txt) => setMessage(txt)} selectionColor="black" placeholder="תרשום תרשום.." style={styles.textInput} numberOfLines={2} multiline />
           </View>
           <IconButton
             icon="send"
             size={20}
             onPress={() => sendMessage()}
             color={Colors.our_dark_blue}
-            style={{ transform: [{ rotateY: '180deg' }] }}
+            style={styles.iconBtn}
             disabled={message.length === 0}
           />
         </View>
@@ -208,6 +180,30 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  createMessageArea: {
+    flexDirection: "row",
+    backgroundColor: "#f1f1f1",
+    justifyContent: "center",
+    alignItems: "flex-end",
+    paddingVertical: 10,
+    paddingLeft: 10,
+    borderTopColor: "#e1e1e1",
+    borderTopWidth: 1,
+    maxHeight: 150
+  },
+  inputWrapper: {
+    flex: 1,
+    backgroundColor: "white",
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 2
+  },
+  textInput: {
+    fontFamily: "our-font-regular"
+  },
+  iconBtn: {
+    transform: [{ rotateY: '180deg' }]
+  }
 });
 
 export default withCommonScreen(ChatScreen, 'ChatScreen');

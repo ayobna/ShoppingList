@@ -1,6 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, TextInput } from 'react-native';
-import { IconButton, Button, Avatar } from 'react-native-paper';
+import { View, StyleSheet, TextInput } from 'react-native';
+import { IconButton } from 'react-native-paper';
 
 
 const AmountInput = (props) => {

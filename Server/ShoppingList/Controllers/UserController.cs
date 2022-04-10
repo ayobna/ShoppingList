@@ -32,11 +32,11 @@ namespace ShoppingList.Controllers
         {
             try
             {
-
+                const int emailAlreadyExists = -1;
 
                 int id = userData.CreateUser(userReq);
 
-                if (id == -1)
+                if (id == emailAlreadyExists)
                 {
                     logger.LogWarning("CreateUser - Email exists in the db");
                     return Ok(id);
@@ -191,9 +191,10 @@ namespace ShoppingList.Controllers
         {
             try
             {
+                const int oldPasswordIsWrong = -1;
                 int res = userData.UpdatePasswordInProfile(user,oldPassword);
                 string logMessage = "UpdatePasswordInProfile - update user password succseed";
-                if (res == -1)
+                if (res == oldPasswordIsWrong)
                 {
                     logMessage = "UpdatePasswordInProfile- update user password failled because old password not the cureent password";
                 }
