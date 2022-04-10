@@ -2,7 +2,6 @@ import * as React from "react";
 import { View, StyleSheet } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import Icon from "react-native-vector-icons/Ionicons";
-
 import RequestsScreen from "../screens/RequestsScreen";
 import Style from "../utils/Style";
 import Colors from "../utils/Colors";
@@ -10,7 +9,7 @@ import Colors from "../utils/Colors";
 const Stack = createStackNavigator();
 
 function RequestsStack(props) {
-    const { navigation, route } = props;
+    const { navigation } = props;
 
 
     return (

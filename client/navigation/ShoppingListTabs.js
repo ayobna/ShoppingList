@@ -1,10 +1,7 @@
 import * as React from "react";
-
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
-import ListScreen from "../screens/ListScreen";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import ChatScreen from "../screens/ChatScreen";
-import ParticipantsScreen from "../screens/ParticipantsScreen";
 import ListScreenStack from "./ListScreenStack";
 import ParticipantsScreenStack from "./ParticipantsScreenStack";
 import Style from "../utils/Style";

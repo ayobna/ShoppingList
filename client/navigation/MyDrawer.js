@@ -1,9 +1,6 @@
 import * as React from "react";
-import { View, Text } from "react-native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
-
 import ShoppingListMainStack from "./ShoppingListMainStack";
-import AccountScreen from "../screens/AccountScreen";
 import RequestsStack from "./RequestsStack";
 import MyDrawerContent from "./MyDrawerContent";
 import AccountStack from "./AccountStack";

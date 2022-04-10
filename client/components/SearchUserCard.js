@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableHighlight } from 'react-native';
-import { Avatar, Card, List, IconButton } from 'react-native-paper';
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
+import { Avatar, List, IconButton } from 'react-native-paper';
 import { API } from '../api/api';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
+
+// varibles
+const wwaitingForApprovement = 0;
 
 const SearchUserCard = (props) => {
   // props
   const { data, confirm } = props;
-
-
 
   const leftContent = (props) => (
     <Avatar.Image size={45} style={{ alignSelf: "center" }} source={{ uri: `${API}/uploads/users/${data.img}` }} theme={{ colors: { primary: "white" } }} />
@@ -16,13 +17,12 @@ const SearchUserCard = (props) => {
 
   const rightContent = props => <View style={styles.buttonContainer}>
     <IconButton
-      icon={() => <MaterialIcons name={data.isApproved === 0 ? "person-add-disabled" : "person-add"} color="black" size={24} />}
+      icon={() => <MaterialIcons name={data.isApproved === wwaitingForApprovement ? "person-add-disabled" : "person-add"} color="black" size={24} />}
       onPress={confirm}
-      disabled={data.isApproved === 0}
+      disabled={data.isApproved === wwaitingForApprovement}
     />
   </View>
 
-  console.log(data)
   return (
     <View style={{ ...styles.container, ...props.styles }}>
 

@@ -76,8 +76,9 @@ namespace ShoppingList.Controllers
                 List<User> userList = loginData.CheckIfUserExistsByEmail(user);
                 if (userList.Count == 0)
                 {
+                    const int fakeCode = -1;
                     logger.LogInformation($"ResetPasswordCheckEmailAndSendCode - The User doesnt find or doesnt active!");
-                    return Ok(-1);
+                    return Ok(fakeCode);
                 }
 
                 int code = mailVerification.GenerateVeraficationCode();

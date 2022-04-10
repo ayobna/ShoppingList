@@ -1,9 +1,7 @@
 import * as React from "react";
 import { View, StyleSheet } from "react-native";
-
 import { createStackNavigator } from "@react-navigation/stack";
 import Icon from "react-native-vector-icons/Ionicons";
-
 import HomeScreen from "../screens/HomeScreen";
 import Style from "../utils/Style";
 import Colors from "../utils/Colors";
@@ -11,10 +9,9 @@ import Colors from "../utils/Colors";
 const Stack = createStackNavigator();
 
 function MyShoppingListsStack(props) {
-  // console.log("MyShoppingListsStack props  ",props)
   const { navigation, route } = props;
   const data = route.params;
-
+  const myShoppingListScreen = 1;
 
   return (
     <Stack.Navigator screenOptions={Style.screenHeader}>
@@ -23,7 +20,7 @@ function MyShoppingListsStack(props) {
         component={HomeScreen}
         initialParams={data}
         options={{
-          title: `${data.extraData === 1 ? "הרשימות שלי" : "רשימות משותפות"}`,
+          title: `${data.extraData === myShoppingListScreen ? "הרשימות שלי" : "רשימות משותפות"}`,
           headerLeft: () => (
             <View style={styles.menuWrapper}>
               <Icon.Button

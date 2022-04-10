@@ -47,7 +47,6 @@ namespace ShoppingList.Hubs
         {
             if (_connections.TryGetValue(Context.ConnectionId, out UserConnection userConnection))
             {
-                chatMessageCard.CreatedOn = DateTime.Now;
                 chatData.CreateChatMessage(chatMessageCard);
                 await Clients.Group(userConnection.ListID.ToString()).SendAsync("ReceiveMessage", chatMessageCard);
             }

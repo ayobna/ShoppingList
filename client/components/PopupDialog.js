@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import React from 'react';
+import { StyleSheet } from 'react-native';
 import { Button, Dialog, Portal } from 'react-native-paper';
 import Colors from '../utils/Colors';
 

@@ -3,24 +3,17 @@ import {
   View,
   Text,
   FlatList,
-  TouchableHighlight,
   StyleSheet,
-  Alert,
 } from "react-native";
-import { API, listUsersApi, shoppingListApi, requestApi } from "../api/api";
+import {  listUsersApi, shoppingListApi} from "../api/api";
 import ParticipantsCard from "../components/ParticipantsCard";
 import SearchUserCard from "../components/SearchUserCard";
 import {
   FAB,
-  TextInput,
-  IconButton,
-  Button,
-  Avatar,
   Searchbar,
 } from "react-native-paper";
 import { _getData, _sendPushNotification } from "../utils/Functions";
 import PopupDialog from "../components/PopupDialog";
-import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import withCommonScreen from "../hoc/withCommonScreen";
 import Spinner from "../components/Spinner";
 
@@ -41,9 +34,9 @@ const ParticipantsScreen = (props) => {
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", async () => {
       console.log("Participant screen");
-      const creatorID = await GetListCreatorByListID();
+      const creatorID = await getListCreatorByListID();
       const loginUser = await loadUser();
-      const data = await GetParticipantsInTheShoppingList();
+      const data = await getParticipantsInTheShoppingList();
 
       setListCreatorId(creatorID);
       setCurrentUser(loginUser);
@@ -71,7 +64,7 @@ const ParticipantsScreen = (props) => {
   }, [deleteParticipantData]);
 
   //get all the participants in the list
-  const GetParticipantsInTheShoppingList = async () => {
+  const getParticipantsInTheShoppingList = async () => {
     try {
       let res =
         await listUsersApi.apiGetParticipantsInTheShoppingListByListIdIdGet(
@@ -84,7 +77,7 @@ const ParticipantsScreen = (props) => {
   };
 
   //get the list creator
-  const GetListCreatorByListID = async () => {
+  const getListCreatorByListID = async () => {
     try {
       let res =
         await shoppingListApi.apiShoppingListGetListCreatorByListIDIdGet(
@@ -103,7 +96,7 @@ const ParticipantsScreen = (props) => {
   };
 
   // get all the users, except the list creator, for sending a join requests
-  const GetUsersToAddToListUsers = async () => {
+  const getUsersToAddToListUsers = async () => {
     try {
       let res = await listUsersApi.apiGetUserByEmailToAddToListUsersGet(
         searchEmail,
@@ -142,7 +135,7 @@ const ParticipantsScreen = (props) => {
   const searchPress = async () => {
     let searchUsers = [];
     if (searchEmail !== "") {
-      searchUsers = await GetUsersToAddToListUsers();
+      searchUsers = await getUsersToAddToListUsers();
     }
     setSearchResult(searchUsers);
     console.log("in searchPress");
@@ -197,7 +190,7 @@ const ParticipantsScreen = (props) => {
   };
   const handleDeleteParticipant = async () => {
     await deleteParticipant();
-    const data = await GetParticipantsInTheShoppingList();
+    const data = await getParticipantsInTheShoppingList();
     setParticipants(data);
     cancelPopupDialog();
   };
@@ -226,7 +219,7 @@ const ParticipantsScreen = (props) => {
 
   const handleRefresh = async () => {
     setIsFetchingTrue();
-    const data = await GetParticipantsInTheShoppingList();
+    const data = await getParticipantsInTheShoppingList();
     setParticipants(data);
     setIsFetchingFalse();
   };

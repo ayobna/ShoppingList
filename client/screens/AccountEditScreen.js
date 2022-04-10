@@ -1,21 +1,13 @@
-import react, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import { API, userApi } from "../api/api";
 import * as ImagePicker from "expo-image-picker";
 import { _getData, _storeData } from "../utils/Functions";
 import { View, StyleSheet, ScrollView } from "react-native";
-import {
-  TextInput,
-  IconButton,
-  Button,
-  Text,
-  Avatar,
-  Caption,
-  Divider,
-} from "react-native-paper";
+import { TextInput, IconButton, Button, Avatar, Caption, Divider } from "react-native-paper";
 import withCommonScreen from "../hoc/withCommonScreen";
 import Spinner from "../components/Spinner";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Colors from "../utils/Colors";
+
 const AccountEditScreen = (props) => {
   const { navigation, route, isPageLoaded, setIsPageLoadedTrue, isButtonSpinner, setIsButtonSpinnerFalse, setIsButtonSpinnerTrue } = props;
 
@@ -32,9 +24,11 @@ const AccountEditScreen = (props) => {
     phoneNumber: "",
     email: "",
   });
+
   const [imageBase64, setImageBase64] = useState(null);
   const [image, setImage] = useState(null);
   const [defaultImg, setDefaultImg] = useState(undefined)
+
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", async () => {
       const user = await loadUser();
@@ -104,23 +98,24 @@ const AccountEditScreen = (props) => {
         userToUpdate.img = imageBase64;
         defaultImgToUpdate = undefined
       }
-      //console.log(imageBase64)
       let res = await userApi.apiUserUpdateUserPost(
         isHaveBase64Img, defaultImgToUpdate, userToUpdate
       );
-      console.log(res.data);
-      const resOfDataStore = await _storeData("User", res.data);
+
+      await _storeData("User", res.data);
       setUser(res.data);
-      navigation.goBack();
+      navigation.navigate("AccountScreen", { snackBar: { visible: true, duration: 3000, message: "עריכת הפרטים בוצע בהצלחה!", color: "green", timeStamp: new Date().getMilliseconds() } });
     } catch (e) {
       console.log(e);
     }
   };
 
   const handleSave = async () => {
-    if (checkValidation() !== 4) {
+    const validationAmount = 4;
+    if (checkValidation() !== validationAmount) {
       return;
     }
+    setIsButtonSpinnerTrue();
     save();
   };
 

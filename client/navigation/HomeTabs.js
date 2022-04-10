@@ -1,28 +1,25 @@
-import react, { useEffect, useState } from "react";
+import React from "react";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 
 import MyShoppingListsStack from "./MyShoppingListsStack";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { shoppingListApi } from "../api/api";
-import Colors from "../utils/Colors";
 import Style from "../utils/Style";
+
 const Tab = createMaterialBottomTabNavigator();
 
 const HomeTabs = () => {
 
 
-  const [shoppingList, setShoppingList] = useState([]);
-  useEffect(() => {
+  const myListScreen = 1;
+  const shareListScreen = 2;
 
-
-  }, [])
 
   return (
     <Tab.Navigator barStyle={Style.barStyle}>
       <Tab.Screen
         name="Home"
         component={MyShoppingListsStack}
-        initialParams={{ extraData: 1 }}
+        initialParams={{ extraData: myListScreen }}
         options={{
           tabBarLabel: "הרשימות שלי",
           tabBarIcon: ({ color }) => (
@@ -32,7 +29,7 @@ const HomeTabs = () => {
       />
       <Tab.Screen
         name="Home2"
-        initialParams={{ extraData: 2 }}
+        initialParams={{ extraData: shareListScreen }}
         component={MyShoppingListsStack}
         options={{
           tabBarLabel: "רשימות משותפות",

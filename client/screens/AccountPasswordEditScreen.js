@@ -39,25 +39,24 @@ const AccountPasswordEditScreen = (props) => {
     };
 
     const handleSave = async () => {
-        console.log("Old password:", oldPassword)
-        console.log("New password:", password)
+        const oldPasswordIsWrong = -1;
+        const validationAmount = 3;
 
-        if (checkValidation() !== 3) {
+        if (checkValidation() !== validationAmount) {
             return;
         }
         setIsButtonSpinnerTrue();
         const result = await save();
         console.log(result);
-        if (result === -1) {
+        if (result === oldPasswordIsWrong) {
             setOldPasswordErrorMessage("הסיסמה הישנה שגויה!");
             setIsButtonSpinnerFalse();
             return;
         }
-        navigation.goBack();
+        navigation.navigate("AccountScreen", { snackBar: { visible: true, duration: 3000, message: "שינוי הסיסמה בוצעה בהצלחה!", color: "green", timeStamp: new Date().getMilliseconds() } });
     };
 
     const save = async () => {
-
         const NewPassword = await Crypto.digestStringAsync(
             Crypto.CryptoDigestAlgorithm.SHA512,
             password
@@ -193,7 +192,6 @@ const AccountPasswordEditScreen = (props) => {
                                 <View style={styles.bottomBtnWrapper}>
                                     <Button
                                         mode="contained"
-                                        // theme={{ colors: { primary: `white` } }}
                                         color="#bfbfbf"
                                         onPress={() => navigation.goBack()}
                                     >

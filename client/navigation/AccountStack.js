@@ -11,7 +11,7 @@ import Style from "../utils/Style";
 const Stack = createStackNavigator();
 
 function AccountStack(props) {
-    const { navigation, route } = props;
+    const { navigation } = props;
     return (
         <Stack.Navigator screenOptions={Style.screenHeader}>
             <Stack.Screen

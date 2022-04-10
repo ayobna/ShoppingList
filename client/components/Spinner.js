@@ -1,4 +1,4 @@
-import Reacr from 'react';
+import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 
