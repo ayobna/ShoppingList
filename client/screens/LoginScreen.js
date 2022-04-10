@@ -30,8 +30,8 @@ const LoginScreen = (props) => {
   } = props;
 
   // states
-  const [email, setEmail] = useState("ayobnas12@gmail.com");
-  const [password, setPassword] = useState("Ayob1234!");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [loginErrorMessage, setLoginErrorMessage] = useState("");
   // states - reset password
