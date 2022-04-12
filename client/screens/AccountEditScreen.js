@@ -9,7 +9,7 @@ import Spinner from "../components/Spinner";
 import Colors from "../utils/Colors";
 
 const AccountEditScreen = (props) => {
-  const { navigation, route, isPageLoaded, setIsPageLoadedTrue, isButtonSpinner, setIsButtonSpinnerFalse, setIsButtonSpinnerTrue } = props;
+  const { navigation, route, isPageLoaded, setIsPageLoadedTrue, isButtonSpinner, setIsButtonSpinnerCondition } = props;
 
   const [user, setUser] = useState({
     firstName: "",
@@ -115,7 +115,7 @@ const AccountEditScreen = (props) => {
     if (checkValidation() !== validationAmount) {
       return;
     }
-    setIsButtonSpinnerTrue();
+    setIsButtonSpinnerCondition(true);
     save();
   };
 

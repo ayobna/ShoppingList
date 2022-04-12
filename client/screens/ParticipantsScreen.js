@@ -18,7 +18,7 @@ import withCommonScreen from "../hoc/withCommonScreen";
 import Spinner from "../components/Spinner";
 
 const ParticipantsScreen = (props) => {
-  const { navigation, route, isPageLoaded, setIsPageLoadedTrue, setIsFetchingTrue, setIsFetchingFalse, isFetching } = props;
+  const { navigation, route, isPageLoaded, setIsPageLoadedTrue, setIsFetchingCondition, isFetching } = props;
   const { shoppingListID, shoppingListTitle } = route.params;
   const [participants, setParticipants] = useState([]);
   const [popupDialogVisible, setPopupDialogVisible] = useState(false);
@@ -42,8 +42,7 @@ const ParticipantsScreen = (props) => {
       setCurrentUser(loginUser);
       setParticipants(data);
       setIsPageLoadedTrue();
-      setIsFetchingFalse();
-
+      setIsFetchingCondition(false);
       console.log(route.params.shoppingListID);
     });
     return unsubscribe;
@@ -218,10 +217,10 @@ const ParticipantsScreen = (props) => {
   );
 
   const handleRefresh = async () => {
-    setIsFetchingTrue();
+    setIsFetchingCondition(true);
     const data = await getParticipantsInTheShoppingList();
     setParticipants(data);
-    setIsFetchingFalse();
+    setIsFetchingCondition(false);
   };
 
   return (

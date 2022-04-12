@@ -75,12 +75,8 @@ const withCommonScreen = (WrappedComponent, screenName) => props => {
         setIsPageLoaded(true);
     };
 
-    const setIsFetchingTrue = () => {
-        setIsFetching(true);
-    };
-
-    const setIsFetchingFalse = () => {
-        setIsFetching(false);
+    const setIsFetchingCondition = (condition) => {
+        setIsFetching(condition);
     };
 
 
@@ -88,12 +84,9 @@ const withCommonScreen = (WrappedComponent, screenName) => props => {
         setRequestDataGlobal();
     };
 
-    const setIsButtonSpinnerTrue = () => {
-        setIsButtonSpinner(true);
-    };
 
-    const setIsButtonSpinnerFalse = () => {
-        setIsButtonSpinner(false);
+    const setIsButtonSpinnerCondition = (condition) => {
+        setIsButtonSpinner(condition);
     };
 
 
@@ -110,12 +103,10 @@ const withCommonScreen = (WrappedComponent, screenName) => props => {
             requestDataGlobal={requestDataGlobal}
             isPageLoaded={isPageLoaded}
             setIsPageLoadedTrue={setIsPageLoadedTrue}
-            setIsFetchingTrue={setIsFetchingTrue}
-            setIsFetchingFalse={setIsFetchingFalse}
+            setIsFetchingCondition={setIsFetchingCondition}
             isFetching={isFetching}
             isButtonSpinner={isButtonSpinner}
-            setIsButtonSpinnerFalse={setIsButtonSpinnerFalse}
-            setIsButtonSpinnerTrue={setIsButtonSpinnerTrue}
+            setIsButtonSpinnerCondition={setIsButtonSpinnerCondition}
             snackBarDetails={snackBarDetails}
             setSnackBar={setSnackBar}
 

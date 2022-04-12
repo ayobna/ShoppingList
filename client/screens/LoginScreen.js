@@ -23,8 +23,7 @@ const LoginScreen = (props) => {
     isPageLoaded,
     setIsPageLoadedTrue,
     isButtonSpinner,
-    setIsButtonSpinnerFalse,
-    setIsButtonSpinnerTrue,
+    setIsButtonSpinnerCondition,
     snackBarDetails,
     setSnackBar
   } = props;
@@ -90,7 +89,7 @@ const LoginScreen = (props) => {
     setIsPasswordVisible(false);
     setLoginErrorMessage("");
     setIsInsertEmailDialogVisible(false);
-    setIsButtonSpinnerFalse();
+    setIsButtonSpinnerCondition(false);
   };
 
   useEffect(() => {
@@ -111,11 +110,11 @@ const LoginScreen = (props) => {
       setLoginErrorMessage("כל השדות חייבים להיות מלאים!");
       return;
     }
-    setIsButtonSpinnerTrue();
+    setIsButtonSpinnerCondition(true);
     const userDetails = await checkLoginDetails();
     if (!userDetails || userDetails === null) {
       setLoginErrorMessage("היוזר לא קיים / הפרטים שגויים!");
-      setIsButtonSpinnerFalse();
+      setIsButtonSpinnerCondition(false);
       return;
     }
     setLoginErrorMessage("");
