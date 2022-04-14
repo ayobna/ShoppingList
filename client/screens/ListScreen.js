@@ -20,8 +20,7 @@ import Colors from "../utils/Colors";
 
 const ListScreen = (props) => {
   //props
-  const { navigation, route, isPageLoaded, setIsPageLoadedTrue, setIsFetchingFalse, isFetching, isButtonSpinner, setIsButtonSpinnerFalse,
-    setIsButtonSpinnerTrue } = props;
+  const { navigation, route, isPageLoaded, setIsPageLoadedTrue, setIsFetchingCondition, isFetching, isButtonSpinner, setIsButtonSpinnerCondition } = props;
   const ScreenName = props.route.name;
   const shoppingListID = route.params.shoppingListID;
 
@@ -60,7 +59,7 @@ const ListScreen = (props) => {
   useEffect(() => {
     const openConnection = async () => {
       await joinChat();
-      setIsFetchingFalse();
+      setIsFetchingCondition(false);
     };
     openConnection();
   }, [])
@@ -248,7 +247,7 @@ const ListScreen = (props) => {
     if (regexValidationProduct(false) < validationAmount) {
       return;
     }
-    setIsButtonSpinnerTrue();
+    setIsButtonSpinnerCondition(true);
     let product = {
       listID: shoppingListID,
       creatorID: user.userID,
@@ -272,9 +271,7 @@ const ListScreen = (props) => {
 
     await invokeNewProduct();
     handleClearStates();
-    setIsButtonSpinnerFalse();
-
-
+    setIsButtonSpinnerCondition(false);
   };
 
   const regexValidationProduct = (edit) => {

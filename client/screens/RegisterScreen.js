@@ -19,7 +19,7 @@ import Spinner from "../components/Spinner";
 
 
 const RegisterScreen = (props) => {
-  const { navigation, isButtonSpinner, setIsButtonSpinnerFalse, setIsButtonSpinnerTrue } = props;
+  const { navigation, isButtonSpinner, setIsButtonSpinnerCondition } = props;
 
   const [user, setUser] = useState({
     FirstName: "",
@@ -51,7 +51,7 @@ const RegisterScreen = (props) => {
     if (checkValidation() !== validationAmount) {
       return;
     }
-    setIsButtonSpinnerTrue();
+    setIsButtonSpinnerCondition(true);
     const digest = await Crypto.digestStringAsync(
       Crypto.CryptoDigestAlgorithm.SHA512,
       user.Password
@@ -61,7 +61,7 @@ const RegisterScreen = (props) => {
     if (res === userAlreadyExists)
     {
       setUserErrorAlreadyExistsMessage("המשתמש כבר קיים, נסה מייל אחר!");
-      setIsButtonSpinnerFalse();
+      setIsButtonSpinnerCondition(false);
       return;
     }
     navigation.navigate("LoginScreen", { snackBar: { visible: true, duration: 3000, message: "ההרשמה בוצעה בהצלחה!", color: "green", timeStamp: new Date().getMilliseconds() } });

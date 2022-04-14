@@ -19,8 +19,7 @@ const RequestsScreen = (props) => {
     requestDataGlobal,
     isPageLoaded,
     setIsPageLoadedTrue,
-    setIsFetchingTrue,
-    setIsFetchingFalse,
+    setIsFetchingCondition,
     isFetching,
     snackBarDetails,
     setSnackBar
@@ -40,7 +39,7 @@ const RequestsScreen = (props) => {
         const data = await getRequests(user.userID);
         setRequests(data);
         setIsPageLoadedTrue();
-        setIsFetchingFalse();
+        setIsFetchingCondition(false);
       }
     });
     return unsubscribe;
@@ -143,10 +142,10 @@ const RequestsScreen = (props) => {
 
   const handleRefresh = async () => {
     const userID = requestDataGlobal ? requestDataGlobal.userID : currentUser.userID;
-    setIsFetchingTrue();
+    setIsFetchingCondition(true);
     const data = await getRequests(userID);
     setRequests(data);
-    setIsFetchingFalse();
+    setIsFetchingCondition(false);
   };
 
 

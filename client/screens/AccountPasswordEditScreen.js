@@ -9,7 +9,7 @@ import * as Crypto from 'expo-crypto';
 import Colors from "../utils/Colors";
 
 const AccountPasswordEditScreen = (props) => {
-    const { navigation, route, isPageLoaded, setIsPageLoadedTrue, isButtonSpinner, setIsButtonSpinnerFalse, setIsButtonSpinnerTrue } = props;
+    const { navigation, route, isPageLoaded, setIsPageLoadedTrue, isButtonSpinner, setIsButtonSpinnerCondition } = props;
 
     const [currentUser, setCurrentUser] = useState();
     const [oldPassword, setOldPassword] = useState("");
@@ -45,12 +45,12 @@ const AccountPasswordEditScreen = (props) => {
         if (checkValidation() !== validationAmount) {
             return;
         }
-        setIsButtonSpinnerTrue();
+        setIsButtonSpinnerCondition(true);
         const result = await save();
         console.log(result);
         if (result === oldPasswordIsWrong) {
             setOldPasswordErrorMessage("הסיסמה הישנה שגויה!");
-            setIsButtonSpinnerFalse();
+            setIsButtonSpinnerCondition(false);
             return;
         }
         navigation.navigate("AccountScreen", { snackBar: { visible: true, duration: 3000, message: "שינוי הסיסמה בוצעה בהצלחה!", color: "green", timeStamp: new Date().getMilliseconds() } });

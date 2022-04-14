@@ -18,8 +18,7 @@ const CreateListScreen = (props) => {
     isPageLoaded,
     setIsPageLoadedTrue,
     isButtonSpinner,
-    setIsButtonSpinnerFalse,
-    setIsButtonSpinnerTrue,
+    setIsButtonSpinnerCondition,
     snackBarDetails,
     setSnackBar
   } = props;
@@ -290,7 +289,7 @@ const CreateListScreen = (props) => {
       console.log("handleSaveShoppingList error")
       return;
     }
-    setIsButtonSpinnerTrue();
+    setIsButtonSpinnerCondition(true);
     handleCreateShoppingListApi();
   };
 

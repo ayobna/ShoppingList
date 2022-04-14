@@ -10,7 +10,7 @@ import Spinner from "../components/Spinner";
 
 const HomeScreen = (props) => {
   // props
-  const { navigation, route, isPageLoaded, setIsPageLoadedTrue, setIsFetchingTrue, setIsFetchingFalse, isFetching, snackBarDetails,
+  const { navigation, route, isPageLoaded, setIsPageLoadedTrue, setIsFetchingCondition, isFetching, snackBarDetails,
     setSnackBar } = props;
 
   // states
@@ -34,8 +34,7 @@ const HomeScreen = (props) => {
       await shoppingListsGetFromAPI(user.userID);
       setCurrentUser(user);
       setIsPageLoadedTrue();
-      setIsFetchingFalse();
-
+      setIsFetchingCondition(false);
     });
     return unsubscribe;
   }, [navigation, route]);
@@ -236,10 +235,10 @@ const HomeScreen = (props) => {
   };
 
   const handleRefresh = async () => {
-    setIsFetchingTrue();
+    setIsFetchingCondition(true);
     await shoppingListsGetFromAPI(currentUser.userID);
     setSearchQuery("");
-    setIsFetchingFalse();
+    setIsFetchingCondition(false);
   };
 
   return (
