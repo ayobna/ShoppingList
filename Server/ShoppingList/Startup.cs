@@ -31,8 +31,9 @@ namespace ShoppingList
         {
             services.AddSwaggerGen();
             services.AddSignalR()
-            .AddAzureSignalR("Endpoint=https://shoppinglistsignalr.service.signalr.net;AccessKey=EBrHHXx9k0H1mg3j0KprIyMbVVN5J7xvJAbexncKkAA=;Version=1.0;");
-            services.Add(new ServiceDescriptor(typeof(IDbConnection), new DbConnection()));
+            .AddAzureSignalR(Configuration["connectionStringAzureSignalR"]);
+
+            services.Add(new ServiceDescriptor(typeof(IDbConnection), new DbConnection(Configuration["connectionStringSqlAzure"])));
             services.AddSingleton<IShoppingList, ShoppingListData>();
             services.AddSingleton<IChatData, ChatData>();
             services.AddSingleton<IProductData, ProductData>();
@@ -40,25 +41,25 @@ namespace ShoppingList
             services.AddSingleton<IRequestsData, RequestsData>();
             services.AddSingleton<ILoginData, LoginData>();
             services.AddSingleton<IListUsers, ListUsersData>();
-            services.AddSingleton<IMailVerification, MailVerification>();
+            services.Add(new ServiceDescriptor(typeof(IMailVerification), new MailVerification(Configuration["SendEmailApiKey"])));
 
             services.AddCors(options =>
-       {
-           options.AddDefaultPolicy(
-           builder => builder.AllowAnyHeader()
-           .AllowAnyMethod()
-           .SetIsOriginAllowed(_ => true)
-           .AllowCredentials()
-           );
+            {
+                options.AddDefaultPolicy(
+                builder => builder.AllowAnyHeader()
+                .AllowAnyMethod()
+                .SetIsOriginAllowed(_ => true)
+                .AllowCredentials()
+                );
 
-           options.AddPolicy("AnotherPolicy",
-               builder =>
-               {
-                   builder.WithOrigins("http://localhost:3000")
-                                       .AllowAnyHeader()
-                                       .AllowAnyMethod();
-               });
-       });
+                options.AddPolicy("AnotherPolicy",
+                    builder =>
+                    {
+                        builder.WithOrigins("http://localhost:3000")
+                                            .AllowAnyHeader()
+                                            .AllowAnyMethod();
+                    });
+            });
             services.AddSingleton<IDictionary<string, UserConnection>>(opts => new Dictionary<string, UserConnection>());
             services.AddControllersWithViews();
         }
@@ -91,9 +92,9 @@ namespace ShoppingList
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
             app.UseAzureSignalR(endpoints =>
-           {
-               endpoints.MapHub<ChatHub>("/chat");
-           });
+            {
+                endpoints.MapHub<ChatHub>("/chat");
+            });
             app.UseAzureSignalR(endpoints =>
             {
                 endpoints.MapHub<ListProductsHub>("/Products");
