@@ -8,13 +8,16 @@ using System.Threading.Tasks;
 
 namespace ShoppingList.Data
 {
-    public class DbConnection: IDbConnection
+    public class DbConnection : IDbConnection
     {
-        private string connectionString = "Server = tcp:shoppinglistdbserver2022.database.windows.net,1433;Initial Catalog = ShoppingList_db; Persist Security Info=False;User ID = Ayoub; Password=@.Ayob.@; MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout = 30";
-
+        private string connectionString = null;
+        //"Server = tcp:shoppinglistdbserver2022.database.windows.net,1433;Initial Catalog = ShoppingList_db; Persist Security Info=False;User ID = Ayoub; Password=@.Ayob.@; MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout = 30"
         //   private string connectionString = ConfigurationManager.ConnectionStrings["Production"].ConnectionString;
         //ctor --> only create the connection
-        public DbConnection() { }
+        public DbConnection(string _connectionString)
+        {
+            connectionString = _connectionString;
+        }
 
         //create connetion to DB
         public SqlConnection Connect()
