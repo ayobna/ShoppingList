@@ -31,9 +31,9 @@ namespace ShoppingList
         {
             services.AddSwaggerGen();
             services.AddSignalR()
-            .AddAzureSignalR(Configuration["connectionStringAzureSignalR"]);
+            .AddAzureSignalR("Endpoint=https://shoppinglistsignalr.service.signalr.net;AccessKey=EBrHHXx9k0H1mg3j0KprIyMbVVN5J7xvJAbexncKkAA=;Version=1.0;");
 
-            services.Add(new ServiceDescriptor(typeof(IDbConnection), new DbConnection(Configuration["connectionStringSqlAzure"])));
+            services.Add(new ServiceDescriptor(typeof(IDbConnection), new DbConnection("Server = tcp:shoppinglistdbserver2022.database.windows.net, 1433; Initial Catalog = ShoppingList_db; Persist Security Info = False; User ID = Ayoub; Password =@.Ayob.@; MultipleActiveResultSets = False; Encrypt = True; TrustServerCertificate = False; Connection Timeout = 30")));
             services.AddSingleton<IShoppingList, ShoppingListData>();
             services.AddSingleton<IChatData, ChatData>();
             services.AddSingleton<IProductData, ProductData>();
@@ -41,7 +41,7 @@ namespace ShoppingList
             services.AddSingleton<IRequestsData, RequestsData>();
             services.AddSingleton<ILoginData, LoginData>();
             services.AddSingleton<IListUsers, ListUsersData>();
-            services.Add(new ServiceDescriptor(typeof(IMailVerification), new MailVerification(Configuration["SendEmailApiKey"])));
+            services.Add(new ServiceDescriptor(typeof(IMailVerification), new MailVerification("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")));
 
             services.AddCors(options =>
             {
