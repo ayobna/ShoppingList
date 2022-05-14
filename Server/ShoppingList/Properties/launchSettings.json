@@ -21,7 +21,10 @@
       "launchBrowser": true,
       "applicationUrl": "http://localhost:5000",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ConnectionStringsDb": "Server=tcp:sqlserverapp03.database.windows.net,1433;Initial Catalog=ShoppingList;Persist Security Info=False;User ID=ayoub;Password=@.Ayob.@;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;",
+        "ConnectionStringSginalR": "Endpoint=https://shoppinglistsignalr.service.signalr.net;AccessKey=r+ZhbuSGuPa92+stgP9t/26/Q+qgSTWq7Kxi6UcleU8=;Version=1.0;",
+        "sendGridKey": "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"
       }
     }
   }

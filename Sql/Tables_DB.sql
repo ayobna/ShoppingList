@@ -150,11 +150,11 @@ Go
 
 --exec Proc_Get_Users
 
-Create Proc Proc_Create_User
+create Proc Proc_Create_User
 @Email nvarchar (150),
 @FirstName nvarchar (150),
 @LastName nvarchar (150),
-@Password varchar(max),
+@Password nvarchar(max),
 @PhoneNumber nvarchar (150),
 @Img nvarchar(max),
 @IsActive bit,

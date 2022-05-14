@@ -7,7 +7,7 @@ Select * From [users]
 Go
 
 
-alter Proc Proc_Update_User
+Create Proc Proc_Update_User
 @UserID int ,
 @Email nvarchar (150),
 @FirstName nvarchar (150),
@@ -44,7 +44,7 @@ Begin transaction
 		End
 commit transaction
 go
-exec Proc_Get_User_By_Id 3
+exec Proc_Get_User_By_Id 1
 -- user --> profile
 Create proc Proc_Delete_User
 @UserID int
@@ -71,7 +71,7 @@ go
 
 -------------------------------------------------List----------------------------------------------
 
-Alter Proc Proc_Get_All_Lists_Created_By_User
+alter Proc Proc_Get_All_Lists_Created_By_User
 @CreatorID int
 AS
 SELECT			shopping_lists.ListID, shopping_lists.Title, shopping_lists.CreatedOn, users.FirstName, users.LastName
@@ -156,7 +156,7 @@ AS
 Go
 
 
-Alter Proc Proc_Get_All_Lists_User_Is_A_Participant
+create Proc Proc_Get_All_Lists_User_Is_A_Participant
 @UserID int
 AS
 SELECT        shopping_lists.ListID, shopping_lists.Title, shopping_lists.CreatedOn, users.FirstName, users.LastName
@@ -167,7 +167,7 @@ WHERE        (shopping_lists_users.UserID = @UserID) AND (NOT (shopping_lists.Cr
 ORDER BY shopping_lists.CreatedOn DESC
 Go
 
-exec Proc_Get_All_Lists_User_Is_A_Participant 1
+--exec Proc_Get_All_Lists_User_Is_A_Participant 1
 
 
 
@@ -180,7 +180,7 @@ delete from [shopping_lists_users]
 WHERE  [ListID]= @ListID ANd [UserID]=@UserID
 Go
 
-exec  Proc_Exit_From_List_User_is_A_Participant 24,1
+--exec  Proc_Exit_From_List_User_is_A_Participant 24,1
 -------------------------------------------------Product----------------------------------------------
 
 
@@ -225,7 +225,7 @@ WHERE        (shopping_lists_messages.ListID = @ListID) AND (shopping_lists_mess
 ORDER BY  shopping_lists_messages.CreatedOn desc
 Go
 
-exec Proc_Get_Chat_Messages 45
+--exec Proc_Get_Chat_Messages 45
 
 
 Create Proc Proc_Create_Message
@@ -241,7 +241,7 @@ Go
 
 
 ------------------------------------------------------------------members---------------------------------------------------------------------
- Alter Proc Proc_Get_List_Users
+ create Proc Proc_Get_List_Users
  @ListID int
  As
  SELECT shopping_lists_users.UserID, users.FirstName, users.LastName, users.Img,  users.Email, users.PhoneNumber, dbo.Func_Return_True_If_Creator_Of_List(@ListID,shopping_lists_users.UserID) As IsCreator
@@ -317,7 +317,7 @@ Go
 
  ---------------------------- Login -------------------------------------------------------+
 
- Alter Proc Proc_Check_Login_Details
+ create Proc Proc_Check_Login_Details
  @Email nvarchar(150)
  --@Password nvarchar(max)
  As
@@ -344,7 +344,7 @@ Go
 	Select FirstName from users Where Upper(Email) = Upper(@Email) And IsActive = 1
  GO
 
- Alter Proc Proc_Update_Password
+ create Proc Proc_Update_Password
  @Email nvarchar(150),
  @Password nvarchar(max)
  As
@@ -372,16 +372,17 @@ Begin
 End 
 Go
 
-
+exec Proc_Create_User 'asd','asd','asdas','asdsa','asdsa'
 ---  more procs
 
-Alter Proc Proc_Get_Products_By_ListId
+create Proc Proc_Get_Products_By_ListId
 @ListID int
 AS
 select *from [products]
 where [ListID] = @ListID  and IsActive =1 
 Go
-exec Proc_Get_Products_By_ListId 59
+
+--exec Proc_Get_Products_By_ListId 59
 
 
 
@@ -399,7 +400,7 @@ UPDATE [products]
 	WHERE [ProductID] =@ProductID  and CreatorID=@CreatorID;
 Go
 
-exec Proc_Update_Product_By_ProductId_And_CreatorID 64,1
+--exec Proc_Update_Product_By_ProductId_And_CreatorID 64,1
 
 
 
@@ -413,7 +414,7 @@ go
 --exec Proc_Get_List_CreatorId_By_ListID 55
 
 
-alter Proc Proc_Delete_Product_By_ID
+create Proc Proc_Delete_Product_By_ID
 @ProductID int
 AS
 		UPDATE [products]
@@ -423,7 +424,7 @@ go
 
 
 
-alter Proc Proc_Checked_Product_By_ID
+create Proc Proc_Checked_Product_By_ID
 @ProductID int
 AS
 	UPDATE [products]
@@ -432,7 +433,7 @@ AS
 go
 
 
-alter Proc Proc_Un_Checked_Product_By_ID
+create Proc Proc_Un_Checked_Product_By_ID
 @ProductID int
 AS
 	UPDATE [products]
@@ -442,5 +443,5 @@ go
 
 
 DECLARE @UserID int;
-exec Proc_Insert_User 'ayob','nas','as@g.com','asd1234','0502158', @UserID OUTPUT
+exec Proc_Create_User 'ayob','nas','as@g.com','asd1234','0502158', @UserID OUTPUT
 SELECT @UserID

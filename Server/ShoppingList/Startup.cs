@@ -31,9 +31,9 @@ namespace ShoppingList
         {
             services.AddSwaggerGen();
             services.AddSignalR()
-            .AddAzureSignalR("Endpoint=https://shoppinglistsignalr.service.signalr.net;AccessKey=EBrHHXx9k0H1mg3j0KprIyMbVVN5J7xvJAbexncKkAA=;Version=1.0;");
+            .AddAzureSignalR("Endpoint=https://shoppinglistsignalr.service.signalr.net;AccessKey=r+ZhbuSGuPa92+stgP9t/26/Q+qgSTWq7Kxi6UcleU8=;Version=1.0;");
 
-            services.Add(new ServiceDescriptor(typeof(IDbConnection), new DbConnection("Server = tcp:shoppinglistdbserver2022.database.windows.net, 1433; Initial Catalog = ShoppingList_db; Persist Security Info = False; User ID = Ayoub; Password =@.Ayob.@; MultipleActiveResultSets = False; Encrypt = True; TrustServerCertificate = False; Connection Timeout = 30")));
+            services.Add(new ServiceDescriptor(typeof(IDbConnection), new DbConnection("Server=tcp:sqlserverapp03.database.windows.net,1433;Initial Catalog=ShoppingList;Persist Security Info=False;User ID=ayoub;Password=@.Ayob.@;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;")));
             services.AddSingleton<IShoppingList, ShoppingListData>();
             services.AddSingleton<IChatData, ChatData>();
             services.AddSingleton<IProductData, ProductData>();
