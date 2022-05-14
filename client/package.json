@@ -8,7 +8,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "eject": "expo eject",
-    "generate:apis": "npx openapi-generator-cli generate -i https://shoppinglist20220314080115.azurewebsites.net/swagger/v1/swagger.json -g typescript-axios -o generated"
+    "generate:apis": "npx openapi-generator-cli generate -i http://shoppinglist01.azurewebsites.net/swagger/v1/swagger.json -g typescript-axios -o generated"
   },
   "dependencies": {
     "@microsoft/signalr": "^6.0.2",

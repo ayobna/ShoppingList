@@ -3,7 +3,7 @@ import { StyleSheet, View, TouchableOpacity, Image, ScrollView } from "react-nat
 import { _storeData, _getData, _registerForPushNotificationsAsync, _diff_minutes } from "../utils/Functions";
 import { Button, TextInput, Caption, Text, Snackbar } from "react-native-paper";
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { loginApi } from "../api/api";
+import { loginApi ,userApi} from "../api/api";
 import Spinner from "../components/Spinner";
 import PopupDialog from "../components/PopupDialog";
 import withCommonScreen from "../hoc/withCommonScreen";
@@ -51,9 +51,14 @@ const LoginScreen = (props) => {
   const [createResetCodeTime, setCreateResetCodeTime] = useState();
 
 
-
+const stam= async()=>{
+  console.log("9999999999999")
+  const test = await userApi.apiGetUserByIdIdGet(1)
+  console.log('1111111111111',test)
+}
 
   useEffect(() => {
+    stam()
     const unsubscribe = navigation.addListener("focus", async () => {
       const currentUser = await _getData("User");
       if (currentUser === null) {

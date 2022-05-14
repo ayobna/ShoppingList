@@ -13,7 +13,7 @@ End
 Go
 
 --if a request was sent or not
-alter function Func_Chack_Statuse_Of_Request(@Email nvarchar (150), @listId int)
+create function Func_Chack_Statuse_Of_Request(@Email nvarchar (150), @listId int)
 Returns int
 As
 Begin
