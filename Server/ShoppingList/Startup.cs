@@ -29,9 +29,11 @@ namespace ShoppingList
 
         public void ConfigureServices(IServiceCollection services)
         {
+           // var asd = Configuration.GetConnectionString("connectionStringAzureSignalR");
+           
             services.AddSwaggerGen();
-            services.AddSignalR()
-            .AddAzureSignalR("Endpoint=https://shoppinglistsignalr.service.signalr.net;AccessKey=r+ZhbuSGuPa92+stgP9t/26/Q+qgSTWq7Kxi6UcleU8=;Version=1.0;");
+            services.AddSignalR()          
+            .AddAzureSignalR("Endpoint=https://shoppinglistsignalr.service.signalr.net;AccessKey=Q8dh/O9xS6PcKALaQnjM5p0wG2+vbyuk73lRfDTig7E=;Version=1.0;");
 
             services.Add(new ServiceDescriptor(typeof(IDbConnection), new DbConnection("Server=tcp:sqlserverapp03.database.windows.net,1433;Initial Catalog=ShoppingList;Persist Security Info=False;User ID=ayoub;Password=@.Ayob.@;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;")));
             services.AddSingleton<IShoppingList, ShoppingListData>();
