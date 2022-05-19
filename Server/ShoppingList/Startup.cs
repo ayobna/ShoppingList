@@ -43,7 +43,7 @@ namespace ShoppingList
             services.AddSingleton<IRequestsData, RequestsData>();
             services.AddSingleton<ILoginData, LoginData>();
             services.AddSingleton<IListUsers, ListUsersData>();
-            services.Add(new ServiceDescriptor(typeof(IMailVerification), new MailVerification("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")));
+            services.Add(new ServiceDescriptor(typeof(IMailVerification), new MailVerification("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")));
 
             services.AddCors(options =>
             {
