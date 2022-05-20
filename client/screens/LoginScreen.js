@@ -51,14 +51,10 @@ const LoginScreen = (props) => {
   const [createResetCodeTime, setCreateResetCodeTime] = useState();
 
 
-const stam= async()=>{
-  console.log("9999999999999")
-  const test = await userApi.apiGetUserByIdIdGet(1)
-  console.log('1111111111111',test)
-}
+
 
   useEffect(() => {
-    stam()
+
     const unsubscribe = navigation.addListener("focus", async () => {
       const currentUser = await _getData("User");
       if (currentUser === null) {
